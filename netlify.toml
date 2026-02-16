@@ -1,0 +1,19 @@
+[build]
+  command = "bun run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  node_bundler = "esbuild"
+  # Increase timeout for AI coach streaming responses (cold start + generation)
+  external_node_modules = ["openai"]
+
+# Environment variables are set in the Netlify dashboard
+# Required:
+#   NEXT_PUBLIC_SUPABASE_URL
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY
+#   OPENAI_API_KEY
+#   NEBIUS_API_KEY
+#   NEBIUS_MODEL

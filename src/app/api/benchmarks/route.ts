@@ -1,0 +1,87 @@
+import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { data: profile } = await supabase
+    .from('athlete_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile) {
+    return NextResponse.json({ benchmarks: [] });
+  }
+
+  const searchParams = request.nextUrl.searchParams;
+  const type = searchParams.get('type');
+
+  let query = supabase
+    .from('benchmark_tests')
+    .select('*')
+    .eq('athlete_id', profile.id)
+    .order('test_date', { ascending: false });
+
+  if (type) query = query.eq('test_type', type);
+
+  const { data: benchmarks, error } = await query;
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ benchmarks: benchmarks ?? [] });
+}
+
+export async function POST(request: Request) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { data: profile } = await supabase
+    .from('athlete_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile) {
+    return NextResponse.json(
+      { error: 'Profile not found' },
+      { status: 400 }
+    );
+  }
+
+  const body = await request.json();
+
+  const { data: benchmark, error } = await supabase
+    .from('benchmark_tests')
+    .insert({
+      athlete_id: profile.id,
+      test_type: body.test_type,
+      station_id: body.station_id || null,
+      results: body.results || {},
+      notes: body.notes || null,
+      test_date: body.test_date || new Date().toISOString().split('T')[0],
+    })
+    .select()
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ benchmark }, { status: 201 });
+}
