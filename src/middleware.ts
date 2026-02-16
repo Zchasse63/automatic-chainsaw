@@ -33,9 +33,11 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Landing page is always public
+  // Root: redirect based on auth status
   if (pathname === '/') {
-    return supabaseResponse;
+    const url = request.nextUrl.clone();
+    url.pathname = user ? '/dashboard' : '/login';
+    return NextResponse.redirect(url);
   }
 
   // Auth pages: redirect authenticated users to dashboard
