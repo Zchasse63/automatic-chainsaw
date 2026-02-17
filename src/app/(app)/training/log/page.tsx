@@ -11,10 +11,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Check, Loader2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Check, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useCreateWorkout } from '@/hooks/use-workouts';
+import { toast } from 'sonner';
 
 const SESSION_TYPES = [
   { value: 'run', label: 'Run' },
@@ -39,10 +41,23 @@ const RPE_LABELS: Record<number, string> = {
   10: 'Maximal',
 };
 
+interface PlannedWorkout {
+  id: string;
+  session_type: string | null;
+  workout_title: string | null;
+  workout_description: string | null;
+  estimated_duration_minutes: number | null;
+}
+
 export default function WorkoutLogPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const planDayId = searchParams.get('planDayId');
+  const createWorkout = useCreateWorkout();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [plannedWorkout, setPlannedWorkout] = useState<PlannedWorkout | null>(null);
 
   const [date, setDate] = useState(
     new Date().toISOString().split('T')[0]
@@ -52,32 +67,47 @@ export default function WorkoutLogPage() {
   const [rpePost, setRpePost] = useState(5);
   const [notes, setNotes] = useState('');
 
+  // Fetch planned workout details if planDayId is provided
+  useEffect(() => {
+    if (!planDayId) return;
+
+    async function fetchPlanDay() {
+      const res = await fetch(`/api/training-plans/day/${planDayId}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const day = data.day;
+      if (day) {
+        setPlannedWorkout(day);
+        if (day.session_type) setSessionType(day.session_type);
+        if (day.estimated_duration_minutes) setDuration(String(day.estimated_duration_minutes));
+        if (day.workout_description) setNotes(day.workout_description);
+      }
+    }
+    fetchPlanDay();
+  }, [planDayId]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const res = await fetch('/api/workouts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    try {
+      await createWorkout.mutateAsync({
         date,
         session_type: sessionType,
-        duration_minutes: duration ? Number(duration) : null,
+        duration_minutes: duration ? Number(duration) : undefined,
         rpe_post: rpePost,
-        notes: notes || null,
-      }),
-    });
-
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error || 'Failed to log workout');
+        notes: notes || undefined,
+        training_plan_day_id: planDayId || undefined,
+      });
+      toast.success('Workout logged');
+      router.push('/training');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to log workout');
+      toast.error('Failed to log workout');
+    } finally {
       setLoading(false);
-      return;
     }
-
-    router.push('/training');
-    router.refresh();
   }
 
   return (
@@ -94,6 +124,26 @@ export default function WorkoutLogPage() {
           Log Workout
         </h1>
       </div>
+
+      {/* Planned workout banner */}
+      {plannedWorkout && (
+        <div className="bg-hyrox-yellow/5 border border-hyrox-yellow/20 rounded-lg px-4 py-3">
+          <div className="flex items-center gap-2 mb-1">
+            <CalendarDays className="h-4 w-4 text-hyrox-yellow" />
+            <span className="font-display text-[10px] uppercase tracking-widest text-hyrox-yellow">
+              Planned Workout
+            </span>
+          </div>
+          <p className="font-display text-sm font-bold uppercase tracking-wider text-text-primary">
+            {plannedWorkout.workout_title || 'Workout'}
+          </p>
+          {plannedWorkout.workout_description && (
+            <p className="font-body text-xs text-text-secondary mt-1 line-clamp-2">
+              {plannedWorkout.workout_description}
+            </p>
+          )}
+        </div>
+      )}
 
       {error && (
         <div className="bg-semantic-error/10 border border-semantic-error/20 rounded-sm px-4 py-3">

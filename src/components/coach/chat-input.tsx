@@ -15,6 +15,7 @@ interface ChatInputProps {
   disabled?: boolean;
   loading?: boolean;
   showQuickActions?: boolean;
+  initialValue?: string;
 }
 
 export function ChatInput({
@@ -22,8 +23,17 @@ export function ChatInput({
   disabled,
   loading,
   showQuickActions,
+  initialValue,
 }: ChatInputProps) {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState(initialValue ?? '');
+  const initialValueApplied = useRef(false);
+
+  useEffect(() => {
+    if (initialValue && !initialValueApplied.current) {
+      initialValueApplied.current = true;
+      setInput(initialValue);
+    }
+  }, [initialValue]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const adjustHeight = useCallback(() => {

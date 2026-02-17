@@ -3,69 +3,31 @@
 import { Button } from '@/components/ui/button';
 import {
   Calendar,
+  ChevronRight,
   Clock,
   Dumbbell,
   Flame,
   MessageSquare,
+  Play,
   Target,
   Timer,
   Trophy,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useDashboard } from '@/hooks/use-dashboard';
 
-interface DashboardData {
-  profile: {
-    display_name: string | null;
-    race_date: string | null;
-    goal_time_minutes: number | null;
-    current_phase: string | null;
-    hyrox_division: string | null;
-  };
-  daysUntilRace: number | null;
-  weeklyStats: {
-    workouts: number;
-    totalMinutes: number;
-    avgRpe: number | null;
-  };
-  streak: number;
-  recentPRs: Array<{
-    id: string;
-    record_type: string;
-    exercise_name: string | null;
-    value: number;
-    value_unit: string;
-    date_achieved: string;
-  }>;
-  goals: Array<{
-    id: string;
-    title: string;
-    target_value: number | null;
-    current_value: number | null;
-    target_date: string | null;
-    status: string;
-  }>;
-  lastConversation: {
-    id: string;
-    title: string | null;
-    updated_at: string | null;
-  } | null;
-}
+const SESSION_LABELS: Record<string, string> = {
+  run: 'Run',
+  hiit: 'HIIT',
+  strength: 'Strength',
+  simulation: 'Simulation',
+  recovery: 'Recovery',
+  station_practice: 'Station Practice',
+  general: 'General',
+};
 
 export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function load() {
-      const res = await fetch('/api/dashboard');
-      if (res.ok) {
-        setData(await res.json());
-      }
-      setLoading(false);
-    }
-    load();
-  }, []);
+  const { data, isLoading: loading } = useDashboard();
 
   if (loading) {
     return (
@@ -196,6 +158,74 @@ export default function DashboardPage() {
             this week
           </p>
         </div>
+
+        {/* Today's Workout */}
+        {data.todaysWorkout && !data.todaysWorkout.is_completed && (
+          <Link
+            href={`/training/log?planDayId=${data.todaysWorkout.id}`}
+            className="col-span-2 bg-hyrox-yellow/5 border border-hyrox-yellow/20 rounded-lg p-5 hover:bg-hyrox-yellow/10 transition-colors group"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-display text-[10px] uppercase tracking-widest text-hyrox-yellow mb-1">
+                  Today&apos;s Workout
+                </p>
+                <p className="font-display text-base font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
+                  {data.todaysWorkout.workout_title || 'Workout'}
+                </p>
+                <div className="flex items-center gap-3 mt-1">
+                  {data.todaysWorkout.session_type && (
+                    <span className="font-display text-[10px] uppercase tracking-wider text-text-tertiary">
+                      {SESSION_LABELS[data.todaysWorkout.session_type] || data.todaysWorkout.session_type}
+                    </span>
+                  )}
+                  {data.todaysWorkout.estimated_duration_minutes && (
+                    <span className="font-mono text-xs text-text-tertiary">
+                      {data.todaysWorkout.estimated_duration_minutes} min
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-hyrox-yellow/10 flex items-center justify-center">
+                <Play className="h-5 w-5 text-hyrox-yellow" />
+              </div>
+            </div>
+          </Link>
+        )}
+
+        {/* Active Plan Progress */}
+        {data.activePlan && (
+          <Link
+            href="/training"
+            className="col-span-2 bg-surface-1 border border-border-default rounded-lg p-5 hover:border-hyrox-yellow/30 transition-colors group"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div>
+                <p className="font-display text-[10px] uppercase tracking-widest text-text-tertiary">
+                  Training Plan
+                </p>
+                <p className="font-display text-sm font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
+                  {data.activePlan.plan_name}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs text-text-tertiary">
+                  Week {data.activePlan.currentWeek}/{data.activePlan.totalWeeks}
+                </span>
+                <ChevronRight className="h-4 w-4 text-text-tertiary" />
+              </div>
+            </div>
+            <div className="h-1.5 bg-surface-3 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-hyrox-yellow rounded-full transition-all"
+                style={{ width: `${data.activePlan.progressPct}%` }}
+              />
+            </div>
+            <p className="font-mono text-[10px] text-text-tertiary mt-1">
+              {data.activePlan.progressPct}% complete
+            </p>
+          </Link>
+        )}
 
         {/* Ask Coach K — CTA */}
         <Link

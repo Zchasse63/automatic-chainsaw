@@ -4,32 +4,55 @@ import { ChatMessage } from '@/components/coach/chat-message';
 import { ChatInput } from '@/components/coach/chat-input';
 import { ConversationSidebar } from '@/components/coach/conversation-sidebar';
 import { Bot, Menu, X } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import {
+  useConversations,
+  useMessages,
+  useInvalidateConversations,
+} from '@/hooks/use-conversations';
+import { useCoachStore } from '@/stores/coach-store';
 
-interface Message {
+interface LocalMessage {
   id?: string;
   role: 'user' | 'assistant';
   content: string;
   feedback?: string | null;
   isStreaming?: boolean;
-}
-
-interface Conversation {
-  id: string;
-  title: string | null;
-  updated_at: string | null;
+  suggested_actions?: Record<string, unknown> | null;
 }
 
 export default function CoachPage() {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [activeConvId, setActiveConvId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const searchParams = useSearchParams();
+  const { activeConversationId, lastConversationId, setActiveConversation } =
+    useCoachStore();
+
+  // Build initial prompt from context search params
+  const initialPrompt = useMemo(() => {
+    const context = searchParams.get('context');
+    if (!context) return undefined;
+    if (context === 'plan') {
+      const planName = searchParams.get('planName');
+      return planName
+        ? `I have a question about my training plan "${planName}". `
+        : 'I have a question about my current training plan. ';
+    }
+    return undefined;
+  }, [searchParams]);
+  const { data: conversations = [], isLoading: convsLoading } =
+    useConversations();
+  const { data: dbMessages } = useMessages(activeConversationId);
+  const { invalidateConversations, invalidateMessages } =
+    useInvalidateConversations();
+
+  const [localMessages, setLocalMessages] = useState<LocalMessage[]>([]);
   const [streaming, setStreaming] = useState(false);
   const [coldStart, setColdStart] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const coldStartTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const hasInitialized = useRef(false);
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {
@@ -38,47 +61,55 @@ export default function CoachPage() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, scrollToBottom]);
+  }, [localMessages, scrollToBottom]);
 
-  // Load conversations on mount
+  // Auto-select last conversation on mount
   useEffect(() => {
-    loadConversations();
-  }, []);
+    if (hasInitialized.current) return;
+    if (convsLoading) return;
+    hasInitialized.current = true;
 
-  async function loadConversations() {
-    const res = await fetch('/api/conversations');
-    if (res.ok) {
-      const data = await res.json();
-      setConversations(data.conversations);
+    if (
+      lastConversationId &&
+      !activeConversationId &&
+      conversations.some((c) => c.id === lastConversationId)
+    ) {
+      setActiveConversation(lastConversationId);
     }
-  }
+  }, [
+    convsLoading,
+    conversations,
+    lastConversationId,
+    activeConversationId,
+    setActiveConversation,
+  ]);
 
-  async function loadMessages(convId: string) {
-    const res = await fetch(`/api/conversations/${convId}/messages`);
-    if (res.ok) {
-      const data = await res.json();
-      setMessages(
-        data.messages.map((m: Message) => ({
-          id: m.id,
-          role: m.role,
-          content: m.content,
-          feedback: m.feedback,
-        }))
-      );
-    }
-  }
+  // Sync DB messages to local state (when not streaming)
+  useEffect(() => {
+    if (streaming) return;
+    if (!dbMessages) return;
+
+    setLocalMessages(
+      dbMessages.map((m) => ({
+        id: m.id,
+        role: m.role,
+        content: m.content,
+        feedback: m.feedback,
+        suggested_actions: m.suggested_actions,
+      }))
+    );
+  }, [dbMessages, streaming]);
 
   function handleSelectConversation(convId: string) {
-    setActiveConvId(convId);
-    setMessages([]);
+    setActiveConversation(convId);
+    setLocalMessages([]);
     setError(null);
     setSidebarOpen(false);
-    loadMessages(convId);
   }
 
   function handleNewConversation() {
-    setActiveConvId(null);
-    setMessages([]);
+    setActiveConversation(null);
+    setLocalMessages([]);
     setError(null);
     setSidebarOpen(false);
   }
@@ -89,10 +120,10 @@ export default function CoachPage() {
     setColdStart(false);
 
     // Add user message immediately
-    setMessages((prev) => [...prev, { role: 'user', content: message }]);
+    setLocalMessages((prev) => [...prev, { role: 'user', content: message }]);
 
     // Add placeholder assistant message for streaming
-    setMessages((prev) => [
+    setLocalMessages((prev) => [
       ...prev,
       { role: 'assistant', content: '', isStreaming: true },
     ]);
@@ -108,7 +139,7 @@ export default function CoachPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message,
-          conversationId: activeConvId,
+          conversationId: activeConversationId,
         }),
       });
 
@@ -119,9 +150,9 @@ export default function CoachPage() {
 
       // Get conversation ID from header if new conversation
       const convId = res.headers.get('X-Conversation-Id');
-      if (convId && !activeConvId) {
-        setActiveConvId(convId);
-        loadConversations();
+      if (convId && !activeConversationId) {
+        setActiveConversation(convId);
+        invalidateConversations();
       }
 
       clearTimeout(coldStartTimer.current);
@@ -149,8 +180,9 @@ export default function CoachPage() {
 
             try {
               const parsed = JSON.parse(data);
+
               if (parsed.token) {
-                setMessages((prev) => {
+                setLocalMessages((prev) => {
                   const updated = [...prev];
                   const last = updated[updated.length - 1];
                   if (last && last.isStreaming) {
@@ -162,6 +194,22 @@ export default function CoachPage() {
                   return updated;
                 });
               }
+
+              // Capture metadata event with message ID
+              if (parsed.done && parsed.messageId) {
+                setLocalMessages((prev) => {
+                  const updated = [...prev];
+                  const last = updated[updated.length - 1];
+                  if (last && last.isStreaming) {
+                    updated[updated.length - 1] = {
+                      ...last,
+                      id: parsed.messageId,
+                    };
+                  }
+                  return updated;
+                });
+              }
+
               if (parsed.error) {
                 setError(parsed.error);
               }
@@ -173,7 +221,7 @@ export default function CoachPage() {
       }
 
       // Mark streaming complete
-      setMessages((prev) => {
+      setLocalMessages((prev) => {
         const updated = [...prev];
         const last = updated[updated.length - 1];
         if (last && last.isStreaming) {
@@ -181,12 +229,19 @@ export default function CoachPage() {
         }
         return updated;
       });
+
+      // Refresh messages from DB to get full metadata (suggested_actions, etc.)
+      const currentConvId = convId || activeConversationId;
+      if (currentConvId) {
+        invalidateMessages(currentConvId);
+      }
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Something went wrong';
       setError(errorMessage);
-      // Remove empty streaming message on error
-      setMessages((prev) => prev.filter((m) => !m.isStreaming || m.content));
+      setLocalMessages((prev) =>
+        prev.filter((m) => !m.isStreaming || m.content)
+      );
     } finally {
       clearTimeout(coldStartTimer.current);
       setColdStart(false);
@@ -205,7 +260,7 @@ export default function CoachPage() {
     });
   }
 
-  const hasMessages = messages.length > 0;
+  const hasMessages = localMessages.length > 0;
 
   return (
     <div className="flex h-[calc(100vh-4rem)] md:h-screen">
@@ -213,7 +268,7 @@ export default function CoachPage() {
       <div className="hidden md:flex w-72 flex-col bg-surface-1 border-r border-border-default">
         <ConversationSidebar
           conversations={conversations}
-          activeId={activeConvId}
+          activeId={activeConversationId}
           onSelect={handleSelectConversation}
           onNew={handleNewConversation}
         />
@@ -240,7 +295,7 @@ export default function CoachPage() {
             </div>
             <ConversationSidebar
               conversations={conversations}
-              activeId={activeConvId}
+              activeId={activeConversationId}
               onSelect={handleSelectConversation}
               onNew={handleNewConversation}
             />
@@ -290,7 +345,7 @@ export default function CoachPage() {
             </div>
           )}
 
-          {messages.map((msg, i) => (
+          {localMessages.map((msg, i) => (
             <ChatMessage
               key={msg.id || `msg-${i}`}
               id={msg.id}
@@ -298,6 +353,7 @@ export default function CoachPage() {
               content={msg.content}
               feedback={msg.feedback}
               isStreaming={msg.isStreaming}
+              suggestedActions={msg.suggested_actions}
               onFeedback={handleFeedback}
             />
           ))}
@@ -318,6 +374,7 @@ export default function CoachPage() {
             disabled={streaming}
             loading={streaming}
             showQuickActions={!hasMessages}
+            initialValue={!hasMessages ? initialPrompt : undefined}
           />
         </div>
       </div>

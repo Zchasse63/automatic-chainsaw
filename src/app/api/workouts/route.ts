@@ -95,5 +95,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // Auto-complete the training plan day and link the workout log
+  if (body.training_plan_day_id && workout) {
+    await supabase
+      .from('training_plan_days')
+      .update({
+        is_completed: true,
+        linked_workout_log_id: workout.id,
+      })
+      .eq('id', body.training_plan_day_id);
+  }
+
   return NextResponse.json({ workout }, { status: 201 });
 }

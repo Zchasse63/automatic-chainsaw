@@ -11,6 +11,8 @@ import {
   User,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { QueryProvider } from '@/components/providers/query-provider';
+import { Toaster } from 'sonner';
 
 const NAV_ITEMS = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -60,7 +62,7 @@ export default function AppLayout({
 
   // Onboarding page — no nav shell
   if (isOnboarding) {
-    return <>{children}</>;
+    return <QueryProvider>{children}</QueryProvider>;
   }
 
   // Wait for profile check before rendering app
@@ -76,6 +78,7 @@ export default function AppLayout({
   }
 
   return (
+    <QueryProvider>
     <div className="min-h-screen bg-surface-0">
       {/* Main content */}
       <main className="pb-20 md:pb-0 md:pl-64">
@@ -138,6 +141,20 @@ export default function AppLayout({
           })}
         </nav>
       </aside>
+
+      <Toaster
+        theme="dark"
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: 'var(--color-surface-1)',
+            border: '1px solid var(--color-border-default)',
+            color: 'var(--color-text-primary)',
+            fontFamily: 'var(--font-body)',
+          },
+        }}
+      />
     </div>
+    </QueryProvider>
   );
 }

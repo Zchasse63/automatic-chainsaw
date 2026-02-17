@@ -282,6 +282,53 @@ export async function runCoachingPipeline(
           }
         }
 
+        // [9] Persist messages BEFORE closing stream
+        const latencyMs = Date.now() - startTime;
+        let assistantMessageId: string | null = null;
+
+        try {
+          await supabase.from('messages').insert({
+            conversation_id: conversationId,
+            role: 'user',
+            content: userMessage,
+          });
+
+          // Detect if response looks like a training plan
+          const suggestedActions = looksLikeTrainingPlan(fullResponse)
+            ? JSON.stringify({ type: 'training_plan' })
+            : null;
+
+          const { data: savedMsg } = await supabase
+            .from('messages')
+            .insert({
+              conversation_id: conversationId,
+              role: 'assistant',
+              content: fullResponse,
+              rag_chunks_used: ragChunkIds,
+              tokens_in: tokensIn,
+              tokens_out: tokensOut,
+              latency_ms: latencyMs,
+              suggested_actions: suggestedActions,
+            })
+            .select('id')
+            .single();
+
+          assistantMessageId = savedMsg?.id ?? null;
+
+          await supabase
+            .from('conversations')
+            .update({ updated_at: new Date().toISOString() })
+            .eq('id', conversationId);
+        } catch (logError) {
+          console.error('Failed to log messages:', logError);
+        }
+
+        // Send metadata with message ID so client can use it for feedback
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({ done: true, messageId: assistantMessageId })}\n\n`
+          )
+        );
         controller.enqueue(encoder.encode('data: [DONE]\n\n'));
         controller.close();
       } catch (err) {
@@ -293,39 +340,24 @@ export async function runCoachingPipeline(
         );
         controller.close();
       }
-
-      // [9] Log to database (fire-and-forget after stream closes)
-      const latencyMs = Date.now() - startTime;
-
-      try {
-        // Save user message
-        await supabase.from('messages').insert({
-          conversation_id: conversationId,
-          role: 'user',
-          content: userMessage,
-        });
-
-        // Save assistant response
-        await supabase.from('messages').insert({
-          conversation_id: conversationId,
-          role: 'assistant',
-          content: fullResponse,
-          rag_chunks_used: ragChunkIds,
-          tokens_in: tokensIn,
-          tokens_out: tokensOut,
-          latency_ms: latencyMs,
-        });
-
-        // Update conversation.updated_at
-        await supabase
-          .from('conversations')
-          .update({ updated_at: new Date().toISOString() })
-          .eq('id', conversationId);
-      } catch (logError) {
-        console.error('Failed to log messages:', logError);
-      }
     },
   });
 
   return { stream, ragChunkIds };
+}
+
+// ── Heuristic: detect training plan in response ──────────
+
+function looksLikeTrainingPlan(content: string): boolean {
+  const weeks = (content.match(/week\s+\d+/gi) || []).length;
+  const days = (
+    content.match(
+      /monday|tuesday|wednesday|thursday|friday|saturday|sunday/gi
+    ) || []
+  ).length;
+  const sessions = (
+    content.match(/\b(run|hiit|strength|recovery|simulation|station)\b/gi) ||
+    []
+  ).length;
+  return weeks >= 2 && days >= 3 && sessions >= 3;
 }

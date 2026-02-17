@@ -4,6 +4,8 @@ import { ThumbsUp, ThumbsDown, Bot } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useState } from 'react';
+import { TrainingPlanCard } from './training-plan-card';
+import { useCoachStore } from '@/stores/coach-store';
 
 interface ChatMessageProps {
   id?: string;
@@ -11,6 +13,7 @@ interface ChatMessageProps {
   content: string;
   feedback?: string | null;
   isStreaming?: boolean;
+  suggestedActions?: Record<string, unknown> | null;
   onFeedback?: (messageId: string, feedback: 'positive' | 'negative' | null) => void;
 }
 
@@ -20,10 +23,18 @@ export function ChatMessage({
   content,
   feedback,
   isStreaming,
+  suggestedActions,
   onFeedback,
 }: ChatMessageProps) {
   const [currentFeedback, setCurrentFeedback] = useState(feedback);
+  const activeConversationId = useCoachStore(
+    (s) => s.activeConversationId
+  );
   const isUser = role === 'user';
+  const isTrainingPlan =
+    suggestedActions &&
+    typeof suggestedActions === 'object' &&
+    suggestedActions.type === 'training_plan';
 
   async function handleFeedback(type: 'positive' | 'negative') {
     if (!id || !onFeedback) return;
@@ -60,6 +71,14 @@ export function ChatMessage({
             )}
           </div>
         </div>
+
+        {/* Training plan action card */}
+        {isTrainingPlan && !isStreaming && (
+          <TrainingPlanCard
+            messageContent={content}
+            conversationId={activeConversationId ?? undefined}
+          />
+        )}
 
         {/* Feedback buttons — only show for completed assistant messages */}
         {id && !isStreaming && (

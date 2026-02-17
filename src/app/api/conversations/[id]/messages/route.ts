@@ -23,7 +23,7 @@ export async function GET(
   const { data: messages, error } = await supabase
     .from('messages')
     .select(
-      'id, role, content, feedback, created_at, rag_chunks_used, tokens_in, tokens_out, latency_ms'
+      'id, role, content, feedback, created_at, rag_chunks_used, tokens_in, tokens_out, latency_ms, suggested_actions'
     )
     .eq('conversation_id', id)
     .order('created_at', { ascending: true })

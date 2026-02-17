@@ -108,6 +108,79 @@ export async function GET() {
     .limit(1)
     .single();
 
+  // Active training plan + today's workout
+  let activePlan: {
+    id: string;
+    plan_name: string;
+    currentWeek: number;
+    totalWeeks: number;
+    progressPct: number;
+  } | null = null;
+  let todaysWorkout: {
+    id: string;
+    session_type: string | null;
+    workout_title: string | null;
+    estimated_duration_minutes: number | null;
+    is_completed: boolean | null;
+  } | null = null;
+
+  const { data: plan } = await supabase
+    .from('training_plans')
+    .select('id, plan_name, start_date, duration_weeks, status')
+    .eq('athlete_id', profile.id)
+    .eq('status', 'active')
+    .limit(1)
+    .single();
+
+  if (plan && plan.start_date) {
+    const startDate = new Date(plan.start_date);
+    const now = new Date();
+    const diffMs = now.getTime() - startDate.getTime();
+    const diffDays = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+    const currentWeek = Math.max(1, Math.floor(diffDays / 7) + 1);
+    const totalWeeks = plan.duration_weeks ?? 1;
+
+    // Get all days to compute progress
+    const { data: weeks } = await supabase
+      .from('training_plan_weeks')
+      .select('id, training_plan_days(id, day_of_week, session_type, workout_title, estimated_duration_minutes, is_rest_day, is_completed)')
+      .eq('training_plan_id', plan.id)
+      .order('week_number', { ascending: true });
+
+    const allDays = weeks?.flatMap((w) => w.training_plan_days ?? []) ?? [];
+    const totalDays = allDays.length;
+    const completedDays = allDays.filter((d) => d.is_completed).length;
+    const progressPct = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
+
+    activePlan = {
+      id: plan.id,
+      plan_name: plan.plan_name,
+      currentWeek: Math.min(currentWeek, totalWeeks),
+      totalWeeks,
+      progressPct,
+    };
+
+    // Find today's workout: current week + today's day_of_week (0=Mon, 6=Sun)
+    const todayDow = (now.getDay() + 6) % 7; // JS Sunday=0 → our Monday=0
+    if (weeks && currentWeek <= totalWeeks) {
+      const currentWeekData = weeks[currentWeek - 1];
+      if (currentWeekData) {
+        const todayDay = currentWeekData.training_plan_days?.find(
+          (d) => d.day_of_week === todayDow && !d.is_rest_day
+        );
+        if (todayDay) {
+          todaysWorkout = {
+            id: todayDay.id,
+            session_type: todayDay.session_type,
+            workout_title: todayDay.workout_title,
+            estimated_duration_minutes: todayDay.estimated_duration_minutes,
+            is_completed: todayDay.is_completed,
+          };
+        }
+      }
+    }
+  }
+
   return NextResponse.json({
     profile: {
       display_name: profile.display_name,
@@ -126,5 +199,7 @@ export async function GET() {
     recentPRs: recentPRs ?? [],
     goals: goals ?? [],
     lastConversation: lastConv ?? null,
+    activePlan,
+    todaysWorkout,
   });
 }

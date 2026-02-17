@@ -7,49 +7,81 @@ import {
   Dumbbell,
   MessageSquare,
   Plus,
+  Check,
+  Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useWorkouts } from '@/hooks/use-workouts';
+import {
+  useActiveTrainingPlan,
+  useTrainingPlan,
+} from '@/hooks/use-training-plans';
+import { WeekCalendar } from '@/components/training/week-calendar';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
+import { useRouter } from 'next/navigation';
+import { useUpdatePlanDay } from '@/hooks/use-training-plans';
+import { toast } from 'sonner';
 
-interface Workout {
+const SESSION_LABELS: Record<string, string> = {
+  run: 'Run',
+  hiit: 'HIIT',
+  strength: 'Strength',
+  simulation: 'Simulation',
+  recovery: 'Recovery',
+  station_practice: 'Station Practice',
+  general: 'General',
+};
+
+interface PlanDay {
   id: string;
-  date: string;
+  day_of_week: number;
   session_type: string | null;
-  duration_minutes: number | null;
-  rpe_post: number | null;
-  notes: string | null;
-  completion_status: string | null;
-}
-
-interface Plan {
-  id: string;
-  plan_name: string;
-  goal: string | null;
-  status: string;
-  start_date: string | null;
-  end_date: string | null;
-  duration_weeks: number;
+  workout_title: string | null;
+  workout_description: string | null;
+  estimated_duration_minutes: number | null;
+  is_rest_day: boolean | null;
+  is_completed: boolean | null;
 }
 
 export default function TrainingPage() {
-  const [workouts, setWorkouts] = useState<Workout[]>([]);
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const { data: workouts = [], isLoading: workoutsLoading } = useWorkouts({
+    limit: 10,
+  });
+  const { activePlan, isLoading: plansLoading } = useActiveTrainingPlan();
+  const { data: planDetail } = useTrainingPlan(activePlan?.id ?? null);
 
-  useEffect(() => {
-    async function load() {
-      const [wRes, pRes] = await Promise.all([
-        fetch('/api/workouts?limit=10'),
-        fetch('/api/training-plans'),
-      ]);
-      if (wRes.ok) setWorkouts((await wRes.json()).workouts);
-      if (pRes.ok) setPlans((await pRes.json()).plans);
-      setLoading(false);
-    }
-    load();
-  }, []);
+  const updatePlanDay = useUpdatePlanDay();
+  const [selectedDay, setSelectedDay] = useState<PlanDay | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const activePlan = plans.find((p) => p.status === 'active');
+  const loading = workoutsLoading || plansLoading;
+
+  function handleDayClick(day: PlanDay) {
+    setSelectedDay(day);
+    setDrawerOpen(true);
+  }
+
+  // Calculate plan progress
+  const totalDays =
+    planDetail?.training_plan_weeks?.reduce(
+      (sum, w) => sum + (w.training_plan_days?.length ?? 0),
+      0
+    ) ?? 0;
+  const completedDays =
+    planDetail?.training_plan_weeks?.reduce(
+      (sum, w) =>
+        sum +
+        (w.training_plan_days?.filter((d) => d.is_completed)?.length ?? 0),
+      0
+    ) ?? 0;
+  const progressPct = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
 
   if (loading) {
     return (
@@ -82,33 +114,51 @@ export default function TrainingPage() {
         </Link>
       </div>
 
-      {/* Active Plan */}
-      <section className="space-y-3">
-        <h2 className="font-display text-sm uppercase tracking-widest text-text-tertiary">
-          Training Plan
-        </h2>
-        {activePlan ? (
-          <div className="bg-surface-1 border border-border-default rounded-lg p-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-display text-lg font-bold text-text-primary">
-                  {activePlan.plan_name}
-                </h3>
-                {activePlan.goal && (
-                  <p className="font-body text-sm text-text-secondary mt-1">
-                    {activePlan.goal}
-                  </p>
-                )}
-                {activePlan.start_date && activePlan.end_date && (
-                  <p className="font-mono text-xs text-text-tertiary mt-2">
-                    {new Date(activePlan.start_date).toLocaleDateString()} —{' '}
-                    {new Date(activePlan.end_date).toLocaleDateString()}
-                  </p>
-                )}
+      {/* Active Plan + Calendar */}
+      <section className="space-y-4">
+        {activePlan && planDetail ? (
+          <>
+            {/* Plan header */}
+            <div className="bg-surface-1 border border-border-default rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <h3 className="font-display text-base font-bold uppercase tracking-wider text-text-primary">
+                    {activePlan.plan_name}
+                  </h3>
+                  {activePlan.goal && (
+                    <p className="font-body text-xs text-text-secondary mt-0.5">
+                      {activePlan.goal}
+                    </p>
+                  )}
+                </div>
+                <div className="text-right">
+                  <span className="font-mono text-xs text-text-tertiary">
+                    {completedDays}/{totalDays} sessions
+                  </span>
+                </div>
               </div>
-              <ChevronRight className="h-5 w-5 text-text-tertiary" />
+              {/* Progress bar */}
+              <div className="h-1.5 bg-surface-3 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-hyrox-yellow rounded-full transition-all"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </div>
             </div>
-          </div>
+
+            {/* Week calendar */}
+            {planDetail.training_plan_weeks &&
+              planDetail.training_plan_weeks.length > 0 &&
+              activePlan.start_date && (
+                <WeekCalendar
+                  weeks={planDetail.training_plan_weeks}
+                  planId={activePlan.id}
+                  startDate={activePlan.start_date}
+                  totalWeeks={activePlan.duration_weeks ?? 1}
+                  onDayClick={handleDayClick}
+                />
+              )}
+          </>
         ) : (
           <div className="bg-surface-1 border border-border-default rounded-lg p-8 text-center space-y-3">
             <CalendarDays className="h-8 w-8 text-text-tertiary mx-auto" />
@@ -127,6 +177,21 @@ export default function TrainingPage() {
           </div>
         )}
       </section>
+
+      {/* Ask Coach K with context */}
+      {activePlan && planDetail && (
+        <Link
+          href={`/coach?context=plan&planName=${encodeURIComponent(activePlan.plan_name)}`}
+          className="block bg-hyrox-yellow/5 border border-hyrox-yellow/20 rounded-lg px-4 py-3 hover:bg-hyrox-yellow/10 transition-colors group"
+        >
+          <div className="flex items-center gap-3">
+            <MessageSquare className="h-5 w-5 text-hyrox-yellow" />
+            <span className="font-display text-xs font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
+              Ask Coach K about this plan
+            </span>
+          </div>
+        </Link>
+      )}
 
       {/* Recent Workouts */}
       <section className="space-y-3">
@@ -156,7 +221,7 @@ export default function TrainingPage() {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-display text-xs uppercase tracking-wider px-2 py-0.5 rounded-sm bg-surface-2 text-text-secondary">
-                      {w.session_type || 'General'}
+                      {SESSION_LABELS[w.session_type] || w.session_type || 'General'}
                     </span>
                     <span className="font-mono text-xs text-text-tertiary">
                       {new Date(w.date).toLocaleDateString()}
@@ -181,6 +246,91 @@ export default function TrainingPage() {
           </div>
         )}
       </section>
+
+      {/* Workout detail drawer */}
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerContent className="bg-surface-1 border-border-default">
+          {selectedDay && (
+            <div className="p-6 space-y-4">
+              <DrawerHeader className="p-0">
+                <DrawerTitle className="font-display text-lg font-bold uppercase tracking-wider text-text-primary">
+                  {selectedDay.is_rest_day
+                    ? 'Rest Day'
+                    : selectedDay.workout_title || 'Workout'}
+                </DrawerTitle>
+              </DrawerHeader>
+
+              {!selectedDay.is_rest_day && (
+                <>
+                  {selectedDay.session_type && (
+                    <span className="inline-block font-display text-[10px] uppercase tracking-[0.2em] text-text-tertiary border border-border-default px-2 py-0.5 rounded-sm bg-surface-2">
+                      {SESSION_LABELS[selectedDay.session_type] ||
+                        selectedDay.session_type}
+                    </span>
+                  )}
+
+                  {selectedDay.workout_description && (
+                    <p className="font-body text-sm text-text-secondary whitespace-pre-wrap">
+                      {selectedDay.workout_description}
+                    </p>
+                  )}
+
+                  {selectedDay.estimated_duration_minutes && (
+                    <p className="font-mono text-xs text-text-tertiary">
+                      Est. {selectedDay.estimated_duration_minutes} min
+                    </p>
+                  )}
+
+                  <div className="flex gap-3 pt-2">
+                    <Button
+                      onClick={() => {
+                        setDrawerOpen(false);
+                        router.push(
+                          `/training/log?planDayId=${selectedDay.id}`
+                        );
+                      }}
+                      className="flex-1 bg-hyrox-yellow text-text-inverse hover:bg-hyrox-yellow-hover font-display uppercase tracking-wider text-xs"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Log Workout
+                    </Button>
+                    {!selectedDay.is_completed && (
+                      <Button
+                        variant="outline"
+                        onClick={async () => {
+                          if (!activePlan) return;
+                          try {
+                            await updatePlanDay.mutateAsync({
+                              planId: activePlan.id,
+                              dayId: selectedDay.id,
+                              data: { is_completed: true },
+                            });
+                            toast.success('Workout marked complete');
+                            setDrawerOpen(false);
+                          } catch {
+                            toast.error('Failed to mark complete');
+                          }
+                        }}
+                        disabled={updatePlanDay.isPending}
+                        className="border-border-default text-text-secondary font-display uppercase tracking-wider text-xs"
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Mark Done
+                      </Button>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {selectedDay.is_rest_day && (
+                <p className="font-body text-sm text-text-secondary">
+                  Take it easy today. Recovery is where adaptation happens.
+                </p>
+              )}
+            </div>
+          )}
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }
