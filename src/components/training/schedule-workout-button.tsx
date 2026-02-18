@@ -46,6 +46,9 @@ export function ScheduleWorkoutButton({
 
       queryClient.invalidateQueries({ queryKey: ['workouts'] });
       queryClient.invalidateQueries({ queryKey: ['training-plans'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['streak-heatmap'] });
+      queryClient.invalidateQueries({ queryKey: ['race-readiness'] });
       toast.success('Workout scheduled!');
       setOpen(false);
     } catch {

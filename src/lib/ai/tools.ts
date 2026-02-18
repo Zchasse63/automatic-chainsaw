@@ -77,35 +77,39 @@ export function createCoachingTools(athleteId: string, supabase: SupabaseClient)
       description: "Get the athlete's scheduled workout for today from their active training plan.",
       inputSchema: z.object({}),
       execute: async () => {
-        const { data: plan } = await supabase
-          .from('training_plans')
-          .select('id, start_date, duration_weeks')
-          .eq('athlete_id', athleteId)
-          .eq('status', 'active')
-          .limit(1)
-          .single();
-        if (!plan?.start_date) return { workout: null, message: 'No active training plan.' };
+        try {
+          const { data: plan } = await supabase
+            .from('training_plans')
+            .select('id, start_date, duration_weeks')
+            .eq('athlete_id', athleteId)
+            .eq('status', 'active')
+            .limit(1)
+            .single();
+          if (!plan?.start_date) return { workout: null, message: 'No active training plan.' };
 
-        const now = new Date();
-        const todayDow = (now.getDay() + 6) % 7;
-        const startDate = new Date(plan.start_date);
-        const diffDays = Math.floor((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
-        const currentWeek = Math.max(1, Math.floor(diffDays / 7) + 1);
+          const now = new Date();
+          const todayDow = (now.getDay() + 6) % 7;
+          const startDate = new Date(plan.start_date);
+          const diffDays = Math.floor((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+          const currentWeek = Math.max(1, Math.floor(diffDays / 7) + 1);
 
-        const { data: weeks } = await supabase
-          .from('training_plan_weeks')
-          .select('id, week_number, training_plan_days(*)')
-          .eq('training_plan_id', plan.id)
-          .eq('week_number', currentWeek)
-          .single();
+          const { data: weeks } = await supabase
+            .from('training_plan_weeks')
+            .select('id, week_number, training_plan_days(*)')
+            .eq('training_plan_id', plan.id)
+            .eq('week_number', currentWeek)
+            .single();
 
-        if (!weeks) return { workout: null, message: `No data for week ${currentWeek}.` };
+          if (!weeks) return { workout: null, message: `No data for week ${currentWeek}.` };
 
-        const todayDay = (weeks.training_plan_days as Array<Record<string, unknown>>)?.find(
-          (d) => d.day_of_week === todayDow
-        );
-        if (!todayDay) return { workout: null, message: 'No workout scheduled today.' };
-        return { workout: todayDay, week: currentWeek };
+          const todayDay = (weeks.training_plan_days as Array<Record<string, unknown>>)?.find(
+            (d) => d.day_of_week === todayDow
+          );
+          if (!todayDay) return { workout: null, message: 'No workout scheduled today.' };
+          return { workout: todayDay, week: currentWeek };
+        } catch {
+          return { error: true, message: 'Unable to fetch today workout. Please try again.' };
+        }
       },
     }),
 
@@ -115,25 +119,29 @@ export function createCoachingTools(athleteId: string, supabase: SupabaseClient)
         week_number: z.number().optional().describe('Specific week number to fetch'),
       }),
       execute: async ({ week_number }) => {
-        const { data: plan } = await supabase
-          .from('training_plans')
-          .select('id, plan_name, goal, start_date, duration_weeks, status')
-          .eq('athlete_id', athleteId)
-          .eq('status', 'active')
-          .limit(1)
-          .single();
-        if (!plan) return { plan: null, message: 'No active training plan.' };
+        try {
+          const { data: plan } = await supabase
+            .from('training_plans')
+            .select('id, plan_name, goal, start_date, duration_weeks, status')
+            .eq('athlete_id', athleteId)
+            .eq('status', 'active')
+            .limit(1)
+            .single();
+          if (!plan) return { plan: null, message: 'No active training plan.' };
 
-        let weeksQuery = supabase
-          .from('training_plan_weeks')
-          .select('week_number, focus, training_plan_days(day_of_week, session_type, workout_title, workout_description, estimated_duration_minutes, is_rest_day, is_completed)')
-          .eq('training_plan_id', plan.id)
-          .order('week_number', { ascending: true });
+          let weeksQuery = supabase
+            .from('training_plan_weeks')
+            .select('week_number, focus, training_plan_days(day_of_week, session_type, workout_title, workout_description, estimated_duration_minutes, is_rest_day, is_completed)')
+            .eq('training_plan_id', plan.id)
+            .order('week_number', { ascending: true });
 
-        if (week_number) weeksQuery = weeksQuery.eq('week_number', week_number);
+          if (week_number) weeksQuery = weeksQuery.eq('week_number', week_number);
 
-        const { data: weeks } = await weeksQuery;
-        return { plan: { ...plan, weeks: weeks ?? [] } };
+          const { data: weeks } = await weeksQuery;
+          return { plan: { ...plan, weeks: weeks ?? [] } };
+        } catch {
+          return { error: true, message: 'Unable to fetch training plan. Please try again.' };
+        }
       },
     }),
 
@@ -173,6 +181,7 @@ export function createCoachingTools(athleteId: string, supabase: SupabaseClient)
         notes: z.string().optional(),
       }),
       execute: async ({ test_type, station_id, results, notes }) => {
+        const testDate = new Date().toISOString().split('T')[0];
         const { data, error } = await supabase
           .from('benchmark_tests')
           .insert({
@@ -181,12 +190,80 @@ export function createCoachingTools(athleteId: string, supabase: SupabaseClient)
             station_id: station_id ?? null,
             results,
             notes: notes ?? null,
-            test_date: new Date().toISOString().split('T')[0],
+            test_date: testDate,
           })
           .select('id, test_type, results, test_date')
           .single();
         if (error) return { success: false, error: error.message };
-        return { success: true, benchmark: data };
+
+        // Extract numeric value from results for PR comparison
+        const newValue = typeof results.value === 'number' ? results.value
+          : typeof results.time === 'number' ? results.time
+          : Object.values(results).find((v) => typeof v === 'number') as number | undefined;
+        const valueUnit = typeof results.unit === 'string' ? results.unit
+          : typeof results.value_unit === 'string' ? results.value_unit
+          : 'seconds';
+
+        // Map test_type to a valid personal_records record_type enum value
+        const recordTypeMap: Record<string, string> = {
+          station_time: 'station_time',
+          exercise_weight: 'exercise_weight',
+          exercise_reps: 'exercise_reps',
+          running_pace: 'running_pace',
+          race_time: 'race_time',
+          '1k_run': 'running_pace',
+          '5k_run': 'running_pace',
+          '10k_run': 'running_pace',
+          half_marathon: 'race_time',
+          marathon: 'race_time',
+        };
+        const mappedRecordType = recordTypeMap[test_type] ?? (station_id ? 'station_time' : 'running_pace');
+
+        let is_pr = false;
+        if (newValue !== undefined) {
+          // Query existing PR for this mapped record_type (and station_id if applicable)
+          let prQuery = supabase
+            .from('personal_records')
+            .select('id, value, value_unit')
+            .eq('athlete_id', athleteId)
+            .eq('record_type', mappedRecordType);
+          if (station_id) prQuery = prQuery.eq('station_id', station_id);
+          else prQuery = prQuery.eq('exercise_name', test_type);
+          const { data: existingPR } = await prQuery.maybeSingle();
+
+          // Direction: lower=better for time/pace, higher=better for weight/reps
+          const lowerIsBetter = ['station_time', 'running_pace', 'race_time'].includes(mappedRecordType);
+          const isBetter = !existingPR || (lowerIsBetter ? newValue < existingPR.value : newValue > existingPR.value);
+          if (isBetter) {
+            is_pr = true;
+            if (existingPR) {
+              // Update existing record (no unique constraint, so update by id)
+              await supabase
+                .from('personal_records')
+                .update({
+                  value: newValue,
+                  value_unit: valueUnit,
+                  date_achieved: testDate,
+                  previous_value: existingPR.value,
+                })
+                .eq('id', existingPR.id);
+            } else {
+              // Insert new PR record
+              await supabase.from('personal_records').insert({
+                athlete_id: athleteId,
+                record_type: mappedRecordType,
+                station_id: station_id ?? null,
+                exercise_name: test_type,
+                value: newValue,
+                value_unit: valueUnit,
+                date_achieved: testDate,
+                previous_value: null,
+              });
+            }
+          }
+        }
+
+        return { success: true, benchmark: data, is_pr };
       },
     }),
 
@@ -194,44 +271,48 @@ export function createCoachingTools(athleteId: string, supabase: SupabaseClient)
       description: "Get the athlete's profile, recent training stats, streak, and PRs.",
       inputSchema: z.object({}),
       execute: async () => {
-        const { data: profile } = await supabase
-          .from('athlete_profiles')
-          .select('*')
-          .eq('id', athleteId)
-          .single();
+        try {
+          const { data: profile } = await supabase
+            .from('athlete_profiles')
+            .select('*')
+            .eq('id', athleteId)
+            .single();
 
-        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-        const { data: recentWorkouts } = await supabase
-          .from('workout_logs')
-          .select('id, duration_minutes, rpe_post, session_type, date')
-          .eq('athlete_id', athleteId)
-          .is('deleted_at', null)
-          .gte('date', weekAgo);
+          const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+          const { data: recentWorkouts } = await supabase
+            .from('workout_logs')
+            .select('id, duration_minutes, rpe_post, session_type, date')
+            .eq('athlete_id', athleteId)
+            .is('deleted_at', null)
+            .gte('date', weekAgo);
 
-        const workouts = recentWorkouts?.length ?? 0;
-        const totalMinutes = recentWorkouts?.reduce((s, w) => s + (w.duration_minutes ?? 0), 0) ?? 0;
-        const avgRpe = workouts > 0
-          ? Math.round(((recentWorkouts?.reduce((s, w) => s + (w.rpe_post ?? 0), 0) ?? 0) / workouts) * 10) / 10
-          : null;
+          const workouts = recentWorkouts?.length ?? 0;
+          const totalMinutes = recentWorkouts?.reduce((s, w) => s + (w.duration_minutes ?? 0), 0) ?? 0;
+          const avgRpe = workouts > 0
+            ? Math.round(((recentWorkouts?.reduce((s, w) => s + (w.rpe_post ?? 0), 0) ?? 0) / workouts) * 10) / 10
+            : null;
 
-        const { data: prs } = await supabase
-          .from('personal_records')
-          .select('record_type, exercise_name, value, value_unit, date_achieved')
-          .eq('athlete_id', athleteId)
-          .order('date_achieved', { ascending: false })
-          .limit(5);
+          const { data: prs } = await supabase
+            .from('personal_records')
+            .select('record_type, exercise_name, value, value_unit, date_achieved')
+            .eq('athlete_id', athleteId)
+            .order('date_achieved', { ascending: false })
+            .limit(5);
 
-        return {
-          profile: profile ? {
-            display_name: profile.display_name,
-            hyrox_division: profile.hyrox_division,
-            race_date: profile.race_date,
-            goal_time_minutes: profile.goal_time_minutes,
-            current_phase: profile.current_phase,
-          } : null,
-          weeklyStats: { workouts, totalMinutes, avgRpe },
-          recentPRs: prs ?? [],
-        };
+          return {
+            profile: profile ? {
+              display_name: profile.display_name,
+              hyrox_division: profile.hyrox_division,
+              race_date: profile.race_date,
+              goal_time_minutes: profile.goal_time_minutes,
+              current_phase: profile.current_phase,
+            } : null,
+            weeklyStats: { workouts, totalMinutes, avgRpe },
+            recentPRs: prs ?? [],
+          };
+        } catch {
+          return { error: true, message: 'Unable to fetch athlete stats. Please try again.' };
+        }
       },
     }),
 
@@ -270,58 +351,62 @@ export function createCoachingTools(athleteId: string, supabase: SupabaseClient)
         days: z.number().optional().describe('Number of days to look back (default 30)'),
       }),
       execute: async ({ days = 30 }) => {
-        const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        try {
+          const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-        const { data: workouts } = await supabase
-          .from('workout_logs')
-          .select('date, session_type, duration_minutes, rpe_post')
-          .eq('athlete_id', athleteId)
-          .is('deleted_at', null)
-          .gte('date', since)
-          .order('date', { ascending: true });
+          const { data: workouts } = await supabase
+            .from('workout_logs')
+            .select('date, session_type, duration_minutes, rpe_post')
+            .eq('athlete_id', athleteId)
+            .is('deleted_at', null)
+            .gte('date', since)
+            .order('date', { ascending: true });
 
-        const { data: goals } = await supabase
-          .from('goals')
-          .select('title, target_value, current_value, status')
-          .eq('athlete_id', athleteId)
-          .eq('status', 'active');
+          const { data: goals } = await supabase
+            .from('goals')
+            .select('title, target_value, current_value, status')
+            .eq('athlete_id', athleteId)
+            .eq('status', 'active');
 
-        const { data: plan } = await supabase
-          .from('training_plans')
-          .select('id, plan_name')
-          .eq('athlete_id', athleteId)
-          .eq('status', 'active')
-          .limit(1)
-          .single();
+          const { data: plan } = await supabase
+            .from('training_plans')
+            .select('id, plan_name')
+            .eq('athlete_id', athleteId)
+            .eq('status', 'active')
+            .limit(1)
+            .single();
 
-        let adherencePct: number | null = null;
-        if (plan) {
-          const { data: allDays } = await supabase
-            .from('training_plan_weeks')
-            .select('training_plan_days(id, is_completed, is_rest_day)')
-            .eq('training_plan_id', plan.id);
+          let adherencePct: number | null = null;
+          if (plan) {
+            const { data: allDays } = await supabase
+              .from('training_plan_weeks')
+              .select('training_plan_days(id, is_completed, is_rest_day)')
+              .eq('training_plan_id', plan.id);
 
-          const planDays = allDays?.flatMap((w) => (w.training_plan_days as Array<Record<string, unknown>>) ?? []) ?? [];
-          const nonRest = planDays.filter((d) => !d.is_rest_day);
-          const completed = nonRest.filter((d) => d.is_completed);
-          adherencePct = nonRest.length > 0 ? Math.round((completed.length / nonRest.length) * 100) : null;
+            const planDays = allDays?.flatMap((w) => (w.training_plan_days as Array<Record<string, unknown>>) ?? []) ?? [];
+            const nonRest = planDays.filter((d) => !d.is_rest_day);
+            const completed = nonRest.filter((d) => d.is_completed);
+            adherencePct = nonRest.length > 0 ? Math.round((completed.length / nonRest.length) * 100) : null;
+          }
+
+          const totalWorkouts = workouts?.length ?? 0;
+          const totalMinutes = workouts?.reduce((s, w) => s + (w.duration_minutes ?? 0), 0) ?? 0;
+          const byType: Record<string, number> = {};
+          for (const w of workouts ?? []) {
+            byType[w.session_type] = (byType[w.session_type] || 0) + 1;
+          }
+
+          return {
+            period: `Last ${days} days`,
+            totalWorkouts,
+            totalHours: Math.round((totalMinutes / 60) * 10) / 10,
+            workoutsByType: byType,
+            planAdherencePct: adherencePct,
+            activeGoals: goals ?? [],
+          };
+        } catch {
+          return { error: true, message: 'Unable to fetch progress summary. Please try again.' };
         }
-
-        const totalWorkouts = workouts?.length ?? 0;
-        const totalMinutes = workouts?.reduce((s, w) => s + (w.duration_minutes ?? 0), 0) ?? 0;
-        const byType: Record<string, number> = {};
-        for (const w of workouts ?? []) {
-          byType[w.session_type] = (byType[w.session_type] || 0) + 1;
-        }
-
-        return {
-          period: `Last ${days} days`,
-          totalWorkouts,
-          totalHours: Math.round((totalMinutes / 60) * 10) / 10,
-          workoutsByType: byType,
-          planAdherencePct: adherencePct,
-          activeGoals: goals ?? [],
-        };
       },
     }),
 

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useQueryClient } from '@tanstack/react-query';
 import { Trophy, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { showAchievementToast } from '@/components/achievements/achievement-toast';
 
 const BENCHMARK_TYPES = [
   { value: 'station_time', label: 'Station Time' },
@@ -49,9 +50,16 @@ export function BenchmarkEntry() {
         }),
       });
       if (!res.ok) throw new Error('Failed to save');
+      const responseData = await res.json();
       queryClient.invalidateQueries({ queryKey: ['benchmarks'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['achievements'] });
       toast.success('Benchmark logged!');
+      if (responseData.newAchievements && responseData.newAchievements.length > 0) {
+        for (const name of responseData.newAchievements as string[]) {
+          showAchievementToast(name, 'Achievement unlocked!');
+        }
+      }
       setOpen(false);
       setTestType('');
       setMinutes('');

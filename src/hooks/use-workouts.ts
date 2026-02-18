@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { showAchievementToast } from '@/components/achievements/achievement-toast';
 
 interface Workout {
   id: string;
@@ -21,6 +22,7 @@ interface WorkoutParams {
 export function useWorkouts(params: WorkoutParams = {}) {
   const { limit = 20, offset, from, to } = params;
   return useQuery<Workout[]>({
+    // React Query v5 uses structuralSharing by default — object params are deep-compared, preventing unnecessary refetches
     queryKey: ['workouts', params],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
@@ -49,9 +51,14 @@ interface CreateWorkoutInput {
   prescribed_workout?: Record<string, unknown>;
 }
 
+interface CreateWorkoutResponse {
+  workout: Workout;
+  newAchievements?: string[];
+}
+
 export function useCreateWorkout() {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutation<CreateWorkoutResponse, Error, CreateWorkoutInput>({
     mutationFn: async (input: CreateWorkoutInput) => {
       const res = await fetch('/api/workouts', {
         method: 'POST',
@@ -64,10 +71,16 @@ export function useCreateWorkout() {
       }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['workouts'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
       queryClient.invalidateQueries({ queryKey: ['training-plans'] });
+      queryClient.invalidateQueries({ queryKey: ['achievements'] });
+      if (data.newAchievements && data.newAchievements.length > 0) {
+        for (const name of data.newAchievements) {
+          showAchievementToast(name, 'Achievement unlocked!');
+        }
+      }
     },
   });
 }

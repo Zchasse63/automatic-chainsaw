@@ -175,13 +175,20 @@ export default function TrainingPage() {
               >
                 <CalendarRange className="h-4 w-4" />
               </button>
+              <Link
+                href="/calendar"
+                className="ml-1 flex items-center gap-1 px-2 py-1 rounded text-text-tertiary hover:text-text-primary hover:bg-surface-2 transition-colors font-display text-[10px] uppercase tracking-wider"
+              >
+                <CalendarDays className="h-4 w-4" />
+                View Full Calendar
+              </Link>
             </div>
 
             {/* Week or Month calendar */}
             {calendarView === 'week' &&
               planDetail.training_plan_weeks &&
               planDetail.training_plan_weeks.length > 0 &&
-              activePlan.start_date && (
+              activePlan.start_date && ( // null-guard: WeekCalendar requires a non-null start_date
                 <WeekCalendar
                   weeks={planDetail.training_plan_weeks}
                   planId={activePlan.id}

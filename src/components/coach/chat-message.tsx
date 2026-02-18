@@ -8,10 +8,11 @@ import { ToolResultRenderer } from './tool-result-renderer';
 import { TrainingPlanCard } from './training-plan-card';
 import { isToolUIPart, getToolName, type UIMessage } from 'ai';
 
-/** Detect if the message text contains a structured training plan (3+ "Week N" mentions). */
+/** Detect if the message text contains a structured training plan (4+ "Week N" mentions + day/workout keywords). */
 function containsTrainingPlan(text: string): boolean {
   const weekMatches = text.match(/week\s*\d+/gi) || [];
-  return weekMatches.length >= 3;
+  const hasDayKeyword = /day\s*\d+|monday|tuesday|wednesday|thursday|friday|saturday|sunday|session_type|workout/i.test(text);
+  return weekMatches.length >= 4 && hasDayKeyword;
 }
 
 interface ChatMessageProps {

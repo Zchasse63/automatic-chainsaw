@@ -73,16 +73,39 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json();
+  const {
+    display_name, age, sex, weight_kg, height_cm, hyrox_division,
+    race_date, goal_time_minutes, experience_level, equipment_available,
+    injuries_limitations, training_days_per_week, current_phase,
+  } = body;
+  const allowed: Record<string, unknown> = {};
+  if (display_name !== undefined) allowed.display_name = display_name;
+  if (age !== undefined) allowed.age = age;
+  if (sex !== undefined) allowed.sex = sex;
+  if (weight_kg !== undefined) allowed.weight_kg = weight_kg;
+  if (height_cm !== undefined) allowed.height_cm = height_cm;
+  if (hyrox_division !== undefined) allowed.hyrox_division = hyrox_division;
+  if (race_date !== undefined) allowed.race_date = race_date;
+  if (goal_time_minutes !== undefined) allowed.goal_time_minutes = goal_time_minutes;
+  if (experience_level !== undefined) allowed.experience_level = experience_level;
+  if (equipment_available !== undefined) allowed.equipment_available = equipment_available;
+  if (injuries_limitations !== undefined) allowed.injuries_limitations = injuries_limitations;
+  if (training_days_per_week !== undefined) allowed.training_days_per_week = training_days_per_week;
+  if (current_phase !== undefined) allowed.current_phase = current_phase;
 
   const { data: profile, error } = await supabase
     .from('athlete_profiles')
-    .update(body)
+    .update(allowed)
     .eq('user_id', user.id)
     .select()
     .single();
 
-  if (error) {
+  if (error && error.code !== 'PGRST116') {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  if (!profile) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
   return NextResponse.json({ profile });

@@ -5,6 +5,7 @@ import { buildAthleteProfileMessage } from '@/lib/ai/athlete-context';
 import { SYSTEM_PROMPT } from '@/lib/coach/system-prompt';
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import type { Json } from '@/types/database';
 
 export const maxDuration = 60;
 
@@ -106,9 +107,38 @@ export async function POST(request: Request) {
       temperature: 0.7,
       maxOutputTokens: 16384,
       stopWhen: stepCountIs(10),
-      onFinish: async ({ text, usage }) => {
+      onFinish: async ({ text, usage, steps }) => {
         const latencyMs = Date.now() - startTime;
         try {
+          // Extract tool call info from all steps
+          const allToolCalls = steps?.flatMap((s) => s.toolCalls ?? []) ?? [];
+          const allToolResults = steps?.flatMap((s) => s.toolResults ?? []) ?? [];
+
+          // Build suggested_actions JSON: tool names + brief result summary
+          let suggestedActionsJson: Json | null = null;
+          if (allToolCalls.length > 0) {
+            suggestedActionsJson = JSON.parse(JSON.stringify({
+              tools_used: allToolCalls.map((tc) => ({
+                tool: tc.toolName,
+              })),
+              tool_results: allToolResults.map((tr) => ({
+                tool: tr.toolName,
+                result_keys: tr.output && typeof tr.output === 'object' ? Object.keys(tr.output as Record<string, unknown>) : [],
+              })),
+            })) as Json;
+          }
+
+          // Extract chunk IDs from search_knowledge_base results
+          const ragChunkIds: string[] = [];
+          for (const tr of allToolResults) {
+            if (tr.toolName === 'search_knowledge_base' && tr.output && typeof tr.output === 'object') {
+              const output = tr.output as { chunkIds?: string[] };
+              if (Array.isArray(output.chunkIds)) {
+                ragChunkIds.push(...output.chunkIds);
+              }
+            }
+          }
+
           await supabase.from('messages').insert({
             conversation_id: convId,
             role: 'assistant',
@@ -116,6 +146,8 @@ export async function POST(request: Request) {
             tokens_in: usage?.inputTokens ?? null,
             tokens_out: usage?.outputTokens ?? null,
             latency_ms: latencyMs,
+            suggested_actions: suggestedActionsJson,
+            rag_chunks_used: ragChunkIds.length > 0 ? ragChunkIds : null,
           });
 
           await supabase

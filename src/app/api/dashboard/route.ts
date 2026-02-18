@@ -36,21 +36,26 @@ export async function GET() {
     .toISOString()
     .split('T')[0];
 
+  // Streak calculation needs a wider window (90 days)
+  const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0];
+
   const { data: recentWorkouts } = await supabase
     .from('workout_logs')
     .select('id, duration_minutes, rpe_post, session_type, date')
     .eq('athlete_id', profile.id)
     .is('deleted_at', null)
-    .gte('date', weekAgo)
+    .gte('date', ninetyDaysAgo)
     .order('date', { ascending: false });
 
-  const workoutsThisWeek = recentWorkouts?.length ?? 0;
+  const weekWorkouts = recentWorkouts?.filter((w) => w.date && w.date >= weekAgo) ?? [];
+  const workoutsThisWeek = weekWorkouts.length;
   const totalMinutes =
-    recentWorkouts?.reduce((sum, w) => sum + (w.duration_minutes ?? 0), 0) ??
-    0;
+    weekWorkouts.reduce((sum, w) => sum + (w.duration_minutes ?? 0), 0);
   const avgRpe =
     workoutsThisWeek > 0
-      ? (recentWorkouts?.reduce((sum, w) => sum + (w.rpe_post ?? 0), 0) ?? 0) /
+      ? weekWorkouts.reduce((sum, w) => sum + (w.rpe_post ?? 0), 0) /
         workoutsThisWeek
       : null;
 
@@ -143,14 +148,14 @@ export async function GET() {
     // Get all days to compute progress
     const { data: weeks } = await supabase
       .from('training_plan_weeks')
-      .select('id, training_plan_days(id, day_of_week, session_type, workout_title, estimated_duration_minutes, is_rest_day, is_completed)')
+      .select('id, week_number, training_plan_days(id, day_of_week, session_type, workout_title, estimated_duration_minutes, is_rest_day, is_completed)')
       .eq('training_plan_id', plan.id)
       .order('week_number', { ascending: true });
 
     const allDays = weeks?.flatMap((w) => w.training_plan_days ?? []) ?? [];
-    const totalDays = allDays.length;
-    const completedDays = allDays.filter((d) => d.is_completed).length;
-    const progressPct = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
+    const activeDays = allDays.filter((d) => !d.is_rest_day);
+    const completedDays = activeDays.filter((d) => d.is_completed).length;
+    const progressPct = activeDays.length > 0 ? Math.round((completedDays / activeDays.length) * 100) : 0;
 
     activePlan = {
       id: plan.id,
@@ -163,7 +168,7 @@ export async function GET() {
     // Find today's workout: current week + today's day_of_week (0=Mon, 6=Sun)
     const todayDow = (now.getDay() + 6) % 7; // JS Sunday=0 → our Monday=0
     if (weeks && currentWeek <= totalWeeks) {
-      const currentWeekData = weeks[currentWeek - 1];
+      const currentWeekData = weeks.find((w) => w.week_number === currentWeek);
       if (currentWeekData) {
         const todayDay = currentWeekData.training_plan_days?.find(
           (d) => d.day_of_week === todayDow && !d.is_rest_day

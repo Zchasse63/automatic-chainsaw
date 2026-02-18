@@ -15,15 +15,26 @@ export async function GET(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const { data: profile } = await supabase
+    .from('athlete_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
   const { data: plan, error } = await supabase
     .from('training_plans')
     .select(
       `*, training_plan_weeks(*, training_plan_days(*))`
     )
     .eq('id', id)
+    .eq('athlete_id', profile.id)
     .single();
 
-  if (error) {
+  if (error || !plan) {
     return NextResponse.json(
       { error: 'Plan not found' },
       { status: 404 }
@@ -47,17 +58,36 @@ export async function PUT(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const { data: profile } = await supabase
+    .from('athlete_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
   const body = await request.json();
+  const { plan_name, goal, status, difficulty_level, start_date, duration_weeks } = body;
+  const allowed: Record<string, unknown> = {};
+  if (plan_name !== undefined) allowed.plan_name = plan_name;
+  if (goal !== undefined) allowed.goal = goal;
+  if (status !== undefined) allowed.status = status;
+  if (difficulty_level !== undefined) allowed.difficulty_level = difficulty_level;
+  if (start_date !== undefined) allowed.start_date = start_date;
+  if (duration_weeks !== undefined) allowed.duration_weeks = duration_weeks;
 
   const { data: plan, error } = await supabase
     .from('training_plans')
-    .update(body)
+    .update(allowed)
     .eq('id', id)
+    .eq('athlete_id', profile.id)
     .select()
     .single();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error || !plan) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
   return NextResponse.json({ plan });
@@ -77,10 +107,21 @@ export async function DELETE(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const { data: profile } = await supabase
+    .from('athlete_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
   const { error } = await supabase
     .from('training_plans')
     .update({ status: 'archived' })
-    .eq('id', id);
+    .eq('id', id)
+    .eq('athlete_id', profile.id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

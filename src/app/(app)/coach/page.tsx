@@ -143,11 +143,26 @@ export default function CoachPage() {
     if (!dbMessages) return;
 
     setMessages(
-      dbMessages.map((m) => ({
-        id: m.id,
-        role: m.role as 'user' | 'assistant',
-        parts: [{ type: 'text' as const, text: m.content }],
-      }))
+      dbMessages.map((m) => {
+        const parts: { type: 'text'; text: string }[] = [];
+
+        // If suggested_actions contains tool usage info, prepend a text indicator
+        if (m.suggested_actions && typeof m.suggested_actions === 'object') {
+          const sa = m.suggested_actions as { tools_used?: Array<{ tool: string }> };
+          if (Array.isArray(sa.tools_used) && sa.tools_used.length > 0) {
+            const toolNames = sa.tools_used.map((t) => t.tool).join(', ');
+            parts.push({ type: 'text' as const, text: `[Used tools: ${toolNames}]\n\n` });
+          }
+        }
+
+        parts.push({ type: 'text' as const, text: m.content });
+
+        return {
+          id: m.id,
+          role: m.role as 'user' | 'assistant',
+          parts,
+        };
+      })
     );
   }, [dbMessages, isStreaming, setMessages]);
 

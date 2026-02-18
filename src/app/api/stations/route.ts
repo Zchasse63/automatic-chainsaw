@@ -7,7 +7,7 @@ export async function GET() {
   const { data: stations, error } = await supabase
     .from('hyrox_stations')
     .select('*')
-    .order('station_order', { ascending: true });
+    .order('station_number', { ascending: true });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

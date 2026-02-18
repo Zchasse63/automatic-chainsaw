@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { checkAndAwardAchievements } from '@/lib/achievements';
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
@@ -106,5 +107,12 @@ export async function POST(request: Request) {
       .eq('id', body.training_plan_day_id);
   }
 
-  return NextResponse.json({ workout }, { status: 201 });
+  let newAchievements: string[] = [];
+  try {
+    newAchievements = await checkAndAwardAchievements(profile.id, supabase, 'workout');
+  } catch {
+    // non-blocking — workout already succeeded
+  }
+
+  return NextResponse.json({ workout, newAchievements }, { status: 201 });
 }

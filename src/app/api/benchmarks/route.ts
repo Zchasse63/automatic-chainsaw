@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { checkAndAwardAchievements } from '@/lib/achievements';
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
@@ -83,5 +84,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ benchmark }, { status: 201 });
+  let newAchievements: string[] = [];
+  try {
+    newAchievements = await checkAndAwardAchievements(profile.id, supabase, 'benchmark');
+  } catch {
+    // non-blocking — benchmark already succeeded
+  }
+
+  return NextResponse.json({ benchmark, newAchievements }, { status: 201 });
 }

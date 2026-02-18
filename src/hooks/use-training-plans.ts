@@ -142,6 +142,7 @@ export function useUpdatePlanDay() {
       return res.json();
     },
     onSuccess: () => {
+      // ['training-plans'] refreshes the plan list; ['training-plan'] prefix-matches all ['training-plan', id] detail queries
       queryClient.invalidateQueries({ queryKey: ['training-plans'] });
       queryClient.invalidateQueries({ queryKey: ['training-plan'] });
     },

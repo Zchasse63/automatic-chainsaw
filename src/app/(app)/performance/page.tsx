@@ -13,8 +13,8 @@ import { RaceResultsEntry } from '@/components/training/race-results-entry';
 
 interface Station {
   id: string;
-  name: string;
-  station_order: number;
+  station_name: string;
+  station_number: number;
   distance_or_reps: string | null;
 }
 
@@ -154,10 +154,10 @@ export default function PerformancePage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-xs text-text-tertiary">
-                        #{station.station_order}
+                        #{station.station_number}
                       </span>
                       <h3 className="font-display text-sm font-bold text-text-primary">
-                        {station.name}
+                        {station.station_name}
                       </h3>
                     </div>
                     {station.distance_or_reps && (

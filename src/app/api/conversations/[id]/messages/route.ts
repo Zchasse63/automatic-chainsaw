@@ -16,6 +16,28 @@ export async function GET(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const { data: profile } = await supabase
+    .from('athlete_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
+  // Verify the conversation belongs to this user
+  const { data: conversation } = await supabase
+    .from('conversations')
+    .select('id')
+    .eq('id', id)
+    .eq('athlete_id', profile.id)
+    .single();
+
+  if (!conversation) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  }
+
   const searchParams = request.nextUrl.searchParams;
   const limit = Math.min(Number(searchParams.get('limit') || '50'), 100);
   const offset = Number(searchParams.get('offset') || '0');

@@ -16,7 +16,7 @@ export const useCoachStore = create<CoachStore>()(
       setActiveConversation: (id) =>
         set({
           activeConversationId: id,
-          lastConversationId: id ?? undefined,
+          lastConversationId: id ?? null,
         }),
       clearConversation: () => set({ activeConversationId: null }),
     }),
