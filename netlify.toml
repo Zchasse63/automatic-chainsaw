@@ -1,13 +1,18 @@
 [build]
-  command = "bun run build"
+  command = "bun install --frozen-lockfile && bun run build"
   publish = ".next"
+
+[build.environment]
+  # Pin Bun version to match local dev (Netlify only auto-detects bun.lockb, not bun.lock)
+  BUN_VERSION = "1.3.9"
+  # Skip npm auto-install since we run bun install explicitly in the build command
+  NPM_FLAGS = "--prefix=/dev/null"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [functions]
   node_bundler = "esbuild"
-  # Increase timeout for AI coach streaming responses (cold start + generation)
   external_node_modules = ["openai"]
 
 # Environment variables are set in the Netlify dashboard
