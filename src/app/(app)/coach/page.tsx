@@ -1,5 +1,7 @@
 'use client';
 
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 import { ChatMessage } from '@/components/coach/chat-message';
 import { ChatInput } from '@/components/coach/chat-input';
 import { ConversationSidebar } from '@/components/coach/conversation-sidebar';
@@ -13,21 +15,11 @@ import {
 } from '@/hooks/use-conversations';
 import { useCoachStore } from '@/stores/coach-store';
 
-interface LocalMessage {
-  id?: string;
-  role: 'user' | 'assistant';
-  content: string;
-  feedback?: string | null;
-  isStreaming?: boolean;
-  suggested_actions?: Record<string, unknown> | null;
-}
-
 export default function CoachPage() {
   const searchParams = useSearchParams();
   const { activeConversationId, lastConversationId, setActiveConversation } =
     useCoachStore();
 
-  // Build initial prompt from context search params
   const initialPrompt = useMemo(() => {
     const context = searchParams.get('context');
     if (!context) return undefined;
@@ -39,29 +31,77 @@ export default function CoachPage() {
     }
     return undefined;
   }, [searchParams]);
+
   const { data: conversations = [], isLoading: convsLoading } =
     useConversations();
   const { data: dbMessages } = useMessages(activeConversationId);
   const { invalidateConversations, invalidateMessages } =
     useInvalidateConversations();
 
-  const [localMessages, setLocalMessages] = useState<LocalMessage[]>([]);
-  const [streaming, setStreaming] = useState(false);
-  const [coldStart, setColdStart] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [coldStart, setColdStart] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const coldStartTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const hasInitialized = useRef(false);
 
-  // Auto-scroll to bottom
+  // Ref to hold callbacks that need access to latest state
+  const callbacksRef = useRef({
+    onResponseHeader: (convId: string) => {
+      setActiveConversation(convId);
+      invalidateConversations();
+    },
+    activeConversationId,
+  });
+  callbacksRef.current.activeConversationId = activeConversationId;
+  callbacksRef.current.onResponseHeader = (convId: string) => {
+    setActiveConversation(convId);
+    invalidateConversations();
+  };
+
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: '/api/chat',
+        body: () => ({ conversationId: callbacksRef.current.activeConversationId }),
+        fetch: async (input, init) => {
+          const response = await globalThis.fetch(input, init);
+          const convId = response.headers.get('X-Conversation-Id');
+          if (convId && !callbacksRef.current.activeConversationId) {
+            callbacksRef.current.onResponseHeader(convId);
+          }
+          clearTimeout(coldStartTimer.current);
+          setColdStart(false);
+          return response;
+        },
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  const { messages, status, sendMessage, setMessages } = useChat({
+    transport,
+    onFinish: () => {
+      clearTimeout(coldStartTimer.current);
+      setColdStart(false);
+      const convId = callbacksRef.current.activeConversationId;
+      if (convId) invalidateMessages(convId);
+      invalidateConversations();
+    },
+    onError: () => {
+      clearTimeout(coldStartTimer.current);
+      setColdStart(false);
+    },
+  });
+
+  const isStreaming = status === 'streaming' || status === 'submitted';
+
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
     scrollToBottom();
-  }, [localMessages, scrollToBottom]);
+  }, [messages, scrollToBottom]);
 
   // Auto-select last conversation on mount
   useEffect(() => {
@@ -84,169 +124,42 @@ export default function CoachPage() {
     setActiveConversation,
   ]);
 
-  // Sync DB messages to local state (when not streaming)
+  // Sync DB messages when switching conversations
   useEffect(() => {
-    if (streaming) return;
+    if (isStreaming) return;
     if (!dbMessages) return;
 
-    setLocalMessages(
+    setMessages(
       dbMessages.map((m) => ({
         id: m.id,
-        role: m.role,
-        content: m.content,
-        feedback: m.feedback,
-        suggested_actions: m.suggested_actions,
+        role: m.role as 'user' | 'assistant',
+        parts: [{ type: 'text' as const, text: m.content }],
       }))
     );
-  }, [dbMessages, streaming]);
+  }, [dbMessages, isStreaming, setMessages]);
+
+  // Cold start detection
+  useEffect(() => {
+    if (status === 'submitted') {
+      coldStartTimer.current = setTimeout(() => setColdStart(true), 5000);
+    }
+    return () => clearTimeout(coldStartTimer.current);
+  }, [status]);
 
   function handleSelectConversation(convId: string) {
     setActiveConversation(convId);
-    setLocalMessages([]);
-    setError(null);
+    setMessages([]);
     setSidebarOpen(false);
   }
 
   function handleNewConversation() {
     setActiveConversation(null);
-    setLocalMessages([]);
-    setError(null);
+    setMessages([]);
     setSidebarOpen(false);
   }
 
-  async function handleSend(message: string) {
-    setError(null);
-    setStreaming(true);
-    setColdStart(false);
-
-    // Add user message immediately
-    setLocalMessages((prev) => [...prev, { role: 'user', content: message }]);
-
-    // Add placeholder assistant message for streaming
-    setLocalMessages((prev) => [
-      ...prev,
-      { role: 'assistant', content: '', isStreaming: true },
-    ]);
-
-    // Start cold start timer (show "warming up" after 5s)
-    coldStartTimer.current = setTimeout(() => {
-      setColdStart(true);
-    }, 5000);
-
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message,
-          conversationId: activeConversationId,
-        }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to send message');
-      }
-
-      // Get conversation ID from header if new conversation
-      const convId = res.headers.get('X-Conversation-Id');
-      if (convId && !activeConversationId) {
-        setActiveConversation(convId);
-        invalidateConversations();
-      }
-
-      clearTimeout(coldStartTimer.current);
-      setColdStart(false);
-
-      // Read SSE stream
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error('No response stream');
-
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6).trim();
-            if (data === '[DONE]') break;
-
-            try {
-              const parsed = JSON.parse(data);
-
-              if (parsed.token) {
-                setLocalMessages((prev) => {
-                  const updated = [...prev];
-                  const last = updated[updated.length - 1];
-                  if (last && last.isStreaming) {
-                    updated[updated.length - 1] = {
-                      ...last,
-                      content: last.content + parsed.token,
-                    };
-                  }
-                  return updated;
-                });
-              }
-
-              // Capture metadata event with message ID
-              if (parsed.done && parsed.messageId) {
-                setLocalMessages((prev) => {
-                  const updated = [...prev];
-                  const last = updated[updated.length - 1];
-                  if (last && last.isStreaming) {
-                    updated[updated.length - 1] = {
-                      ...last,
-                      id: parsed.messageId,
-                    };
-                  }
-                  return updated;
-                });
-              }
-
-              if (parsed.error) {
-                setError(parsed.error);
-              }
-            } catch {
-              // Skip malformed JSON
-            }
-          }
-        }
-      }
-
-      // Mark streaming complete
-      setLocalMessages((prev) => {
-        const updated = [...prev];
-        const last = updated[updated.length - 1];
-        if (last && last.isStreaming) {
-          updated[updated.length - 1] = { ...last, isStreaming: false };
-        }
-        return updated;
-      });
-
-      // Refresh messages from DB to get full metadata (suggested_actions, etc.)
-      const currentConvId = convId || activeConversationId;
-      if (currentConvId) {
-        invalidateMessages(currentConvId);
-      }
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Something went wrong';
-      setError(errorMessage);
-      setLocalMessages((prev) =>
-        prev.filter((m) => !m.isStreaming || m.content)
-      );
-    } finally {
-      clearTimeout(coldStartTimer.current);
-      setColdStart(false);
-      setStreaming(false);
-    }
+  function handleSend(message: string) {
+    sendMessage({ text: message });
   }
 
   async function handleFeedback(
@@ -260,7 +173,7 @@ export default function CoachPage() {
     });
   }
 
-  const hasMessages = localMessages.length > 0;
+  const hasMessages = messages.length > 0;
 
   return (
     <div className="flex h-[calc(100vh-4rem)] md:h-screen">
@@ -318,7 +231,7 @@ export default function CoachPage() {
             <h1 className="font-display text-sm font-bold uppercase tracking-wider text-text-primary">
               Coach K
             </h1>
-            {streaming && (
+            {isStreaming && (
               <p className="font-body text-[10px] text-hyrox-yellow">
                 {coldStart ? 'Warming up...' : 'Thinking...'}
               </p>
@@ -345,24 +258,13 @@ export default function CoachPage() {
             </div>
           )}
 
-          {localMessages.map((msg, i) => (
+          {messages.map((msg) => (
             <ChatMessage
-              key={msg.id || `msg-${i}`}
-              id={msg.id}
-              role={msg.role}
-              content={msg.content}
-              feedback={msg.feedback}
-              isStreaming={msg.isStreaming}
-              suggestedActions={msg.suggested_actions}
+              key={msg.id}
+              message={msg}
               onFeedback={handleFeedback}
             />
           ))}
-
-          {error && (
-            <div className="bg-semantic-error/10 border border-semantic-error/20 rounded-sm px-4 py-3">
-              <p className="font-body text-sm text-semantic-error">{error}</p>
-            </div>
-          )}
 
           <div ref={messagesEndRef} />
         </div>
@@ -371,8 +273,8 @@ export default function CoachPage() {
         <div className="border-t border-border-default bg-surface-0 p-4">
           <ChatInput
             onSend={handleSend}
-            disabled={streaming}
-            loading={streaming}
+            disabled={isStreaming}
+            loading={isStreaming}
             showQuickActions={!hasMessages}
             initialValue={!hasMessages ? initialPrompt : undefined}
           />

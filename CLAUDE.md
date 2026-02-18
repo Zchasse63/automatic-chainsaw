@@ -64,7 +64,9 @@ Building a personalized AI-powered Hyrox coach using a **Hybrid RAG + Fine-Tunin
 | Auth | Supabase Auth | User management |
 | Embeddings | OpenAI text-embedding-3-small (1536 dim) | Document + query embedding |
 | Inference + Fine-tuning | Llama 3.3 70B LoRA via Nebius Token Factory | Fine-tuned coaching responses + persona training |
-| Frontend | TBD (mobile-first) | "Coach in your pocket" interface |
+| Frontend | Next.js 16.1.6 + React 19 + Tailwind v4 | Dark-mode mobile-first "coach in your pocket" UI |
+| State Mgmt | @tanstack/react-query v5 + Zustand v5 | Server state caching + ephemeral UI state |
+| Hosting | Netlify | hyrox-ai-coach.netlify.app |
 
 ## Research Workflow
 
@@ -105,12 +107,12 @@ Each task has a self-contained prompt in `docs/research/`. They can run in paral
 
 | File | Team | Status | Priority |
 |------|------|--------|----------|
-| `team1_hyrox_event_deep_dive.md` | Hyrox Event Analysis & Benchmarking | ⬜ Not started | 🔴 Critical |
-| `team2_elite_athletes.md` | Elite Athlete Training Methods | ⬜ Not started | 🔴 Critical |
-| `team3_training_programs.md` | Training Programs & Camps | ⬜ Not started | 🟡 High |
-| `team4_sports_science.md` | Sports Science & Aerobic Frameworks | ⬜ Not started | 🟡 High |
-| `team5_periodization_blueprint.md` | 16-Week Periodization Blueprint | ⬜ Blocked (needs Teams 1-4) | 🔴 Critical |
-| `team6_engineering.md` | RAG System & AI Coach Architecture | ⬜ Can start schema now | 🟡 High |
+| `team1_hyrox_event_deep_dive.md` | Hyrox Event Analysis & Benchmarking | ✅ Complete | 🔴 Critical |
+| `team2_elite_athletes.md` | Elite Athlete Training Methods | ✅ Complete | 🔴 Critical |
+| `team3_training_programs.md` | Training Programs & Camps | ✅ Complete | 🟡 High |
+| `team4_sports_science.md` | Sports Science & Aerobic Frameworks | ✅ Complete | 🟡 High |
+| `team5_periodization_blueprint.md` | 16-Week Periodization Blueprint | ✅ Complete | 🔴 Critical |
+| `team6_engineering.md` | RAG System & AI Coach Architecture | ✅ Complete | 🟡 High |
 
 **Execution order:**
 - **Wave 1** (parallel): Teams 1, 2, 3, 4
@@ -128,9 +130,9 @@ Each task has a self-contained prompt in `docs/research/`. They can run in paral
 
 ### Platform: Nebius Token Factory LoRA on Llama 3.3 70B Instruct
 
-**Training Data**: 729 examples in JSONL chat completions format across 11 categories
+**Training Data**: 924 examples (v2) in JSONL chat completions format across 25 categories
 - Located at `docs/training-data/raw/*.jsonl` and `docs/training-data/combined/all.jsonl`
-- Avg ~862 tokens/example, ~628K total tokens
+- Avg ~843 tokens/example, ~779K total tokens
 - Max example: 2,304 tokens (well under 8K limit)
 
 **Fine-Tuning Config**:
@@ -156,7 +158,6 @@ All API keys are stored in `.env.local` (gitignored). Required keys:
 | Nebius Token Factory | `NEBIUS_API_KEY` | Fine-tuning + inference |
 | OpenAI | `OPENAI_API_KEY` | Embeddings only (text-embedding-3-small) |
 | Perplexity | `PERPLEXITY_API_KEY` | Research only |
-| Kokonut UI Pro | `KOKO_PRO_TOKEN` | Pro component registry |
 | Supabase | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Client + server |
 
 ## Project File Structure
@@ -189,7 +190,22 @@ hyrox-ai-coach/
 │   ├── chunk_research.py             # Semantic chunker for RAG
 │   ├── combine_training_data.py      # Combines JSONL into train/eval split
 │   └── test_coach_k.py              # 43-prompt evaluation suite
-└── src/                               # Application source code (Team 6 builds this)
+└── src/
+    ├── app/
+    │   ├── (app)/                     # Authenticated app shell (dashboard, coach, training, performance, profile)
+    │   ├── api/                       # API routes (chat, conversations, workouts, training-plans, dashboard, etc.)
+    │   ├── auth/callback/             # Supabase auth callback handler
+    │   └── (auth)/                    # Login, signup pages
+    ├── components/
+    │   ├── coach/                     # Chat message, input, sidebar, plan card, plan review modal
+    │   ├── training/                  # Week calendar, draggable/droppable workout cards
+    │   ├── providers/                 # React Query provider
+    │   └── ui/                        # shadcn/ui primitives (21 components)
+    ├── hooks/                         # React Query hooks (conversations, workouts, training-plans, dashboard)
+    ├── stores/                        # Zustand stores (coach-store)
+    └── lib/
+        ├── coach/                     # AI pipeline (SSE streaming, RAG, plan extraction schema)
+        └── supabase/                  # Client, server, middleware helpers + generated types
 ```
 
 ## Key Decisions Log
@@ -202,3 +218,16 @@ hyrox-ai-coach/
 | 2025-02-13 | Build fine-tuning from day one | Collect training data immediately, no reason to phase it |
 | 2025-02-13 | text-embedding-3-small for embeddings | 1536 dim, good quality/cost balance for coaching content |
 | 2026-02-13 | Llama 3.3 70B on Nebius Token Factory | $5.28 training, $0.13/$0.40 inference, serverless LoRA, proven platform. |
+| 2026-02-15 | Next.js 16 + Tailwind v4 + shadcn/ui + B0 design system | Dark-mode mobile-first design, Hyrox caution-stripe aesthetic |
+| 2026-02-16 | React Query + Zustand for state | Server state caching + localStorage-persisted UI state |
+| 2026-02-16 | @dnd-kit for training calendar | Drag-and-drop workout rescheduling within weekly calendar |
+
+## Current Build Status
+
+All phases complete and deployed:
+- **Research**: 15 outputs, ~92K words, 239 RAG chunks embedded in Supabase PGVector
+- **Fine-tuning**: v2 model deployed on Nebius (924 examples, loss 1.44→0.565)
+- **Evaluation**: 83% (273/330 checks) with tuned prompt
+- **Frontend**: Full-stack Next.js app with auth, AI coach chat, training calendar, dashboard, workout logging
+- **Integration**: Cross-page data flow via React Query, chat persistence, plan acceptance from coach
+- **Deployment**: Live at hyrox-ai-coach.netlify.app

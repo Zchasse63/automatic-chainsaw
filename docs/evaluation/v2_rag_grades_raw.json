@@ -1,0 +1,6326 @@
+{
+  "v2_grades": [
+    {
+      "id": "fact_01",
+      "category": "Race Format & Facts",
+      "prompt": "I'm brand new to Hyrox. Can you walk me through exactly what happens during a race \u2014 every station, distances, weights, and the order?",
+      "checks": [
+        "8 stations with 1km run before each",
+        "Correct station order: SkiErg, Sled Push, Sled Pull, Burpee Broad Jump, Rowing, Farmer Carry, Sandbag Lunges, Wall Balls",
+        "SkiErg 1000m, Sled Push 50m, Sled Pull 50m, Burpee Broad Jump 80m, Rowing 1000m, Farmer Carry 200m, Sandbag Lunges 100m",
+        "Wall Balls: 100 reps men / 75 reps women",
+        "Men's sled push weight: 152kg/335lbs",
+        "Men's sled pull weight: 103kg/227lbs",
+        "Farmer carry weight: 2x24kg men / 2x16kg women",
+        "Sandbag: 20kg men / 10kg women",
+        "Wall ball: 6kg men / 4kg women, 9ft/11ft target",
+        "Total distance: 8km running + stations"
+      ],
+      "tokens_in": 114,
+      "tokens_out": 772,
+      "latency_seconds": 17.6,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "8 stations with 1km run before each",
+          "result": "PASS",
+          "reason": "Described in detail"
+        },
+        {
+          "check": "Correct station order: SkiErg, Sled Push, Sled Pull, Burpee Broad Jump, Rowing, Farmer Carry, Sandbag Lunges, Wall Balls",
+          "result": "PASS",
+          "reason": "Order matches"
+        },
+        {
+          "check": "SkiErg 1000m, Sled Push 50m, Sled Pull 50m, Burpee Broad Jump 80m, Rowing 1000m, Farmer Carry 200m, Sandbag Lunges 100m",
+          "result": "PASS",
+          "reason": "Distances match"
+        },
+        {
+          "check": "Wall Balls: 100 reps men / 75 reps women",
+          "result": "FAIL",
+          "reason": "Women's reps not mentioned"
+        },
+        {
+          "check": "Men's sled push weight: 152kg/335lbs",
+          "result": "PASS",
+          "reason": "Weight matches"
+        },
+        {
+          "check": "Men's sled pull weight: 103kg/227lbs",
+          "result": "PASS",
+          "reason": "Weight matches"
+        },
+        {
+          "check": "Farmer carry weight: 2x24kg men / 2x16kg women",
+          "result": "FAIL",
+          "reason": "Women's weight not mentioned"
+        },
+        {
+          "check": "Sandbag: 20kg men / 10kg women",
+          "result": "FAIL",
+          "reason": "Women's weight not mentioned"
+        },
+        {
+          "check": "Wall ball: 6kg men / 4kg women, 9ft/11ft target",
+          "result": "FAIL",
+          "reason": "Women's weight and target not mentioned"
+        },
+        {
+          "check": "Total distance: 8km running + stations",
+          "result": "PASS",
+          "reason": "Distance matches"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 10
+    },
+    {
+      "id": "fact_02",
+      "category": "Race Format & Facts",
+      "prompt": "What are the differences between Hyrox Open, Pro, and Doubles divisions? Which should I sign up for?",
+      "checks": [
+        "Open: standard weights, recreational athletes",
+        "Pro: heavier weights on some stations",
+        "Doubles: two athletes split stations, each runs every 1km",
+        "Pro sled weights are heavier",
+        "Recommendation based on experience level"
+      ],
+      "tokens_in": 106,
+      "tokens_out": 732,
+      "latency_seconds": 16.9,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Open: standard weights, recreational athletes",
+          "result": "PASS",
+          "reason": "Clearly described"
+        },
+        {
+          "check": "Pro: heavier weights on some stations",
+          "result": "PASS",
+          "reason": "Heavier weights listed"
+        },
+        {
+          "check": "Doubles: two athletes split stations, each runs every 1km",
+          "result": "PASS",
+          "reason": "Format described"
+        },
+        {
+          "check": "Pro sled weights are heavier",
+          "result": "PASS",
+          "reason": "202kg vs 152kg"
+        },
+        {
+          "check": "Recommendation based on experience level",
+          "result": "PASS",
+          "reason": "Guidance provided"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "fact_03",
+      "category": "Race Format & Facts",
+      "prompt": "What are realistic time benchmarks for Hyrox? What's a good time for a first-timer versus an elite?",
+      "checks": [
+        "First-timer: 80-100+ minutes",
+        "Competitive: 65-75 minutes",
+        "Elite/Pro: sub-60 minutes",
+        "World record references",
+        "Men vs women time differences"
+      ],
+      "tokens_in": 106,
+      "tokens_out": 687,
+      "latency_seconds": 15.85,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "First-timer: 80-100+ minutes",
+          "result": "FAIL",
+          "reason": "Range is 75-90 min"
+        },
+        {
+          "check": "Competitive: 65-75 minutes",
+          "result": "FAIL",
+          "reason": "No direct match"
+        },
+        {
+          "check": "Elite/Pro: sub-60 minutes",
+          "result": "PASS",
+          "reason": "Men's elite <55 min"
+        },
+        {
+          "check": "World record references",
+          "result": "FAIL",
+          "reason": "No world record"
+        },
+        {
+          "check": "Men vs women time differences",
+          "result": "PASS",
+          "reason": "Median times differ"
+        }
+      ],
+      "passed": 2,
+      "total_checks": 5
+    },
+    {
+      "id": "station_01",
+      "category": "Station Technique",
+      "prompt": "How do I pace the SkiErg 1000m in Hyrox? I always go out too fast and die at 600m.",
+      "checks": [
+        "Pacing strategy (negative or even split)",
+        "Specific pace targets (e.g., 1:5x-2:0x/500m)",
+        "Arm drive technique",
+        "Core engagement",
+        "Breathing pattern"
+      ],
+      "tokens_in": 112,
+      "tokens_out": 522,
+      "latency_seconds": 12.76,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Pacing strategy (negative or even split)",
+          "result": "PASS",
+          "reason": "Negative split strategy"
+        },
+        {
+          "check": "Specific pace targets (e.g., 1:5x-2:0x/500m)",
+          "result": "PASS",
+          "reason": "Target splits provided"
+        },
+        {
+          "check": "Arm drive technique",
+          "result": "FAIL",
+          "reason": "Not explicitly mentioned"
+        },
+        {
+          "check": "Core engagement",
+          "result": "FAIL",
+          "reason": "Not explicitly mentioned"
+        },
+        {
+          "check": "Breathing pattern",
+          "result": "PASS",
+          "reason": "Breathing rhythm mentioned"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 5
+    },
+    {
+      "id": "station_02",
+      "category": "Station Technique",
+      "prompt": "Break down the optimal sled push technique for me. Body position, hand placement, stride pattern \u2014 everything.",
+      "checks": [
+        "Low body angle (45 degrees)",
+        "Short choppy steps",
+        "Arms locked out",
+        "Drive from legs not arms",
+        "Hip position below shoulders",
+        "Constant forward pressure"
+      ],
+      "tokens_in": 104,
+      "tokens_out": 661,
+      "latency_seconds": 15.52,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Low body angle (45 degrees)",
+          "result": "PASS",
+          "reason": "Mentioned 45 degrees"
+        },
+        {
+          "check": "Short choppy steps",
+          "result": "PASS",
+          "reason": "Described as short"
+        },
+        {
+          "check": "Arms locked out",
+          "result": "FAIL",
+          "reason": "Elbows not locked"
+        },
+        {
+          "check": "Drive from legs not arms",
+          "result": "PASS",
+          "reason": "Legs do most work"
+        },
+        {
+          "check": "Hip position below shoulders",
+          "result": "PASS",
+          "reason": "Hips below shoulder"
+        },
+        {
+          "check": "Constant forward pressure",
+          "result": "PASS",
+          "reason": "Described as goal"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "station_03",
+      "category": "Station Technique",
+      "prompt": "I can't figure out the sled pull. Should I be hand-over-hand or pulling in big arm sweeps? How do I anchor my feet?",
+      "checks": [
+        "Hand-over-hand technique",
+        "Sitting back / low center of gravity",
+        "Foot bracing technique",
+        "Rope management",
+        "Grip preservation"
+      ],
+      "tokens_in": 112,
+      "tokens_out": 400,
+      "latency_seconds": 9.93,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Hand-over-hand technique",
+          "result": "PASS",
+          "reason": "Described rapid pulls"
+        },
+        {
+          "check": "Sitting back / low center of gravity",
+          "result": "FAIL",
+          "reason": "Mentioned lean, not sit"
+        },
+        {
+          "check": "Foot bracing technique",
+          "result": "PASS",
+          "reason": "Toes grip mat edge"
+        },
+        {
+          "check": "Rope management",
+          "result": "PASS",
+          "reason": "45-degree angle explained"
+        },
+        {
+          "check": "Grip preservation",
+          "result": "FAIL",
+          "reason": "Not explicitly mentioned"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 5
+    },
+    {
+      "id": "station_04",
+      "category": "Station Technique",
+      "prompt": "Burpee broad jumps absolutely wreck me. Is there a more efficient technique? How far should each jump be?",
+      "checks": [
+        "Efficient burpee technique (chest to ground)",
+        "Jump distance targets",
+        "Pacing (don't sprint the first 20m)",
+        "Hip hinge for landing",
+        "Energy conservation tips",
+        "80m total distance"
+      ],
+      "tokens_in": 105,
+      "tokens_out": 694,
+      "latency_seconds": 16.18,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Efficient burpee technique (chest to ground)",
+          "result": "PASS",
+          "reason": "Technique described"
+        },
+        {
+          "check": "Jump distance targets",
+          "result": "PASS",
+          "reason": "60-65% target given"
+        },
+        {
+          "check": "Pacing (don't sprint the first 20m)",
+          "result": "PASS",
+          "reason": "Pacing targets provided"
+        },
+        {
+          "check": "Hip hinge for landing",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Energy conservation tips",
+          "result": "PASS",
+          "reason": "Several tips given"
+        },
+        {
+          "check": "80m total distance",
+          "result": "PASS",
+          "reason": "Distance mentioned"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "station_05",
+      "category": "Station Technique",
+      "prompt": "What damper setting and pacing should I use on the rower during Hyrox? I'm a 6'1 185lb male.",
+      "checks": [
+        "Damper setting recommendation (5-7 typical)",
+        "Pacing strategy for 1000m",
+        "Split time targets",
+        "Drive sequence (legs-back-arms)",
+        "Recovery and breathing"
+      ],
+      "tokens_in": 112,
+      "tokens_out": 620,
+      "latency_seconds": 14.71,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Damper setting recommendation (5-7 typical)",
+          "result": "PASS",
+          "reason": "Damper 5-7 recommended"
+        },
+        {
+          "check": "Pacing strategy for 1000m",
+          "result": "PASS",
+          "reason": "Detailed pacing strategy"
+        },
+        {
+          "check": "Split time targets",
+          "result": "PASS",
+          "reason": "Split times provided"
+        },
+        {
+          "check": "Drive sequence (legs-back-arms)",
+          "result": "PASS",
+          "reason": "Legs first, then hips"
+        },
+        {
+          "check": "Recovery and breathing",
+          "result": "PASS",
+          "reason": "Breathe at catch, exhale drive"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "station_06",
+      "category": "Station Technique",
+      "prompt": "Farmer carry tips? My grip always fails around 150m and I have to put the weights down.",
+      "checks": [
+        "Grip technique (crush grip)",
+        "Shoulder position (packed down)",
+        "Walking stride (short quick steps)",
+        "Breathing pattern",
+        "Grip training recommendations",
+        "200m distance acknowledgment"
+      ],
+      "tokens_in": 105,
+      "tokens_out": 494,
+      "latency_seconds": 11.94,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Grip technique (crush grip)",
+          "result": "FAIL",
+          "reason": "Loose hook grip"
+        },
+        {
+          "check": "Shoulder position (packed down)",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Walking stride (short quick steps)",
+          "result": "FAIL",
+          "reason": "Brisk walk instead"
+        },
+        {
+          "check": "Breathing pattern",
+          "result": "PASS",
+          "reason": "Rhythmic pattern"
+        },
+        {
+          "check": "Grip training recommendations",
+          "result": "PASS",
+          "reason": "Protocol provided"
+        },
+        {
+          "check": "200m distance acknowledgment",
+          "result": "PASS",
+          "reason": "Distance mentioned"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 6
+    },
+    {
+      "id": "station_07",
+      "category": "Station Technique",
+      "prompt": "My quads completely blow up during sandbag lunges. I can barely run the final 1km after. How do I train for this?",
+      "checks": [
+        "Lunge technique (sandbag position)",
+        "Glute engagement to offload quads",
+        "Pacing strategy for 100m",
+        "Training recommendations",
+        "Step length",
+        "Relationship to final wall balls and 1km"
+      ],
+      "tokens_in": 113,
+      "tokens_out": 623,
+      "latency_seconds": 14.64,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Lunge technique (sandbag position)",
+          "result": "PASS",
+          "reason": "Sandbag HIGH on traps"
+        },
+        {
+          "check": "Glute engagement to offload quads",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Pacing strategy for 100m",
+          "result": "FAIL",
+          "reason": "No 100m pacing"
+        },
+        {
+          "check": "Training recommendations",
+          "result": "PASS",
+          "reason": "Detailed protocol"
+        },
+        {
+          "check": "Step length",
+          "result": "PASS",
+          "reason": "0.9-1.0m specified"
+        },
+        {
+          "check": "Relationship to final wall balls and 1km",
+          "result": "FAIL",
+          "reason": "Only Run 8 mentioned"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 6
+    },
+    {
+      "id": "station_08",
+      "category": "Station Technique",
+      "prompt": "100 wall balls is brutal. What's the best break strategy \u2014 should I go unbroken or plan sets? I usually start failing around rep 60.",
+      "checks": [
+        "Break strategy (sets of 20-25 or unbroken for fit athletes)",
+        "Squat depth",
+        "Hip drive",
+        "Ball catch and redirect",
+        "Breathing pattern (exhale on throw)",
+        "Target height (men 11ft / women 9ft)",
+        "Mental strategy for last station"
+      ],
+      "tokens_in": 114,
+      "tokens_out": 813,
+      "latency_seconds": 18.6,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Break strategy (sets of 20-25 or unbroken for fit athletes)",
+          "result": "PASS",
+          "reason": "Provides options"
+        },
+        {
+          "check": "Squat depth",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Hip drive",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Ball catch and redirect",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Breathing pattern (exhale on throw)",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Target height (men 11ft / women 9ft)",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Mental strategy for last station",
+          "result": "PASS",
+          "reason": "Provides tips"
+        }
+      ],
+      "passed": 2,
+      "total_checks": 7
+    },
+    {
+      "id": "train_01",
+      "category": "Training Programming",
+      "prompt": "Write me a sample training week for Hyrox. I can train 5 days per week and my race is in 10 weeks.",
+      "checks": [
+        "5-day structure with specific sessions",
+        "Mix of running, station work, and hybrid sessions",
+        "At least 1 long run or race simulation",
+        "Rest/recovery days",
+        "Progressive overload mention",
+        "Specific exercises with sets/reps"
+      ],
+      "tokens_in": 110,
+      "tokens_out": 1008,
+      "latency_seconds": 22.7,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "5-day structure with specific sessions",
+          "result": "PASS",
+          "reason": "5 days outlined"
+        },
+        {
+          "check": "Mix of running, station work, and hybrid sessions",
+          "result": "PASS",
+          "reason": "Variety present"
+        },
+        {
+          "check": "At least 1 long run or race simulation",
+          "result": "PASS",
+          "reason": "Thursday simulation"
+        },
+        {
+          "check": "Rest/recovery days",
+          "result": "FAIL",
+          "reason": "No rest days"
+        },
+        {
+          "check": "Progressive overload mention",
+          "result": "PASS",
+          "reason": "Intensity phase mentioned"
+        },
+        {
+          "check": "Specific exercises with sets/reps",
+          "result": "PASS",
+          "reason": "Detailed exercises"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "train_02",
+      "category": "Training Programming",
+      "prompt": "I only have 3 days per week to train. Can I still be competitive in Hyrox?",
+      "checks": [
+        "Yes, with strategic programming",
+        "Hybrid sessions (combine running + stations)",
+        "Priority-based training allocation",
+        "Specific 3-day structure",
+        "What to sacrifice and what's non-negotiable"
+      ],
+      "tokens_in": 103,
+      "tokens_out": 556,
+      "latency_seconds": 13.14,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Yes, with strategic programming",
+          "result": "PASS",
+          "reason": "Response confirms possibility"
+        },
+        {
+          "check": "Hybrid sessions (combine running + stations)",
+          "result": "PASS",
+          "reason": "Example sessions provided"
+        },
+        {
+          "check": "Priority-based training allocation",
+          "result": "PASS",
+          "reason": "Sessions have specific purposes"
+        },
+        {
+          "check": "Specific 3-day structure",
+          "result": "PASS",
+          "reason": "Detailed structure outlined"
+        },
+        {
+          "check": "What to sacrifice and what's non-negotiable",
+          "result": "PASS",
+          "reason": "Rules and priorities explained"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "train_03",
+      "category": "Training Programming",
+      "prompt": "How should I taper for Hyrox? My race is in 10 days.",
+      "checks": [
+        "Reduce volume 40-60%",
+        "Maintain intensity",
+        "Specific day-by-day guidance",
+        "Last hard session timing",
+        "Light touch-point sessions",
+        "Sleep and recovery emphasis"
+      ],
+      "tokens_in": 99,
+      "tokens_out": 709,
+      "latency_seconds": 16.37,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Reduce volume 40-60%",
+          "result": "PASS",
+          "reason": "Volume reduced 40-50%"
+        },
+        {
+          "check": "Maintain intensity",
+          "result": "FAIL",
+          "reason": "Intensity not maintained"
+        },
+        {
+          "check": "Specific day-by-day guidance",
+          "result": "PASS",
+          "reason": "Detailed day plan"
+        },
+        {
+          "check": "Last hard session timing",
+          "result": "PASS",
+          "reason": "Day -3 session specified"
+        },
+        {
+          "check": "Light touch-point sessions",
+          "result": "PASS",
+          "reason": "Day -1 shakeout jog"
+        },
+        {
+          "check": "Sleep and recovery emphasis",
+          "result": "PASS",
+          "reason": "Sleep emphasized"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "train_04",
+      "category": "Training Programming",
+      "prompt": "I'm training for my second Hyrox. My first time was 82 minutes and I want to go sub-70. What needs to change in my training?",
+      "checks": [
+        "Identify likely time sinks",
+        "Transition time optimization",
+        "Station-specific speed work",
+        "Running pace targets",
+        "Specific weekly structure changes",
+        "Race simulation frequency"
+      ],
+      "tokens_in": 116,
+      "tokens_out": 948,
+      "latency_seconds": 21.36,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Identify likely time sinks",
+          "result": "PASS",
+          "reason": "Breaks down time"
+        },
+        {
+          "check": "Transition time optimization",
+          "result": "PASS",
+          "reason": "Compromised running"
+        },
+        {
+          "check": "Station-specific speed work",
+          "result": "PASS",
+          "reason": "Technique fixes"
+        },
+        {
+          "check": "Running pace targets",
+          "result": "PASS",
+          "reason": "Pace targets given"
+        },
+        {
+          "check": "Specific weekly structure changes",
+          "result": "PASS",
+          "reason": "Weekly plan outlined"
+        },
+        {
+          "check": "Race simulation frequency",
+          "result": "FAIL",
+          "reason": "Not explicitly stated"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "train_05",
+      "category": "Training Programming",
+      "prompt": "I come from a marathon running background (3:15 PR). My running is solid but I'm weak on every station. How do I fix this without losing my running fitness?",
+      "checks": [
+        "Reduce running volume strategically",
+        "Station-specific strength work",
+        "Compromised running training",
+        "Maintain 1-2 quality run sessions",
+        "Specific strength targets",
+        "Timeline for adaptation"
+      ],
+      "tokens_in": 119,
+      "tokens_out": 571,
+      "latency_seconds": 13.55,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Reduce running volume strategically",
+          "result": "PASS",
+          "reason": "Reduces volume"
+        },
+        {
+          "check": "Station-specific strength work",
+          "result": "PASS",
+          "reason": "Includes station work"
+        },
+        {
+          "check": "Compromised running training",
+          "result": "FAIL",
+          "reason": "Running not compromised"
+        },
+        {
+          "check": "Maintain 1-2 quality run sessions",
+          "result": "PASS",
+          "reason": "Includes 2 runs"
+        },
+        {
+          "check": "Specific strength targets",
+          "result": "PASS",
+          "reason": "Includes strength targets"
+        },
+        {
+          "check": "Timeline for adaptation",
+          "result": "PASS",
+          "reason": "16-week plan"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "train_06",
+      "category": "Training Programming",
+      "prompt": "I'm a CrossFitter transitioning to Hyrox. I can do wall balls and burpees all day but my running is terrible \u2014 I can barely run a 5K under 25 minutes.",
+      "checks": [
+        "Build aerobic base (Zone 2 running)",
+        "Running volume recommendations",
+        "Reduce MetCon intensity",
+        "Leverage existing station strength",
+        "Running-specific training plan",
+        "Timeline for running improvement"
+      ],
+      "tokens_in": 123,
+      "tokens_out": 743,
+      "latency_seconds": 16.85,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Build aerobic base (Zone 2 running)",
+          "result": "PASS",
+          "reason": "Zone 2 runs mentioned"
+        },
+        {
+          "check": "Running volume recommendations",
+          "result": "PASS",
+          "reason": "Weekly mileage specified"
+        },
+        {
+          "check": "Reduce MetCon intensity",
+          "result": "PASS",
+          "reason": "Stop CrossFit metcons"
+        },
+        {
+          "check": "Leverage existing station strength",
+          "result": "PASS",
+          "reason": "Acknowledges strength"
+        },
+        {
+          "check": "Running-specific training plan",
+          "result": "PASS",
+          "reason": "8-week plan provided"
+        },
+        {
+          "check": "Timeline for running improvement",
+          "result": "PASS",
+          "reason": "8-week timeline given"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "run_01",
+      "category": "Running",
+      "prompt": "How do I pace my 1km runs between stations? Should I run them all the same speed or adjust based on which station I just finished?",
+      "checks": [
+        "Station-dependent pacing strategy",
+        "Harder to run after leg-heavy stations (lunges, sled)",
+        "Easier to recover pace after upper body stations",
+        "Target pace ranges",
+        "Heart rate recovery guidance",
+        "First 200m of each run matters"
+      ],
+      "tokens_in": 113,
+      "tokens_out": 740,
+      "latency_seconds": 16.82,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Station-dependent pacing strategy",
+          "result": "PASS",
+          "reason": "Adjust pace based"
+        },
+        {
+          "check": "Harder to run after leg-heavy stations (lunges, sled)",
+          "result": "PASS",
+          "reason": "Legs feel heavy"
+        },
+        {
+          "check": "Easier to recover pace after upper body stations",
+          "result": "PASS",
+          "reason": "Legs are fine"
+        },
+        {
+          "check": "Target pace ranges",
+          "result": "PASS",
+          "reason": "Provided pace ranges"
+        },
+        {
+          "check": "Heart rate recovery guidance",
+          "result": "FAIL",
+          "reason": "No HR guidance"
+        },
+        {
+          "check": "First 200m of each run matters",
+          "result": "FAIL",
+          "reason": "Only last 200m mentioned"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 6
+    },
+    {
+      "id": "run_02",
+      "category": "Running",
+      "prompt": "What is 'compromised running' and how do I train it? Everyone talks about it but I'm not sure I'm doing it right.",
+      "checks": [
+        "Definition: running immediately after station work",
+        "Why it matters for Hyrox specifically",
+        "Training methods (run after strength sets)",
+        "Specific workout examples",
+        "Progressive overload approach",
+        "Race-day relevance"
+      ],
+      "tokens_in": 113,
+      "tokens_out": 879,
+      "latency_seconds": 19.95,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Definition: running immediately after station work",
+          "result": "PASS",
+          "reason": "Clearly defined"
+        },
+        {
+          "check": "Why it matters for Hyrox specifically",
+          "result": "PASS",
+          "reason": "Explained in detail"
+        },
+        {
+          "check": "Training methods (run after strength sets)",
+          "result": "PASS",
+          "reason": "Methods described"
+        },
+        {
+          "check": "Specific workout examples",
+          "result": "PASS",
+          "reason": "Examples provided"
+        },
+        {
+          "check": "Progressive overload approach",
+          "result": "PASS",
+          "reason": "Progression outlined"
+        },
+        {
+          "check": "Race-day relevance",
+          "result": "PASS",
+          "reason": "Relevance explained"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "nutr_01",
+      "category": "Nutrition",
+      "prompt": "What should I eat and drink on race day? Before, during, and after the race.",
+      "checks": [
+        "Pre-race meal timing (2-3 hours before)",
+        "Carb-focused pre-race meal",
+        "During race: gels, electrolytes",
+        "Hydration strategy",
+        "Post-race recovery nutrition",
+        "Specific food examples"
+      ],
+      "tokens_in": 102,
+      "tokens_out": 963,
+      "latency_seconds": 21.76,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Pre-race meal timing (2-3 hours before)",
+          "result": "PASS",
+          "reason": "Meal 3-4 hrs pre-start"
+        },
+        {
+          "check": "Carb-focused pre-race meal",
+          "result": "PASS",
+          "reason": "100-150g carbs"
+        },
+        {
+          "check": "During race: gels, electrolytes",
+          "result": "PASS",
+          "reason": "30-60g carbs per hour"
+        },
+        {
+          "check": "Hydration strategy",
+          "result": "PASS",
+          "reason": "100-200ml per 15-20 min"
+        },
+        {
+          "check": "Post-race recovery nutrition",
+          "result": "PASS",
+          "reason": "1.0-1.2 g/kg carbs"
+        },
+        {
+          "check": "Specific food examples",
+          "result": "PASS",
+          "reason": "Pasta, rice, eggs, banana"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "nutr_02",
+      "category": "Nutrition",
+      "prompt": "I'm trying to lose 15 lbs while training for Hyrox. Is this realistic? How should I approach it?",
+      "checks": [
+        "Caution about caloric deficit during training",
+        "Moderate deficit (300-500 cal)",
+        "Protein priority (1.6-2.2 g/kg)",
+        "Timing nutrition around workouts",
+        "Realistic timeline",
+        "Performance trade-offs"
+      ],
+      "tokens_in": 107,
+      "tokens_out": 934,
+      "latency_seconds": 21.48,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Caution about caloric deficit during training",
+          "result": "PASS",
+          "reason": "Warns of under-fueling"
+        },
+        {
+          "check": "Moderate deficit (300-500 cal)",
+          "result": "PASS",
+          "reason": "Recommends 200-300 kcal deficit"
+        },
+        {
+          "check": "Protein priority (1.6-2.2 g/kg)",
+          "result": "FAIL",
+          "reason": "No specific g/kg guidance"
+        },
+        {
+          "check": "Timing nutrition around workouts",
+          "result": "PASS",
+          "reason": "Provides pre/post workout nutrition"
+        },
+        {
+          "check": "Realistic timeline",
+          "result": "PASS",
+          "reason": "Outlines 16-week plan"
+        },
+        {
+          "check": "Performance trade-offs",
+          "result": "PASS",
+          "reason": "Discusses training quality impact"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "recov_01",
+      "category": "Recovery & Injury",
+      "prompt": "I have knee pain on the inside of my left knee after lunges and running. It's been 2 weeks. Should I push through or rest?",
+      "checks": [
+        "Do NOT push through 2-week persistent pain",
+        "Possible MCL or meniscus issue",
+        "Recommend professional assessment",
+        "Modified training alternatives",
+        "What to avoid",
+        "When to resume"
+      ],
+      "tokens_in": 114,
+      "tokens_out": 113,
+      "latency_seconds": 3.31,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Do NOT push through 2-week persistent pain",
+          "result": "PASS",
+          "reason": "Advises against pushing"
+        },
+        {
+          "check": "Possible MCL or meniscus issue",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Recommend professional assessment",
+          "result": "FAIL",
+          "reason": "Not explicitly stated"
+        },
+        {
+          "check": "Modified training alternatives",
+          "result": "FAIL",
+          "reason": "Not provided"
+        },
+        {
+          "check": "What to avoid",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "When to resume",
+          "result": "FAIL",
+          "reason": "Not discussed"
+        }
+      ],
+      "passed": 1,
+      "total_checks": 6
+    },
+    {
+      "id": "recov_02",
+      "category": "Recovery & Injury",
+      "prompt": "I feel overtrained \u2014 my resting heart rate is up 8 beats, I'm sleeping poorly, and my motivation is gone. I have a race in 4 weeks.",
+      "checks": [
+        "Recognize overtraining symptoms",
+        "Immediate volume reduction (deload)",
+        "Sleep optimization",
+        "Stress management",
+        "Return-to-training plan",
+        "4-week race timeline considerations"
+      ],
+      "tokens_in": 118,
+      "tokens_out": 768,
+      "latency_seconds": 16.49,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Recognize overtraining symptoms",
+          "result": "PASS",
+          "reason": "Identifies symptoms correctly"
+        },
+        {
+          "check": "Immediate volume reduction (deload)",
+          "result": "PASS",
+          "reason": "40-60% volume drop"
+        },
+        {
+          "check": "Sleep optimization",
+          "result": "PASS",
+          "reason": "9+ hours sleep target"
+        },
+        {
+          "check": "Stress management",
+          "result": "FAIL",
+          "reason": "No stress management"
+        },
+        {
+          "check": "Return-to-training plan",
+          "result": "PASS",
+          "reason": "Detailed 4-week plan"
+        },
+        {
+          "check": "4-week race timeline considerations",
+          "result": "PASS",
+          "reason": "Taper and peak week included"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "recov_03",
+      "category": "Recovery & Injury",
+      "prompt": "My lower back is sore after every sled session. Is this normal?",
+      "checks": [
+        "Not normal \u2014 technique issue likely",
+        "Common cause: too upright on sled push",
+        "Core bracing recommendations",
+        "Form corrections",
+        "Prehab exercises",
+        "When to see a professional"
+      ],
+      "tokens_in": 97,
+      "tokens_out": 552,
+      "latency_seconds": 13.3,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Not normal \u2014 technique issue likely",
+          "result": "PASS",
+          "reason": "Identifies technique issue"
+        },
+        {
+          "check": "Common cause: too upright on sled push",
+          "result": "FAIL",
+          "reason": "Rounded back mentioned"
+        },
+        {
+          "check": "Core bracing recommendations",
+          "result": "PASS",
+          "reason": "Core exercises listed"
+        },
+        {
+          "check": "Form corrections",
+          "result": "PASS",
+          "reason": "Specific fixes provided"
+        },
+        {
+          "check": "Prehab exercises",
+          "result": "PASS",
+          "reason": "Exercises like pallof press mentioned"
+        },
+        {
+          "check": "When to see a professional",
+          "result": "FAIL",
+          "reason": "No professional guidance"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 6
+    },
+    {
+      "id": "race_01",
+      "category": "Race Strategy",
+      "prompt": "Walk me through the ideal race day from waking up to crossing the finish line. My start time is 11:00 AM and I'm targeting 75 minutes.",
+      "checks": [
+        "Wake time and breakfast timing",
+        "Warm-up protocol",
+        "Arrival time",
+        "Pre-race activation",
+        "Pacing plan station by station",
+        "Hydration/fueling during race",
+        "Mental cues",
+        "Transition strategy"
+      ],
+      "tokens_in": 116,
+      "tokens_out": 1084,
+      "latency_seconds": 24.31,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Wake time and breakfast timing",
+          "result": "PASS",
+          "reason": "6:00 AM wake up"
+        },
+        {
+          "check": "Warm-up protocol",
+          "result": "PASS",
+          "reason": "Detailed warm-up"
+        },
+        {
+          "check": "Arrival time",
+          "result": "FAIL",
+          "reason": "No arrival time"
+        },
+        {
+          "check": "Pre-race activation",
+          "result": "PASS",
+          "reason": "Caffeine dose mentioned"
+        },
+        {
+          "check": "Pacing plan station by station",
+          "result": "PASS",
+          "reason": "Detailed pacing plan"
+        },
+        {
+          "check": "Hydration/fueling during race",
+          "result": "FAIL",
+          "reason": "No in-race hydration"
+        },
+        {
+          "check": "Mental cues",
+          "result": "PASS",
+          "reason": "Mental reset mentioned"
+        },
+        {
+          "check": "Transition strategy",
+          "result": "FAIL",
+          "reason": "No transition strategy"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 8
+    },
+    {
+      "id": "race_02",
+      "category": "Race Strategy",
+      "prompt": "What mistakes do first-timers make on race day? I want to avoid all of them.",
+      "checks": [
+        "Going out too fast on first run/SkiErg",
+        "Not practicing transitions",
+        "Wrong shoes",
+        "Ignoring hydration",
+        "Not knowing the course/station layout",
+        "Ego lifting (sprinting sled push)",
+        "Not training wall balls specifically"
+      ],
+      "tokens_in": 102,
+      "tokens_out": 689,
+      "latency_seconds": 14.74,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Going out too fast on first run/SkiErg",
+          "result": "PASS",
+          "reason": "Mistake 1 addressed"
+        },
+        {
+          "check": "Not practicing transitions",
+          "result": "PASS",
+          "reason": "Mistake 5 addressed"
+        },
+        {
+          "check": "Wrong shoes",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Ignoring hydration",
+          "result": "PASS",
+          "reason": "Mistake 7 addressed"
+        },
+        {
+          "check": "Not knowing the course/station layout",
+          "result": "PASS",
+          "reason": "Mistake 5 addressed"
+        },
+        {
+          "check": "Ego lifting (sprinting sled push)",
+          "result": "PASS",
+          "reason": "Mistake 2 addressed"
+        },
+        {
+          "check": "Not training wall balls specifically",
+          "result": "FAIL",
+          "reason": "Only strategy mentioned"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 7
+    },
+    {
+      "id": "race_03",
+      "category": "Race Strategy",
+      "prompt": "I always hit a wall after station 5 (rowing). The last 3 stations and runs feel impossible. How do I fix this?",
+      "checks": [
+        "Pacing problem in first half",
+        "Energy system depletion",
+        "Fueling during race",
+        "Training the back half specifically",
+        "Race simulation importance",
+        "Mental strategies for suffering"
+      ],
+      "tokens_in": 111,
+      "tokens_out": 639,
+      "latency_seconds": 13.75,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Pacing problem in first half",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Energy system depletion",
+          "result": "PASS",
+          "reason": "Glycogen depletion"
+        },
+        {
+          "check": "Fueling during race",
+          "result": "PASS",
+          "reason": "Gel and electrolyte"
+        },
+        {
+          "check": "Training the back half specifically",
+          "result": "PASS",
+          "reason": "Second-half simulation"
+        },
+        {
+          "check": "Race simulation importance",
+          "result": "PASS",
+          "reason": "Monthly simulations"
+        },
+        {
+          "check": "Mental strategies for suffering",
+          "result": "PASS",
+          "reason": "Mental reframe"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "pop_01",
+      "category": "Special Populations",
+      "prompt": "I'm 52 years old and want to do my first Hyrox. Am I too old? What should I worry about?",
+      "checks": [
+        "Not too old \u2014 Hyrox has age group divisions",
+        "Recovery takes longer \u2014 plan accordingly",
+        "Injury prevention priority",
+        "Joint-friendly training modifications",
+        "Realistic expectations",
+        "Warm-up importance"
+      ],
+      "tokens_in": 109,
+      "tokens_out": 627,
+      "latency_seconds": 15.09,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Not too old \u2014 Hyrox has age group divisions",
+          "result": "PASS",
+          "reason": "Mentions 60+ age group"
+        },
+        {
+          "check": "Recovery takes longer \u2014 plan accordingly",
+          "result": "PASS",
+          "reason": "72-96 hours recovery time"
+        },
+        {
+          "check": "Injury prevention priority",
+          "result": "PASS",
+          "reason": "Mobility and flexibility emphasized"
+        },
+        {
+          "check": "Joint-friendly training modifications",
+          "result": "FAIL",
+          "reason": "Not explicitly mentioned"
+        },
+        {
+          "check": "Realistic expectations",
+          "result": "PASS",
+          "reason": "Provides race time estimates"
+        },
+        {
+          "check": "Warm-up importance",
+          "result": "FAIL",
+          "reason": "Only mentions dynamic stretching"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 6
+    },
+    {
+      "id": "pop_02",
+      "category": "Special Populations",
+      "prompt": "I'm a 28-year-old female, 5'5 140lbs. The women's weights seem light on paper but I struggle with farmer carry and sled push. Is this normal?",
+      "checks": [
+        "Acknowledges the weights are challenging",
+        "Women's specific weight references (correct)",
+        "Grip and upper body often undertrained in women",
+        "Specific training recommendations",
+        "Strength benchmarks to target",
+        "Encouraging but honest"
+      ],
+      "tokens_in": 122,
+      "tokens_out": 611,
+      "latency_seconds": 13.92,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Acknowledges the weights are challenging",
+          "result": "PASS",
+          "reason": "Normal struggle acknowledged"
+        },
+        {
+          "check": "Women's specific weight references (correct)",
+          "result": "PASS",
+          "reason": "Correct weights provided"
+        },
+        {
+          "check": "Grip and upper body often undertrained in women",
+          "result": "FAIL",
+          "reason": "Not explicitly stated"
+        },
+        {
+          "check": "Specific training recommendations",
+          "result": "PASS",
+          "reason": "Detailed programs given"
+        },
+        {
+          "check": "Strength benchmarks to target",
+          "result": "FAIL",
+          "reason": "No specific targets given"
+        },
+        {
+          "check": "Encouraging but honest",
+          "result": "PASS",
+          "reason": "Honest yet encouraging tone"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 6
+    },
+    {
+      "id": "equip_01",
+      "category": "Equipment",
+      "prompt": "What shoes should I wear for Hyrox? I've heard conflicting advice about running shoes vs cross-trainers.",
+      "checks": [
+        "Hybrid recommendation (cross-trainer with some cushion)",
+        "Specific shoe suggestions or characteristics",
+        "Why pure running shoes are problematic (sled push)",
+        "Why pure lifting shoes are problematic (8km of running)",
+        "Grip considerations for sled work"
+      ],
+      "tokens_in": 105,
+      "tokens_out": 564,
+      "latency_seconds": 12.54,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Hybrid recommendation (cross-trainer with some cushion)",
+          "result": "PASS",
+          "reason": "Hybrid approach recommended"
+        },
+        {
+          "check": "Specific shoe suggestions or characteristics",
+          "result": "PASS",
+          "reason": "Examples given"
+        },
+        {
+          "check": "Why pure running shoes are problematic (sled push)",
+          "result": "PASS",
+          "reason": "Soft foam compresses"
+        },
+        {
+          "check": "Why pure lifting shoes are problematic (8km of running)",
+          "result": "PASS",
+          "reason": "Less cushion more impact"
+        },
+        {
+          "check": "Grip considerations for sled work",
+          "result": "PASS",
+          "reason": "Good grip mentioned"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "equip_02",
+      "category": "Equipment",
+      "prompt": "What gear do I need for race day? Gloves? Belt? Anything else?",
+      "checks": [
+        "Gloves: pros and cons (grip vs feel)",
+        "No belt needed",
+        "Clothing recommendations",
+        "Hydration vest or belt",
+        "What NOT to bring"
+      ],
+      "tokens_in": 99,
+      "tokens_out": 708,
+      "latency_seconds": 15.45,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Gloves: pros and cons (grip vs feel)",
+          "result": "PASS",
+          "reason": "Gloves discussed"
+        },
+        {
+          "check": "No belt needed",
+          "result": "FAIL",
+          "reason": "Belt recommended"
+        },
+        {
+          "check": "Clothing recommendations",
+          "result": "PASS",
+          "reason": "Clothing discussed"
+        },
+        {
+          "check": "Hydration vest or belt",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "What NOT to bring",
+          "result": "PASS",
+          "reason": "Items listed"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 5
+    },
+    {
+      "id": "mental_01",
+      "category": "Mental Game",
+      "prompt": "I'm terrified of the wall balls. I've never done 100 in a row and I panic just thinking about it. How do I mentally prepare?",
+      "checks": [
+        "Break it into manageable sets (mental chunking)",
+        "Practice 100 reps in training",
+        "Visualization techniques",
+        "Self-talk strategies",
+        "Process focus (next 10 reps, not remaining 80)",
+        "It's the last station \u2014 dig deep"
+      ],
+      "tokens_in": 114,
+      "tokens_out": 595,
+      "latency_seconds": 13.73,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Break it into manageable sets (mental chunking)",
+          "result": "PASS",
+          "reason": "Chunks of 10"
+        },
+        {
+          "check": "Practice 100 reps in training",
+          "result": "FAIL",
+          "reason": "Only 50 reps"
+        },
+        {
+          "check": "Visualization techniques",
+          "result": "PASS",
+          "reason": "Daily rehearsal"
+        },
+        {
+          "check": "Self-talk strategies",
+          "result": "PASS",
+          "reason": "Count down"
+        },
+        {
+          "check": "Process focus (next 10 reps, not remaining 80)",
+          "result": "PASS",
+          "reason": "Focus on next"
+        },
+        {
+          "check": "It's the last station \u2014 dig deep",
+          "result": "PASS",
+          "reason": "Almost done"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "mental_02",
+      "category": "Mental Game",
+      "prompt": "How do I stay motivated during the middle of the race when everything hurts? Stations 4-6 are where I mentally check out.",
+      "checks": [
+        "Recognize the low point is normal",
+        "Mental cues/mantras",
+        "Focus on process not outcome",
+        "Break race into thirds",
+        "Use other athletes for motivation",
+        "Remind yourself of training"
+      ],
+      "tokens_in": 110,
+      "tokens_out": 969,
+      "latency_seconds": 21.52,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Recognize the low point is normal",
+          "result": "PASS",
+          "reason": "Acknowledges pain peak"
+        },
+        {
+          "check": "Mental cues/mantras",
+          "result": "PASS",
+          "reason": "Mantras reduce exertion"
+        },
+        {
+          "check": "Focus on process not outcome",
+          "result": "PASS",
+          "reason": "Micro-competitions focus"
+        },
+        {
+          "check": "Break race into thirds",
+          "result": "FAIL",
+          "reason": "No thirds mentioned"
+        },
+        {
+          "check": "Use other athletes for motivation",
+          "result": "FAIL",
+          "reason": "No mention of others"
+        },
+        {
+          "check": "Remind yourself of training",
+          "result": "PASS",
+          "reason": "Training mentioned"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 6
+    },
+    {
+      "id": "team_01",
+      "category": "Doubles/Team",
+      "prompt": "My partner and I are doing Hyrox Doubles. How should we split the stations? I'm stronger, she's a better runner.",
+      "checks": [
+        "Both run every 1km",
+        "Split stations based on strengths",
+        "Stronger athlete: sled push/pull, farmer carry",
+        "Better runner: could take SkiErg, rowing",
+        "Wall balls and burpees: discuss endurance",
+        "Practice transitions together"
+      ],
+      "tokens_in": 111,
+      "tokens_out": 516,
+      "latency_seconds": 12.56,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Both run every 1km",
+          "result": "PASS",
+          "reason": "Running strategy"
+        },
+        {
+          "check": "Split stations based on strengths",
+          "result": "PASS",
+          "reason": "Strengths-based split"
+        },
+        {
+          "check": "Stronger athlete: sled push/pull, farmer carry",
+          "result": "PASS",
+          "reason": "Assigned to stronger"
+        },
+        {
+          "check": "Better runner: could take SkiErg, rowing",
+          "result": "PASS",
+          "reason": "Assigned accordingly"
+        },
+        {
+          "check": "Wall balls and burpees: discuss endurance",
+          "result": "PASS",
+          "reason": "Endurance considered"
+        },
+        {
+          "check": "Practice transitions together",
+          "result": "PASS",
+          "reason": "Mandatory training"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "adv_01",
+      "category": "Advanced",
+      "prompt": "I'm an experienced Hyrox athlete with a PR of 63 minutes. I want to break 60 minutes. What does sub-60 training look like?",
+      "checks": [
+        "Specific time targets per station",
+        "Transition time optimization (under 15s)",
+        "Running pace targets (sub 4:00-4:15/km)",
+        "Station speed work",
+        "Specificity over volume",
+        "Race simulation at target pace",
+        "Identifies which 3 minutes to shave"
+      ],
+      "tokens_in": 115,
+      "tokens_out": 1075,
+      "latency_seconds": 24.13,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Specific time targets per station",
+          "result": "PASS",
+          "reason": "Provides target times"
+        },
+        {
+          "check": "Transition time optimization (under 15s)",
+          "result": "FAIL",
+          "reason": "Targets under 2:00"
+        },
+        {
+          "check": "Running pace targets (sub 4:00-4:15/km)",
+          "result": "PASS",
+          "reason": "Targets 4:15-4:20/km"
+        },
+        {
+          "check": "Station speed work",
+          "result": "PASS",
+          "reason": "Includes station speed work"
+        },
+        {
+          "check": "Specificity over volume",
+          "result": "PASS",
+          "reason": "Focuses on specific improvements"
+        },
+        {
+          "check": "Race simulation at target pace",
+          "result": "FAIL",
+          "reason": "Not explicitly mentioned"
+        },
+        {
+          "check": "Identifies which 3 minutes to shave",
+          "result": "PASS",
+          "reason": "Breaks down time savings"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 7
+    },
+    {
+      "id": "adv_02",
+      "category": "Advanced",
+      "prompt": "Should I be doing heart rate zone training for Hyrox? If so, how should my training be distributed across zones?",
+      "checks": [
+        "Zone 2 base building importance",
+        "80/20 or polarized distribution",
+        "Zone-specific session types",
+        "How zones apply to station work",
+        "Heart rate during actual race",
+        "Monitoring tools"
+      ],
+      "tokens_in": 107,
+      "tokens_out": 708,
+      "latency_seconds": 16.42,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Zone 2 base building importance",
+          "result": "PASS",
+          "reason": "Clearly emphasized"
+        },
+        {
+          "check": "80/20 or polarized distribution",
+          "result": "PASS",
+          "reason": "Explained with example"
+        },
+        {
+          "check": "Zone-specific session types",
+          "result": "PASS",
+          "reason": "Detailed in table"
+        },
+        {
+          "check": "How zones apply to station work",
+          "result": "PASS",
+          "reason": "Mentioned in Zone 4"
+        },
+        {
+          "check": "Heart rate during actual race",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Monitoring tools",
+          "result": "FAIL",
+          "reason": "Not discussed"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 6
+    },
+    {
+      "id": "adv_03",
+      "category": "Advanced",
+      "prompt": "I'm racing 3 Hyrox events this season \u2014 one in 6 weeks, one in 14 weeks, and one in 22 weeks. How do I periodize across all three?",
+      "checks": [
+        "Macro periodization across 22 weeks",
+        "Peak/taper for each race",
+        "Recovery between races",
+        "Base building vs race-specific phases",
+        "Volume management",
+        "Realistic expectations (can't peak for all three)"
+      ],
+      "tokens_in": 122,
+      "tokens_out": 802,
+      "latency_seconds": 17.27,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Macro periodization across 22 weeks",
+          "result": "PASS",
+          "reason": "Clear phase plan"
+        },
+        {
+          "check": "Peak/taper for each race",
+          "result": "PASS",
+          "reason": "Taper described"
+        },
+        {
+          "check": "Recovery between races",
+          "result": "PASS",
+          "reason": "Active recovery included"
+        },
+        {
+          "check": "Base building vs race-specific phases",
+          "result": "PASS",
+          "reason": "Phases clearly defined"
+        },
+        {
+          "check": "Volume management",
+          "result": "PASS",
+          "reason": "Volume drops described"
+        },
+        {
+          "check": "Realistic expectations (can't peak for all three)",
+          "result": "PASS",
+          "reason": "Targeted peaking explained"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "edge_01",
+      "category": "Edge Cases",
+      "prompt": "Is Hyrox harder than a marathon? My friend says it's easy compared to running 26.2 miles.",
+      "checks": [
+        "Different type of hard (hybrid vs endurance)",
+        "Hyrox is shorter duration but higher intensity",
+        "Muscular demands vs pure aerobic",
+        "Nuanced answer \u2014 not dismissive of either",
+        "Depends on individual strengths"
+      ],
+      "tokens_in": 106,
+      "tokens_out": 456,
+      "latency_seconds": 11.15,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Different type of hard (hybrid vs endurance)",
+          "result": "PASS",
+          "reason": "Explains hybrid demand"
+        },
+        {
+          "check": "Hyrox is shorter duration but higher intensity",
+          "result": "PASS",
+          "reason": "Duration and intensity compared"
+        },
+        {
+          "check": "Muscular demands vs pure aerobic",
+          "result": "PASS",
+          "reason": "Muscular endurance highlighted"
+        },
+        {
+          "check": "Nuanced answer \u2014 not dismissive of either",
+          "result": "PASS",
+          "reason": "Respectful comparison made"
+        },
+        {
+          "check": "Depends on individual strengths",
+          "result": "PASS",
+          "reason": "Individual variability implied"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "edge_02",
+      "category": "Edge Cases",
+      "prompt": "Can I just train running and CrossFit and be fine for Hyrox? Or do I need Hyrox-specific training?",
+      "checks": [
+        "CrossFit + running gives a good base BUT...",
+        "Hyrox specificity matters (compromised running, race weights, pacing)",
+        "CrossFit metabolic conditioning is different from Hyrox pacing",
+        "Need to practice actual stations at race weights",
+        "Race simulation is essential"
+      ],
+      "tokens_in": 107,
+      "tokens_out": 638,
+      "latency_seconds": 13.73,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "CrossFit + running gives a good base BUT...",
+          "result": "PASS",
+          "reason": "Base covered"
+        },
+        {
+          "check": "Hyrox specificity matters (compromised running, race weights, pacing)",
+          "result": "PASS",
+          "reason": "Specificity explained"
+        },
+        {
+          "check": "CrossFit metabolic conditioning is different from Hyrox pacing",
+          "result": "PASS",
+          "reason": "Pacing differences"
+        },
+        {
+          "check": "Need to practice actual stations at race weights",
+          "result": "PASS",
+          "reason": "Stations require practice"
+        },
+        {
+          "check": "Race simulation is essential",
+          "result": "PASS",
+          "reason": "Simulation importance"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "edge_03",
+      "category": "Edge Cases",
+      "prompt": "I just signed up for Hyrox and the race is in 3 weeks. I've never done any of the stations before. What do I do?",
+      "checks": [
+        "Honest about limited improvement in 3 weeks",
+        "Priority: learn each station's technique",
+        "Do at least 1-2 race simulations",
+        "Focus on pacing strategy",
+        "Don't try to get fit \u2014 just get familiar",
+        "Lower expectations but still enjoy it"
+      ],
+      "tokens_in": 114,
+      "tokens_out": 830,
+      "latency_seconds": 17.74,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Honest about limited improvement in 3 weeks",
+          "result": "PASS",
+          "reason": "Acknowledges limitations"
+        },
+        {
+          "check": "Priority: learn each station's technique",
+          "result": "PASS",
+          "reason": "Station familiarization"
+        },
+        {
+          "check": "Do at least 1-2 race simulations",
+          "result": "PASS",
+          "reason": "Full simulation planned"
+        },
+        {
+          "check": "Focus on pacing strategy",
+          "result": "PASS",
+          "reason": "Pacing discipline emphasized"
+        },
+        {
+          "check": "Don't try to get fit \u2014 just get familiar",
+          "result": "PASS",
+          "reason": "Familiarity over fitness"
+        },
+        {
+          "check": "Lower expectations but still enjoy it",
+          "result": "PASS",
+          "reason": "Realistic expectations set"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "edge_04",
+      "category": "Edge Cases",
+      "prompt": "What supplements should I take for Hyrox training and race day?",
+      "checks": [
+        "Evidence-based only (caffeine, creatine, beta-alanine)",
+        "Doesn't oversell supplements",
+        "Food-first approach",
+        "Race day: caffeine timing, electrolytes",
+        "No bro-science"
+      ],
+      "tokens_in": 96,
+      "tokens_out": 664,
+      "latency_seconds": 15.33,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Evidence-based only (caffeine, creatine, beta-alanine)",
+          "result": "PASS",
+          "reason": "Lists evidence-backed"
+        },
+        {
+          "check": "Doesn't oversell supplements",
+          "result": "PASS",
+          "reason": "Provides balanced view"
+        },
+        {
+          "check": "Food-first approach",
+          "result": "FAIL",
+          "reason": "Not explicitly mentioned"
+        },
+        {
+          "check": "Race day: caffeine timing, electrolytes",
+          "result": "FAIL",
+          "reason": "Electrolytes not mentioned"
+        },
+        {
+          "check": "No bro-science",
+          "result": "PASS",
+          "reason": "Avoids speculative claims"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 5
+    },
+    {
+      "id": "edge_05",
+      "category": "Edge Cases",
+      "prompt": "My gym doesn't have a ski erg, sleds, or a wall ball wall. How do I train for Hyrox with basic equipment?",
+      "checks": [
+        "Substitute exercises for each station",
+        "SkiErg alternatives (battle ropes, band pulldowns)",
+        "Sled push alternatives (heavy prowler, weighted push)",
+        "Wall ball alternatives (thrusters, med ball throws)",
+        "Farmer carry: heavy dumbbells/kettlebells",
+        "Creative solutions"
+      ],
+      "tokens_in": 112,
+      "tokens_out": 816,
+      "latency_seconds": 18.88,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Substitute exercises for each station",
+          "result": "PASS",
+          "reason": "Provides substitutes"
+        },
+        {
+          "check": "SkiErg alternatives (battle ropes, band pulldowns)",
+          "result": "PASS",
+          "reason": "Mentions battle ropes"
+        },
+        {
+          "check": "Sled push alternatives (heavy prowler, weighted push)",
+          "result": "PASS",
+          "reason": "Mentions heavy prowler"
+        },
+        {
+          "check": "Wall ball alternatives (thrusters, med ball throws)",
+          "result": "FAIL",
+          "reason": "No alternatives given"
+        },
+        {
+          "check": "Farmer carry: heavy dumbbells/kettlebells",
+          "result": "PASS",
+          "reason": "Mentions kettlebells"
+        },
+        {
+          "check": "Creative solutions",
+          "result": "PASS",
+          "reason": "Provides creative solutions"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "persona_01",
+      "category": "Persona",
+      "prompt": "I just finished my first Hyrox in 94 minutes. I feel like I did terrible.",
+      "checks": [
+        "Encouragement \u2014 first race is about finishing",
+        "Contextualizes the time (not bad for first race)",
+        "Identifies areas for improvement",
+        "Motivating tone",
+        "Asks about experience or offers next steps",
+        "Not dismissive of feelings"
+      ],
+      "tokens_in": 102,
+      "tokens_out": 75,
+      "latency_seconds": 2.94,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Encouragement \u2014 first race is about finishing",
+          "result": "PASS",
+          "reason": "Finishing emphasized"
+        },
+        {
+          "check": "Contextualizes the time (not bad for first race)",
+          "result": "PASS",
+          "reason": "Time deemed solid"
+        },
+        {
+          "check": "Identifies areas for improvement",
+          "result": "PASS",
+          "reason": "Asks about splits"
+        },
+        {
+          "check": "Motivating tone",
+          "result": "PASS",
+          "reason": "Positive language used"
+        },
+        {
+          "check": "Asks about experience or offers next steps",
+          "result": "PASS",
+          "reason": "Asks questions"
+        },
+        {
+          "check": "Not dismissive of feelings",
+          "result": "PASS",
+          "reason": "Acknowledges feelings"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "persona_02",
+      "category": "Persona",
+      "prompt": "Can you just give me a quick yes or no \u2014 is running 5 days a week too much for Hyrox training?",
+      "checks": [
+        "Gives a direct answer (probably yes, too much)",
+        "Brief explanation of why",
+        "Suggests better allocation",
+        "Respects the 'quick answer' request",
+        "Coaching tone, not lecturing"
+      ],
+      "tokens_in": 108,
+      "tokens_out": 94,
+      "latency_seconds": 2.31,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Gives a direct answer (probably yes, too much)",
+          "result": "FAIL",
+          "reason": "Answer is no"
+        },
+        {
+          "check": "Brief explanation of why",
+          "result": "PASS",
+          "reason": "Provides study reference"
+        },
+        {
+          "check": "Suggests better allocation",
+          "result": "PASS",
+          "reason": "Mentions recovery balance"
+        },
+        {
+          "check": "Respects the 'quick answer' request",
+          "result": "FAIL",
+          "reason": "Response is too detailed"
+        },
+        {
+          "check": "Coaching tone, not lecturing",
+          "result": "PASS",
+          "reason": "Helpful advice given"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 5
+    },
+    {
+      "id": "persona_03",
+      "category": "Persona",
+      "prompt": "My coach at my CrossFit gym says I should just do more MetCons to prepare for Hyrox. Is he right?",
+      "checks": [
+        "Respectfully disagrees or qualifies",
+        "Explains why MetCons alone aren't sufficient",
+        "Running volume is the gap for most CrossFitters",
+        "Doesn't trash the other coach",
+        "Offers specific alternatives"
+      ],
+      "tokens_in": 108,
+      "tokens_out": 647,
+      "latency_seconds": 13.94,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Respectfully disagrees or qualifies",
+          "result": "PASS",
+          "reason": "Polite disagreement"
+        },
+        {
+          "check": "Explains why MetCons alone aren't sufficient",
+          "result": "PASS",
+          "reason": "Clear explanations"
+        },
+        {
+          "check": "Running volume is the gap for most CrossFitters",
+          "result": "PASS",
+          "reason": "Running volume mentioned"
+        },
+        {
+          "check": "Doesn't trash the other coach",
+          "result": "PASS",
+          "reason": "No personal attack"
+        },
+        {
+          "check": "Offers specific alternatives",
+          "result": "PASS",
+          "reason": "Detailed alternatives"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "multi_01",
+      "category": "Multi-Turn",
+      "prompt": "I want to get better at Hyrox but I don't know where to start. Can you help?",
+      "checks": [
+        "Asks clarifying questions (current fitness, race date, experience)",
+        "Doesn't give generic advice without info",
+        "Shows coaching instinct to assess before prescribing",
+        "Welcoming and organized"
+      ],
+      "tokens_in": 104,
+      "tokens_out": 30,
+      "latency_seconds": 2.0,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Asks clarifying questions (current fitness, race date, experience)",
+          "result": "PASS",
+          "reason": "Asks about fitness level"
+        },
+        {
+          "check": "Doesn't give generic advice without info",
+          "result": "PASS",
+          "reason": "No advice given"
+        },
+        {
+          "check": "Shows coaching instinct to assess before prescribing",
+          "result": "PASS",
+          "reason": "Assesses before planning"
+        },
+        {
+          "check": "Welcoming and organized",
+          "result": "PASS",
+          "reason": "Clear and direct approach"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 4
+    },
+    {
+      "id": "multi_02",
+      "category": "Multi-Turn",
+      "prompt": "What's more important for Hyrox \u2014 strength or cardio?",
+      "checks": [
+        "Neither \u2014 it's the hybrid that matters",
+        "Depends on current weakness",
+        "Specific examples of why both matter",
+        "Nuanced answer",
+        "May ask about current profile"
+      ],
+      "tokens_in": 95,
+      "tokens_out": 379,
+      "latency_seconds": 8.76,
+      "error": null,
+      "is_v2_new": false,
+      "grades": [
+        {
+          "check": "Neither \u2014 it's the hybrid that matters",
+          "result": "PASS",
+          "reason": "Response emphasizes balance"
+        },
+        {
+          "check": "Depends on current weakness",
+          "result": "PASS",
+          "reason": "Response prioritizes based"
+        },
+        {
+          "check": "Specific examples of why both matter",
+          "result": "PASS",
+          "reason": "Provides station examples"
+        },
+        {
+          "check": "Nuanced answer",
+          "result": "PASS",
+          "reason": "Considers multiple factors"
+        },
+        {
+          "check": "May ask about current profile",
+          "result": "PASS",
+          "reason": "Asks about 1RM squat"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_equip_01",
+      "category": "Equipment (V2 NEW)",
+      "prompt": "Should I wear Nike Vaporfly or Alphafly for Hyrox? They're my fastest running shoes.",
+      "checks": [
+        "Says NO \u2014 carbon plate racing flats are wrong for Hyrox",
+        "Explains lateral stability issues on sleds",
+        "Explains lack of grip on turf/sled surfaces",
+        "Risk of injury during lateral movements",
+        "Recommends cross-trainers instead (e.g., Nike Metcon, TYR CXT-1, Reebok Nano)"
+      ],
+      "tokens_in": 105,
+      "tokens_out": 480,
+      "latency_seconds": 11.56,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "Says NO \u2014 carbon plate racing flats are wrong for Hyrox",
+          "result": "PASS",
+          "reason": "Clearly states no"
+        },
+        {
+          "check": "Explains lateral stability issues on sleds",
+          "result": "PASS",
+          "reason": "Describes instability"
+        },
+        {
+          "check": "Explains lack of grip on turf/sled surfaces",
+          "result": "PASS",
+          "reason": "Mentions slipping risk"
+        },
+        {
+          "check": "Risk of injury during lateral movements",
+          "result": "PASS",
+          "reason": "Ankle roll risk"
+        },
+        {
+          "check": "Recommends cross-trainers instead (e.g., Nike Metcon, TYR CXT-1, Reebok Nano)",
+          "result": "PASS",
+          "reason": "Suggests Metcon or Nano"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_equip_02",
+      "category": "Equipment (V2 NEW)",
+      "prompt": "Should I wear a weightlifting belt for the sled push and farmer carry stations?",
+      "checks": [
+        "No belt needed for Hyrox",
+        "Explains it restricts breathing under sustained effort",
+        "Hyrox is endurance-strength, not max effort lifting",
+        "Core should be trained to brace without belt",
+        "Not practical for transitions"
+      ],
+      "tokens_in": 99,
+      "tokens_out": 387,
+      "latency_seconds": 10.01,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "No belt needed for Hyrox",
+          "result": "PASS",
+          "reason": "Clearly states no belt needed"
+        },
+        {
+          "check": "Explains it restricts breathing under sustained effort",
+          "result": "PASS",
+          "reason": "Restricts breathing explained"
+        },
+        {
+          "check": "Hyrox is endurance-strength, not max effort lifting",
+          "result": "PASS",
+          "reason": "Describes as endurance event"
+        },
+        {
+          "check": "Core should be trained to brace without belt",
+          "result": "PASS",
+          "reason": "Core provides stabilization"
+        },
+        {
+          "check": "Not practical for transitions",
+          "result": "PASS",
+          "reason": "Saves 5 seconds"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_equip_03",
+      "category": "Equipment (V2 NEW)",
+      "prompt": "What specific shoe models do top Hyrox athletes actually wear?",
+      "checks": [
+        "Mentions 2+ real shoe models (e.g., TYR CXT-1, Nike Metcon, Reebok Nano, NOBULL, Puma Fuse)",
+        "Explains cross-trainer category",
+        "Grip for sled work",
+        "Enough cushion for 8km running",
+        "Does NOT recommend Vaporfly, Alphafly, or pure racing flats"
+      ],
+      "tokens_in": 95,
+      "tokens_out": 541,
+      "latency_seconds": 11.71,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "Mentions 2+ real shoe models",
+          "result": "PASS",
+          "reason": "Multiple models listed"
+        },
+        {
+          "check": "Explains cross-trainer category",
+          "result": "PASS",
+          "reason": "Describes Metcon, Nano"
+        },
+        {
+          "check": "Grip for sled work",
+          "result": "FAIL",
+          "reason": "No mention of grip"
+        },
+        {
+          "check": "Enough cushion for 8km running",
+          "result": "FAIL",
+          "reason": "No mention of cushion"
+        },
+        {
+          "check": "Does NOT recommend Vaporfly, Alphafly, or pure racing flats",
+          "result": "PASS",
+          "reason": "Explicitly advises against"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_doubles_01",
+      "category": "Doubles (V2 NEW)",
+      "prompt": "In Hyrox Doubles, can my partner and I alternate the 1km runs \u2014 I run odds, she runs evens?",
+      "checks": [
+        "BOTH partners MUST run ALL 8 runs together",
+        "You cannot split or alternate runs",
+        "Only stations are split (4 each)",
+        "Running together is a key rule",
+        "Pacing to the slower partner's speed"
+      ],
+      "tokens_in": 110,
+      "tokens_out": 294,
+      "latency_seconds": 8.01,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "BOTH partners MUST run ALL 8 runs together",
+          "result": "PASS",
+          "reason": "Clearly stated rule"
+        },
+        {
+          "check": "You cannot split or alternate runs",
+          "result": "PASS",
+          "reason": "Directly addressed"
+        },
+        {
+          "check": "Only stations are split (4 each)",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Running together is a key rule",
+          "result": "PASS",
+          "reason": "Emphasized strongly"
+        },
+        {
+          "check": "Pacing to the slower partner's speed",
+          "result": "PASS",
+          "reason": "Explained in detail"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_doubles_02",
+      "category": "Doubles (V2 NEW)",
+      "prompt": "How does the Relay format work compared to Doubles? We have 4 friends interested.",
+      "checks": [
+        "Relay is 4 athletes, not 2",
+        "Each athlete does 2 runs and 2 stations",
+        "Handoff/transition protocol",
+        "Differs from Doubles (which is 2 athletes, all runs together)"
+      ],
+      "tokens_in": 101,
+      "tokens_out": 448,
+      "latency_seconds": 11.07,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "Relay is 4 athletes, not 2",
+          "result": "PASS",
+          "reason": "Correct team size"
+        },
+        {
+          "check": "Each athlete does 2 runs and 2 stations",
+          "result": "FAIL",
+          "reason": "Incorrect run count"
+        },
+        {
+          "check": "Handoff/transition protocol",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Differs from Doubles (which is 2 athletes, all runs together)",
+          "result": "PASS",
+          "reason": "Correct format difference"
+        }
+      ],
+      "passed": 2,
+      "total_checks": 4
+    },
+    {
+      "id": "v2_weights_01",
+      "category": "Weights (V2 NEW)",
+      "prompt": "What's the sled push weight versus the sled pull weight for men's open? Are they the same?",
+      "checks": [
+        "Sled push: 152kg / 335lbs",
+        "Sled pull: 103kg / 227lbs",
+        "They are NOT the same \u2014 push is heavier",
+        "Correct distinction between push and pull"
+      ],
+      "tokens_in": 104,
+      "tokens_out": 279,
+      "latency_seconds": 7.07,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "Sled push: 152kg / 335lbs",
+          "result": "PASS",
+          "reason": "Weight matches"
+        },
+        {
+          "check": "Sled pull: 103kg / 227lbs",
+          "result": "PASS",
+          "reason": "Weight matches"
+        },
+        {
+          "check": "They are NOT the same \u2014 push is heavier",
+          "result": "PASS",
+          "reason": "Correct difference"
+        },
+        {
+          "check": "Correct distinction between push and pull",
+          "result": "PASS",
+          "reason": "Explained muscle groups"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 4
+    },
+    {
+      "id": "v2_weights_02",
+      "category": "Weights (V2 NEW)",
+      "prompt": "Give me the complete weight chart for Hyrox women's open division \u2014 every station.",
+      "checks": [
+        "Sled push weight for women",
+        "Sled pull weight for women",
+        "Farmer carry: 2x16kg",
+        "Sandbag: 10kg",
+        "Wall ball: 4kg at 9ft/2.7m target",
+        "Wall ball reps: 75 (not 100)"
+      ],
+      "tokens_in": 100,
+      "tokens_out": 421,
+      "latency_seconds": 10.04,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "Sled push weight for women",
+          "result": "PASS",
+          "reason": "Correct weight"
+        },
+        {
+          "check": "Sled pull weight for women",
+          "result": "PASS",
+          "reason": "Correct weight"
+        },
+        {
+          "check": "Farmer carry: 2x16kg",
+          "result": "PASS",
+          "reason": "Correct weight"
+        },
+        {
+          "check": "Sandbag: 10kg",
+          "result": "PASS",
+          "reason": "Correct weight"
+        },
+        {
+          "check": "Wall ball: 4kg at 9ft/2.7m target",
+          "result": "PASS",
+          "reason": "Correct weight"
+        },
+        {
+          "check": "Wall ball reps: 75 (not 100)",
+          "result": "FAIL",
+          "reason": "Incorrect reps"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "v2_venue_01",
+      "category": "Venue (V2 NEW)",
+      "prompt": "Is Hyrox always indoors? What's the running surface like? Are there hills?",
+      "checks": [
+        "Always indoors (convention centers, exhibition halls)",
+        "Flat \u2014 no hills",
+        "Running surface is typically artificial turf or similar",
+        "Does NOT claim outdoor courses or hills",
+        "Does NOT hallucinate specific venue names"
+      ],
+      "tokens_in": 100,
+      "tokens_out": 524,
+      "latency_seconds": 12.73,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "Always indoors (convention centers, exhibition halls)",
+          "result": "PASS",
+          "reason": "Correct venue types"
+        },
+        {
+          "check": "Flat \u2014 no hills",
+          "result": "PASS",
+          "reason": "No hills mentioned"
+        },
+        {
+          "check": "Running surface is typically artificial turf or similar",
+          "result": "FAIL",
+          "reason": "Mentions rubber mat"
+        },
+        {
+          "check": "Does NOT claim outdoor courses or hills",
+          "result": "PASS",
+          "reason": "No outdoor claims"
+        },
+        {
+          "check": "Does NOT hallucinate specific venue names",
+          "result": "PASS",
+          "reason": "No specific names"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_technique_01",
+      "category": "Technique (V2 NEW)",
+      "prompt": "Should I lock my arms out or bend them during the sled push? I've seen coaches disagree on this.",
+      "checks": [
+        "Arms extended/locked for better force transfer",
+        "Acknowledges the debate exists",
+        "Explains biomechanical reasoning",
+        "Not dismissive of other approaches"
+      ],
+      "tokens_in": 105,
+      "tokens_out": 515,
+      "latency_seconds": 12.14,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "Arms extended/locked for better force transfer",
+          "result": "PASS",
+          "reason": "Explains force transfer"
+        },
+        {
+          "check": "Acknowledges the debate exists",
+          "result": "PASS",
+          "reason": "Mentions debate"
+        },
+        {
+          "check": "Explains biomechanical reasoning",
+          "result": "PASS",
+          "reason": "Breaks down biomechanics"
+        },
+        {
+          "check": "Not dismissive of other approaches",
+          "result": "PASS",
+          "reason": "Presents both sides"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 4
+    },
+    {
+      "id": "v2_technique_02",
+      "category": "Technique (V2 NEW)",
+      "prompt": "What's a realistic burpee broad jump time for an intermediate athlete? Someone told me 2:45 is normal.",
+      "checks": [
+        "2:45 is NOT realistic for intermediate \u2014 that's elite/sub-60 pace",
+        "Intermediate is more like 4:00-5:30",
+        "Provides realistic range by level",
+        "Doesn't agree with unrealistic benchmarks"
+      ],
+      "tokens_in": 107,
+      "tokens_out": 363,
+      "latency_seconds": 9.47,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "2:45 is NOT realistic for intermediate \u2014 that's elite/sub-60 pace",
+          "result": "FAIL",
+          "reason": "2:45 is within range"
+        },
+        {
+          "check": "Intermediate is more like 4:00-5:30",
+          "result": "FAIL",
+          "reason": "Range is 2:30-3:15"
+        },
+        {
+          "check": "Provides realistic range by level",
+          "result": "PASS",
+          "reason": "Table provides ranges"
+        },
+        {
+          "check": "Doesn't agree with unrealistic benchmarks",
+          "result": "PASS",
+          "reason": "Corrects 2:45 estimate"
+        }
+      ],
+      "passed": 2,
+      "total_checks": 4
+    },
+    {
+      "id": "v2_boundary_01",
+      "category": "Boundaries (V2 NEW)",
+      "prompt": "What's the best testosterone booster for Hyrox performance? My buddy takes turkesterone and says it works.",
+      "checks": [
+        "Does not recommend testosterone boosters",
+        "Stays evidence-based",
+        "May redirect to proven strategies (sleep, nutrition, training)",
+        "Professional boundary on supplement claims"
+      ],
+      "tokens_in": 106,
+      "tokens_out": 708,
+      "latency_seconds": 16.48,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "Does not recommend testosterone boosters",
+          "result": "PASS",
+          "reason": "Clearly states no benefit"
+        },
+        {
+          "check": "Stays evidence-based",
+          "result": "PASS",
+          "reason": "Cites human studies"
+        },
+        {
+          "check": "May redirect to proven strategies (sleep, nutrition, training)",
+          "result": "PASS",
+          "reason": "Provides alternatives"
+        },
+        {
+          "check": "Professional boundary on supplement claims",
+          "result": "PASS",
+          "reason": "Critiques marketing claims"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 4
+    },
+    {
+      "id": "v2_boundary_02",
+      "category": "Boundaries (V2 NEW)",
+      "prompt": "I have a herniated disc at L4-L5. Can you design a training program around it?",
+      "checks": [
+        "Does NOT design a full program around a herniated disc",
+        "Recommends seeing a physical therapist or sports medicine doctor",
+        "May offer general guidance but defers to medical professional",
+        "Acknowledges the limitation of coaching vs medical advice"
+      ],
+      "tokens_in": 104,
+      "tokens_out": 800,
+      "latency_seconds": 18.29,
+      "error": null,
+      "is_v2_new": true,
+      "grades": [
+        {
+          "check": "Does NOT design a full program around a herniated disc",
+          "result": "PASS",
+          "reason": "Defers to medical professional"
+        },
+        {
+          "check": "Recommends seeing a physical therapist or sports medicine doctor",
+          "result": "PASS",
+          "reason": "Sports medicine physician"
+        },
+        {
+          "check": "May offer general guidance but defers to medical professional",
+          "result": "PASS",
+          "reason": "General guidance given"
+        },
+        {
+          "check": "Acknowledges the limitation of coaching vs medical advice",
+          "result": "PASS",
+          "reason": "Clearly stated limitations"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 4
+    }
+  ],
+  "v2_rag_grades": [
+    {
+      "id": "fact_01",
+      "category": "Race Format & Facts",
+      "prompt": "I'm brand new to Hyrox. Can you walk me through exactly what happens during a race \u2014 every station, distances, weights, and the order?",
+      "checks": [
+        "8 stations with 1km run before each",
+        "Correct station order: SkiErg, Sled Push, Sled Pull, Burpee Broad Jump, Rowing, Farmer Carry, Sandbag Lunges, Wall Balls",
+        "SkiErg 1000m, Sled Push 50m, Sled Pull 50m, Burpee Broad Jump 80m, Rowing 1000m, Farmer Carry 200m, Sandbag Lunges 100m",
+        "Wall Balls: 100 reps men / 75 reps women",
+        "Men's sled push weight: 152kg/335lbs",
+        "Men's sled pull weight: 103kg/227lbs",
+        "Farmer carry weight: 2x24kg men / 2x16kg women",
+        "Sandbag: 20kg men / 10kg women",
+        "Wall ball: 6kg men / 4kg women, 9ft/11ft target",
+        "Total distance: 8km running + stations"
+      ],
+      "tokens_in": 3448,
+      "tokens_out": 1200,
+      "latency_seconds": 29.54,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1a_000",
+        "team1a_002",
+        "team1a_003",
+        "team1c_023",
+        "team1b_006"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "8 stations with 1km run before each",
+          "result": "PASS",
+          "reason": "8 runs and stations"
+        },
+        {
+          "check": "Correct station order: SkiErg, Sled Push, Sled Pull, Burpee Broad Jump, Rowing, Farmer Carry, Sandbag Lunges, Wall Balls",
+          "result": "PASS",
+          "reason": "Correct order given"
+        },
+        {
+          "check": "SkiErg 1000m, Sled Push 50m, Sled Pull 50m, Burpee Broad Jump 80m, Rowing 1000m, Farmer Carry 200m, Sandbag Lunges 100m",
+          "result": "PASS",
+          "reason": "Distances match"
+        },
+        {
+          "check": "Wall Balls: 100 reps men / 75 reps women",
+          "result": "FAIL",
+          "reason": "Women's reps not mentioned"
+        },
+        {
+          "check": "Men's sled push weight: 152kg/335lbs",
+          "result": "PASS",
+          "reason": "Weight matches"
+        },
+        {
+          "check": "Men's sled pull weight: 103kg/227lbs",
+          "result": "PASS",
+          "reason": "Weight matches"
+        },
+        {
+          "check": "Farmer carry weight: 2x24kg men / 2x16kg women",
+          "result": "FAIL",
+          "reason": "Women's weight not mentioned"
+        },
+        {
+          "check": "Sandbag: 20kg men / 10kg women",
+          "result": "FAIL",
+          "reason": "Women's weight not mentioned"
+        },
+        {
+          "check": "Wall ball: 6kg men / 4kg women, 9ft/11ft target",
+          "result": "FAIL",
+          "reason": "Women's weight and target not mentioned"
+        },
+        {
+          "check": "Total distance: 8km running + stations",
+          "result": "PASS",
+          "reason": "Total distance implied"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 10
+    },
+    {
+      "id": "fact_02",
+      "category": "Race Format & Facts",
+      "prompt": "What are the differences between Hyrox Open, Pro, and Doubles divisions? Which should I sign up for?",
+      "checks": [
+        "Open: standard weights, recreational athletes",
+        "Pro: heavier weights on some stations",
+        "Doubles: two athletes split stations, each runs every 1km",
+        "Pro sled weights are heavier",
+        "Recommendation based on experience level"
+      ],
+      "tokens_in": 3522,
+      "tokens_out": 739,
+      "latency_seconds": 16.98,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1a_004",
+        "team1a_001",
+        "team1a_005",
+        "team1a_003",
+        "team1a_006"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Open: standard weights, recreational athletes",
+          "result": "PASS",
+          "reason": "Described in table"
+        },
+        {
+          "check": "Pro: heavier weights on some stations",
+          "result": "PASS",
+          "reason": "Shown in comparison"
+        },
+        {
+          "check": "Doubles: two athletes split stations, each runs every 1km",
+          "result": "FAIL",
+          "reason": "Running together"
+        },
+        {
+          "check": "Pro sled weights are heavier",
+          "result": "PASS",
+          "reason": "202kg incl. sled"
+        },
+        {
+          "check": "Recommendation based on experience level",
+          "result": "PASS",
+          "reason": "Asks for fitness level"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 5
+    },
+    {
+      "id": "fact_03",
+      "category": "Race Format & Facts",
+      "prompt": "What are realistic time benchmarks for Hyrox? What's a good time for a first-timer versus an elite?",
+      "checks": [
+        "First-timer: 80-100+ minutes",
+        "Competitive: 65-75 minutes",
+        "Elite/Pro: sub-60 minutes",
+        "World record references",
+        "Men vs women time differences"
+      ],
+      "tokens_in": 4944,
+      "tokens_out": 783,
+      "latency_seconds": 19.15,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1a_011",
+        "team1a_010",
+        "team4b_012",
+        "team1a_012",
+        "team2b_synth_008"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "First-timer: 80-100+ minutes",
+          "result": "FAIL",
+          "reason": "Time range incorrect"
+        },
+        {
+          "check": "Competitive: 65-75 minutes",
+          "result": "PASS",
+          "reason": "Time range correct"
+        },
+        {
+          "check": "Elite/Pro: sub-60 minutes",
+          "result": "PASS",
+          "reason": "Time correct"
+        },
+        {
+          "check": "World record references",
+          "result": "FAIL",
+          "reason": "No references found"
+        },
+        {
+          "check": "Men vs women time differences",
+          "result": "PASS",
+          "reason": "Differences shown"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 5
+    },
+    {
+      "id": "station_01",
+      "category": "Station Technique",
+      "prompt": "How do I pace the SkiErg 1000m in Hyrox? I always go out too fast and die at 600m.",
+      "checks": [
+        "Pacing strategy (negative or even split)",
+        "Specific pace targets (e.g., 1:5x-2:0x/500m)",
+        "Arm drive technique",
+        "Core engagement",
+        "Breathing pattern"
+      ],
+      "tokens_in": 4137,
+      "tokens_out": 684,
+      "latency_seconds": 16.51,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1b_002",
+        "team1c_001",
+        "team1c_000",
+        "team1b_007",
+        "team1b_001"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Pacing strategy (negative or even split)",
+          "result": "PASS",
+          "reason": "Even pacing plan"
+        },
+        {
+          "check": "Specific pace targets (e.g., 1:5x-2:0x/500m)",
+          "result": "PASS",
+          "reason": "Target splits provided"
+        },
+        {
+          "check": "Arm drive technique",
+          "result": "FAIL",
+          "reason": "Hips drive mentioned"
+        },
+        {
+          "check": "Core engagement",
+          "result": "PASS",
+          "reason": "Hips and lats engaged"
+        },
+        {
+          "check": "Breathing pattern",
+          "result": "PASS",
+          "reason": "Breathe every stroke"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 5
+    },
+    {
+      "id": "station_02",
+      "category": "Station Technique",
+      "prompt": "Break down the optimal sled push technique for me. Body position, hand placement, stride pattern \u2014 everything.",
+      "checks": [
+        "Low body angle (45 degrees)",
+        "Short choppy steps",
+        "Arms locked out",
+        "Drive from legs not arms",
+        "Hip position below shoulders",
+        "Constant forward pressure"
+      ],
+      "tokens_in": 3665,
+      "tokens_out": 559,
+      "latency_seconds": 13.2,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_003",
+        "team1c_004",
+        "team1c_005",
+        "team1c_002",
+        "team1b_002"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Low body angle (45 degrees)",
+          "result": "PASS",
+          "reason": "45-degree lean mentioned"
+        },
+        {
+          "check": "Short choppy steps",
+          "result": "PASS",
+          "reason": "6\u20138 inches stride length"
+        },
+        {
+          "check": "Arms locked out",
+          "result": "FAIL",
+          "reason": "Arms bent at 90\u2013120 degrees"
+        },
+        {
+          "check": "Drive from legs not arms",
+          "result": "PASS",
+          "reason": "Transmit leg power"
+        },
+        {
+          "check": "Hip position below shoulders",
+          "result": "PASS",
+          "reason": "Hips below shoulders"
+        },
+        {
+          "check": "Constant forward pressure",
+          "result": "PASS",
+          "reason": "Maintain kinetic friction"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "station_03",
+      "category": "Station Technique",
+      "prompt": "I can't figure out the sled pull. Should I be hand-over-hand or pulling in big arm sweeps? How do I anchor my feet?",
+      "checks": [
+        "Hand-over-hand technique",
+        "Sitting back / low center of gravity",
+        "Foot bracing technique",
+        "Rope management",
+        "Grip preservation"
+      ],
+      "tokens_in": 3268,
+      "tokens_out": 897,
+      "latency_seconds": 20.69,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_003",
+        "team1c_005",
+        "team7_015",
+        "team1c_006",
+        "team1c_004"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Hand-over-hand technique",
+          "result": "PASS",
+          "reason": "Described in detail"
+        },
+        {
+          "check": "Sitting back / low center of gravity",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Foot bracing technique",
+          "result": "PASS",
+          "reason": "Mentioned as foot anchoring"
+        },
+        {
+          "check": "Rope management",
+          "result": "PASS",
+          "reason": "Discussed as key skill"
+        },
+        {
+          "check": "Grip preservation",
+          "result": "PASS",
+          "reason": "Tips provided for grip"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 5
+    },
+    {
+      "id": "station_04",
+      "category": "Station Technique",
+      "prompt": "Burpee broad jumps absolutely wreck me. Is there a more efficient technique? How far should each jump be?",
+      "checks": [
+        "Efficient burpee technique (chest to ground)",
+        "Jump distance targets",
+        "Pacing (don't sprint the first 20m)",
+        "Hip hinge for landing",
+        "Energy conservation tips",
+        "80m total distance"
+      ],
+      "tokens_in": 2868,
+      "tokens_out": 602,
+      "latency_seconds": 14.67,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team2b_synth_006",
+        "team1c_008",
+        "team7_016",
+        "team1c_007",
+        "team5_009"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Efficient burpee technique (chest to ground)",
+          "result": "PASS",
+          "reason": "Step-up method described"
+        },
+        {
+          "check": "Jump distance targets",
+          "result": "PASS",
+          "reason": "60-70% max distance given"
+        },
+        {
+          "check": "Pacing (don't sprint the first 20m)",
+          "result": "PASS",
+          "reason": "Steady rhythm advised"
+        },
+        {
+          "check": "Hip hinge for landing",
+          "result": "FAIL",
+          "reason": "Bent knees mentioned"
+        },
+        {
+          "check": "Energy conservation tips",
+          "result": "PASS",
+          "reason": "Conservation tips provided"
+        },
+        {
+          "check": "80m total distance",
+          "result": "PASS",
+          "reason": "80m distance mentioned"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "station_05",
+      "category": "Station Technique",
+      "prompt": "What damper setting and pacing should I use on the rower during Hyrox? I'm a 6'1 185lb male.",
+      "checks": [
+        "Damper setting recommendation (5-7 typical)",
+        "Pacing strategy for 1000m",
+        "Split time targets",
+        "Drive sequence (legs-back-arms)",
+        "Recovery and breathing"
+      ],
+      "tokens_in": 3643,
+      "tokens_out": 716,
+      "latency_seconds": 17.19,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_010",
+        "team3c_006",
+        "team1c_011",
+        "team4_001",
+        "team1b_002"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Damper setting recommendation (5-7 typical)",
+          "result": "PASS",
+          "reason": "Damper 6 recommended"
+        },
+        {
+          "check": "Pacing strategy for 1000m",
+          "result": "PASS",
+          "reason": "Three strategies provided"
+        },
+        {
+          "check": "Split time targets",
+          "result": "PASS",
+          "reason": "Targets given for 500m"
+        },
+        {
+          "check": "Drive sequence (legs-back-arms)",
+          "result": "PASS",
+          "reason": "Correct sequence given"
+        },
+        {
+          "check": "Recovery and breathing",
+          "result": "PASS",
+          "reason": "Proper technique described"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "station_06",
+      "category": "Station Technique",
+      "prompt": "Farmer carry tips? My grip always fails around 150m and I have to put the weights down.",
+      "checks": [
+        "Grip technique (crush grip)",
+        "Shoulder position (packed down)",
+        "Walking stride (short quick steps)",
+        "Breathing pattern",
+        "Grip training recommendations",
+        "200m distance acknowledgment"
+      ],
+      "tokens_in": 3077,
+      "tokens_out": 756,
+      "latency_seconds": 17.24,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_013",
+        "team1c_015",
+        "team1c_014",
+        "team1c_012",
+        "team7_016"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Grip technique (crush grip)",
+          "result": "FAIL",
+          "reason": "No crush grip"
+        },
+        {
+          "check": "Shoulder position (packed down)",
+          "result": "PASS",
+          "reason": "Retracted shoulders"
+        },
+        {
+          "check": "Walking stride (short quick steps)",
+          "result": "FAIL",
+          "reason": "Walk fast only"
+        },
+        {
+          "check": "Breathing pattern",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Grip training recommendations",
+          "result": "PASS",
+          "reason": "Detailed protocol"
+        },
+        {
+          "check": "200m distance acknowledgment",
+          "result": "PASS",
+          "reason": "Target split provided"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 6
+    },
+    {
+      "id": "station_07",
+      "category": "Station Technique",
+      "prompt": "My quads completely blow up during sandbag lunges. I can barely run the final 1km after. How do I train for this?",
+      "checks": [
+        "Lunge technique (sandbag position)",
+        "Glute engagement to offload quads",
+        "Pacing strategy for 100m",
+        "Training recommendations",
+        "Step length",
+        "Relationship to final wall balls and 1km"
+      ],
+      "tokens_in": 3855,
+      "tokens_out": 767,
+      "latency_seconds": 19.15,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_016",
+        "team1c_015",
+        "team1b_004",
+        "team1c_017",
+        "team7_017"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Lunge technique (sandbag position)",
+          "result": "FAIL",
+          "reason": "No sandbag position"
+        },
+        {
+          "check": "Glute engagement to offload quads",
+          "result": "PASS",
+          "reason": "Posterior chain emphasis"
+        },
+        {
+          "check": "Pacing strategy for 100m",
+          "result": "FAIL",
+          "reason": "No pacing strategy"
+        },
+        {
+          "check": "Training recommendations",
+          "result": "PASS",
+          "reason": "Three-part protocol"
+        },
+        {
+          "check": "Step length",
+          "result": "PASS",
+          "reason": "0.9-1.1m target"
+        },
+        {
+          "check": "Relationship to final wall balls and 1km",
+          "result": "PASS",
+          "reason": "Direct downstream effect"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 6
+    },
+    {
+      "id": "station_08",
+      "category": "Station Technique",
+      "prompt": "100 wall balls is brutal. What's the best break strategy \u2014 should I go unbroken or plan sets? I usually start failing around rep 60.",
+      "checks": [
+        "Break strategy (sets of 20-25 or unbroken for fit athletes)",
+        "Squat depth",
+        "Hip drive",
+        "Ball catch and redirect",
+        "Breathing pattern (exhale on throw)",
+        "Target height (men 11ft / women 9ft)",
+        "Mental strategy for last station"
+      ],
+      "tokens_in": 3151,
+      "tokens_out": 605,
+      "latency_seconds": 14.75,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_019",
+        "team1c_020",
+        "team1c_018",
+        "team1c_021",
+        "team2b_synth_005"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Break strategy (sets of 20-25 or unbroken for fit athletes)",
+          "result": "PASS",
+          "reason": "Provides break strategy"
+        },
+        {
+          "check": "Squat depth",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Hip drive",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Ball catch and redirect",
+          "result": "PASS",
+          "reason": "Mentions catch"
+        },
+        {
+          "check": "Breathing pattern (exhale on throw)",
+          "result": "PASS",
+          "reason": "Correct breathing"
+        },
+        {
+          "check": "Target height (men 11ft / women 9ft)",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Mental strategy for last station",
+          "result": "PASS",
+          "reason": "Provides mental strategy"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 7
+    },
+    {
+      "id": "train_01",
+      "category": "Training Programming",
+      "prompt": "Write me a sample training week for Hyrox. I can train 5 days per week and my race is in 10 weeks.",
+      "checks": [
+        "5-day structure with specific sessions",
+        "Mix of running, station work, and hybrid sessions",
+        "At least 1 long run or race simulation",
+        "Rest/recovery days",
+        "Progressive overload mention",
+        "Specific exercises with sets/reps"
+      ],
+      "tokens_in": 3445,
+      "tokens_out": 857,
+      "latency_seconds": 20.35,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team3c_006",
+        "team3c_004",
+        "team3a_synth_003",
+        "team5_003",
+        "team3b_synth_008"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "5-day structure with specific sessions",
+          "result": "PASS",
+          "reason": "Detailed weekly structure"
+        },
+        {
+          "check": "Mix of running, station work, and hybrid sessions",
+          "result": "PASS",
+          "reason": "Variety of sessions included"
+        },
+        {
+          "check": "At least 1 long run or race simulation",
+          "result": "PASS",
+          "reason": "Hyrox Simulation on Thursday"
+        },
+        {
+          "check": "Rest/recovery days",
+          "result": "PASS",
+          "reason": "Saturday and Sunday rest"
+        },
+        {
+          "check": "Progressive overload mention",
+          "result": "PASS",
+          "reason": "Progression for next 10 weeks"
+        },
+        {
+          "check": "Specific exercises with sets/reps",
+          "result": "PASS",
+          "reason": "Detailed exercise breakdown"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "train_02",
+      "category": "Training Programming",
+      "prompt": "I only have 3 days per week to train. Can I still be competitive in Hyrox?",
+      "checks": [
+        "Yes, with strategic programming",
+        "Hybrid sessions (combine running + stations)",
+        "Priority-based training allocation",
+        "Specific 3-day structure",
+        "What to sacrifice and what's non-negotiable"
+      ],
+      "tokens_in": 3450,
+      "tokens_out": 748,
+      "latency_seconds": 17.72,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team3c_006",
+        "team2_000",
+        "team2b_synth_008",
+        "team3c_004",
+        "team3a_synth_012"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Yes, with strategic programming",
+          "result": "PASS",
+          "reason": "Response confirms possibility"
+        },
+        {
+          "check": "Hybrid sessions (combine running + stations)",
+          "result": "PASS",
+          "reason": "Sessions combine exercises"
+        },
+        {
+          "check": "Priority-based training allocation",
+          "result": "PASS",
+          "reason": "Prioritizes high-impact sessions"
+        },
+        {
+          "check": "Specific 3-day structure",
+          "result": "PASS",
+          "reason": "Provides detailed structure"
+        },
+        {
+          "check": "What to sacrifice and what's non-negotiable",
+          "result": "PASS",
+          "reason": "Explains sacrifices clearly"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "train_03",
+      "category": "Training Programming",
+      "prompt": "How should I taper for Hyrox? My race is in 10 days.",
+      "checks": [
+        "Reduce volume 40-60%",
+        "Maintain intensity",
+        "Specific day-by-day guidance",
+        "Last hard session timing",
+        "Light touch-point sessions",
+        "Sleep and recovery emphasis"
+      ],
+      "tokens_in": 3444,
+      "tokens_out": 815,
+      "latency_seconds": 19.25,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team5_021",
+        "team3b_synth_008",
+        "team2b_synth_008",
+        "team5_000",
+        "team3c_006"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Reduce volume 40-60%",
+          "result": "PASS",
+          "reason": "Volume reduction specified"
+        },
+        {
+          "check": "Maintain intensity",
+          "result": "PASS",
+          "reason": "Intensity near race level"
+        },
+        {
+          "check": "Specific day-by-day guidance",
+          "result": "PASS",
+          "reason": "Detailed 10-day protocol"
+        },
+        {
+          "check": "Last hard session timing",
+          "result": "PASS",
+          "reason": "Last hard session implied"
+        },
+        {
+          "check": "Light touch-point sessions",
+          "result": "PASS",
+          "reason": "Easy runs and shakeouts"
+        },
+        {
+          "check": "Sleep and recovery emphasis",
+          "result": "PASS",
+          "reason": "Rest and recovery emphasized"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "train_04",
+      "category": "Training Programming",
+      "prompt": "I'm training for my second Hyrox. My first time was 82 minutes and I want to go sub-70. What needs to change in my training?",
+      "checks": [
+        "Identify likely time sinks",
+        "Transition time optimization",
+        "Station-specific speed work",
+        "Running pace targets",
+        "Specific weekly structure changes",
+        "Race simulation frequency"
+      ],
+      "tokens_in": 3549,
+      "tokens_out": 891,
+      "latency_seconds": 20.89,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team2b_synth_008",
+        "team1a_014",
+        "team3c_006",
+        "team1a_011",
+        "team1b_006"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Identify likely time sinks",
+          "result": "PASS",
+          "reason": "Time sinks identified"
+        },
+        {
+          "check": "Transition time optimization",
+          "result": "PASS",
+          "reason": "Roxzone optimization"
+        },
+        {
+          "check": "Station-specific speed work",
+          "result": "PASS",
+          "reason": "Station work included"
+        },
+        {
+          "check": "Running pace targets",
+          "result": "PASS",
+          "reason": "Pace targets provided"
+        },
+        {
+          "check": "Specific weekly structure changes",
+          "result": "PASS",
+          "reason": "Phased plan outlined"
+        },
+        {
+          "check": "Race simulation frequency",
+          "result": "PASS",
+          "reason": "Simulations scheduled"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "train_05",
+      "category": "Training Programming",
+      "prompt": "I come from a marathon running background (3:15 PR). My running is solid but I'm weak on every station. How do I fix this without losing my running fitness?",
+      "checks": [
+        "Reduce running volume strategically",
+        "Station-specific strength work",
+        "Compromised running training",
+        "Maintain 1-2 quality run sessions",
+        "Specific strength targets",
+        "Timeline for adaptation"
+      ],
+      "tokens_in": 3417,
+      "tokens_out": 981,
+      "latency_seconds": 23.28,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_001",
+        "team1c_004",
+        "team1c_008",
+        "team1c_002",
+        "team1b_010"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Reduce running volume strategically",
+          "result": "PASS",
+          "reason": "Reduces volume from marathon training"
+        },
+        {
+          "check": "Station-specific strength work",
+          "result": "PASS",
+          "reason": "Includes station fundamentals"
+        },
+        {
+          "check": "Compromised running training",
+          "result": "FAIL",
+          "reason": "Running quality maintained"
+        },
+        {
+          "check": "Maintain 1-2 quality run sessions",
+          "result": "PASS",
+          "reason": "Includes tempo and interval runs"
+        },
+        {
+          "check": "Specific strength targets",
+          "result": "PASS",
+          "reason": "Provides station benchmarks"
+        },
+        {
+          "check": "Timeline for adaptation",
+          "result": "PASS",
+          "reason": "Outlines 16-week training plan"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "train_06",
+      "category": "Training Programming",
+      "prompt": "I'm a CrossFitter transitioning to Hyrox. I can do wall balls and burpees all day but my running is terrible \u2014 I can barely run a 5K under 25 minutes.",
+      "checks": [
+        "Build aerobic base (Zone 2 running)",
+        "Running volume recommendations",
+        "Reduce MetCon intensity",
+        "Leverage existing station strength",
+        "Running-specific training plan",
+        "Timeline for running improvement"
+      ],
+      "tokens_in": 3401,
+      "tokens_out": 867,
+      "latency_seconds": 20.83,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team2b_synth_008",
+        "team3c_001",
+        "team3c_002",
+        "team3c_006",
+        "team2b_synth_009"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Build aerobic base (Zone 2 running)",
+          "result": "PASS",
+          "reason": "Mentions Zone 2"
+        },
+        {
+          "check": "Running volume recommendations",
+          "result": "PASS",
+          "reason": "Provides weekly totals"
+        },
+        {
+          "check": "Reduce MetCon intensity",
+          "result": "PASS",
+          "reason": "Reduces CrossFit sessions"
+        },
+        {
+          "check": "Leverage existing station strength",
+          "result": "PASS",
+          "reason": "Acknowledges strength"
+        },
+        {
+          "check": "Running-specific training plan",
+          "result": "PASS",
+          "reason": "Provides 8-week plan"
+        },
+        {
+          "check": "Timeline for running improvement",
+          "result": "PASS",
+          "reason": "Gives 16-week timeline"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "run_01",
+      "category": "Running",
+      "prompt": "How do I pace my 1km runs between stations? Should I run them all the same speed or adjust based on which station I just finished?",
+      "checks": [
+        "Station-dependent pacing strategy",
+        "Harder to run after leg-heavy stations (lunges, sled)",
+        "Easier to recover pace after upper body stations",
+        "Target pace ranges",
+        "Heart rate recovery guidance",
+        "First 200m of each run matters"
+      ],
+      "tokens_in": 4524,
+      "tokens_out": 793,
+      "latency_seconds": 18.86,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_002",
+        "team1b_000",
+        "team1c_001",
+        "team3b_synth_012",
+        "team4b_012"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Station-dependent pacing strategy",
+          "result": "PASS",
+          "reason": "Strategy varies by run"
+        },
+        {
+          "check": "Harder to run after leg-heavy stations (lunges, sled)",
+          "result": "PASS",
+          "reason": "Runs 5-7 slower"
+        },
+        {
+          "check": "Easier to recover pace after upper body stations",
+          "result": "FAIL",
+          "reason": "No mention found"
+        },
+        {
+          "check": "Target pace ranges",
+          "result": "PASS",
+          "reason": "Provided calculation"
+        },
+        {
+          "check": "Heart rate recovery guidance",
+          "result": "FAIL",
+          "reason": "No specific guidance"
+        },
+        {
+          "check": "First 200m of each run matters",
+          "result": "PASS",
+          "reason": "Mentioned for Run 8"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 6
+    },
+    {
+      "id": "run_02",
+      "category": "Running",
+      "prompt": "What is 'compromised running' and how do I train it? Everyone talks about it but I'm not sure I'm doing it right.",
+      "checks": [
+        "Definition: running immediately after station work",
+        "Why it matters for Hyrox specifically",
+        "Training methods (run after strength sets)",
+        "Specific workout examples",
+        "Progressive overload approach",
+        "Race-day relevance"
+      ],
+      "tokens_in": 3650,
+      "tokens_out": 838,
+      "latency_seconds": 19.59,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team3a_synth_009",
+        "team3c_007",
+        "team1b_006",
+        "team1b_010",
+        "team3a_synth_010"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Definition: running immediately after station work",
+          "result": "PASS",
+          "reason": "Clearly defined"
+        },
+        {
+          "check": "Why it matters for Hyrox specifically",
+          "result": "PASS",
+          "reason": "Unique physiological demand"
+        },
+        {
+          "check": "Training methods (run after strength sets)",
+          "result": "PASS",
+          "reason": "Protocols provided"
+        },
+        {
+          "check": "Specific workout examples",
+          "result": "PASS",
+          "reason": "5 protocols listed"
+        },
+        {
+          "check": "Progressive overload approach",
+          "result": "PASS",
+          "reason": "8-week progression outlined"
+        },
+        {
+          "check": "Race-day relevance",
+          "result": "PASS",
+          "reason": "Simulates race conditions"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "nutr_01",
+      "category": "Nutrition",
+      "prompt": "What should I eat and drink on race day? Before, during, and after the race.",
+      "checks": [
+        "Pre-race meal timing (2-3 hours before)",
+        "Carb-focused pre-race meal",
+        "During race: gels, electrolytes",
+        "Hydration strategy",
+        "Post-race recovery nutrition",
+        "Specific food examples"
+      ],
+      "tokens_in": 4186,
+      "tokens_out": 739,
+      "latency_seconds": 17.67,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1b_008",
+        "team8_014",
+        "team1b_011",
+        "team5_022",
+        "team1b_009"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Pre-race meal timing (2-3 hours before)",
+          "result": "PASS",
+          "reason": "Timing specified"
+        },
+        {
+          "check": "Carb-focused pre-race meal",
+          "result": "PASS",
+          "reason": "High-carb meal mentioned"
+        },
+        {
+          "check": "During race: gels, electrolytes",
+          "result": "PASS",
+          "reason": "Gels and electrolytes mentioned"
+        },
+        {
+          "check": "Hydration strategy",
+          "result": "PASS",
+          "reason": "Electrolyte drinks specified"
+        },
+        {
+          "check": "Post-race recovery nutrition",
+          "result": "PASS",
+          "reason": "High-carb and protein meal mentioned"
+        },
+        {
+          "check": "Specific food examples",
+          "result": "PASS",
+          "reason": "Examples like toast and banana given"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "nutr_02",
+      "category": "Nutrition",
+      "prompt": "I'm trying to lose 15 lbs while training for Hyrox. Is this realistic? How should I approach it?",
+      "checks": [
+        "Caution about caloric deficit during training",
+        "Moderate deficit (300-500 cal)",
+        "Protein priority (1.6-2.2 g/kg)",
+        "Timing nutrition around workouts",
+        "Realistic timeline",
+        "Performance trade-offs"
+      ],
+      "tokens_in": 3466,
+      "tokens_out": 824,
+      "latency_seconds": 19.01,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team3c_006",
+        "team2b_synth_008",
+        "team3c_004",
+        "team3b_synth_008",
+        "team1b_006"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Caution about caloric deficit during training",
+          "result": "PASS",
+          "reason": "Warns of deficits"
+        },
+        {
+          "check": "Moderate deficit (300-500 cal)",
+          "result": "PASS",
+          "reason": "Recommends 200-300 kcal"
+        },
+        {
+          "check": "Protein priority (1.6-2.2 g/kg)",
+          "result": "PASS",
+          "reason": "Specifies 1.8-2.0 g/kg"
+        },
+        {
+          "check": "Timing nutrition around workouts",
+          "result": "FAIL",
+          "reason": "Not explicitly mentioned"
+        },
+        {
+          "check": "Realistic timeline",
+          "result": "PASS",
+          "reason": "Provides 16-week plan"
+        },
+        {
+          "check": "Performance trade-offs",
+          "result": "PASS",
+          "reason": "Discusses performance impact"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "recov_01",
+      "category": "Recovery & Injury",
+      "prompt": "I have knee pain on the inside of my left knee after lunges and running. It's been 2 weeks. Should I push through or rest?",
+      "checks": [
+        "Do NOT push through 2-week persistent pain",
+        "Possible MCL or meniscus issue",
+        "Recommend professional assessment",
+        "Modified training alternatives",
+        "What to avoid",
+        "When to resume"
+      ],
+      "tokens_in": 3968,
+      "tokens_out": 563,
+      "latency_seconds": 14.92,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team7_009",
+        "team1c_016",
+        "team7_020",
+        "team5_005",
+        "team1c_019"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Do NOT push through 2-week persistent pain",
+          "result": "PASS",
+          "reason": "Explicitly advises rest"
+        },
+        {
+          "check": "Possible MCL or meniscus issue",
+          "result": "PASS",
+          "reason": "Mentions medial meniscus"
+        },
+        {
+          "check": "Recommend professional assessment",
+          "result": "PASS",
+          "reason": "See physiotherapist"
+        },
+        {
+          "check": "Modified training alternatives",
+          "result": "PASS",
+          "reason": "Provides alternatives"
+        },
+        {
+          "check": "What to avoid",
+          "result": "PASS",
+          "reason": "Avoid lunges and running"
+        },
+        {
+          "check": "When to resume",
+          "result": "FAIL",
+          "reason": "No clear timeline"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "recov_02",
+      "category": "Recovery & Injury",
+      "prompt": "I feel overtrained \u2014 my resting heart rate is up 8 beats, I'm sleeping poorly, and my motivation is gone. I have a race in 4 weeks.",
+      "checks": [
+        "Recognize overtraining symptoms",
+        "Immediate volume reduction (deload)",
+        "Sleep optimization",
+        "Stress management",
+        "Return-to-training plan",
+        "4-week race timeline considerations"
+      ],
+      "tokens_in": 3993,
+      "tokens_out": 714,
+      "latency_seconds": 16.52,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1b_010",
+        "team5_021",
+        "team5b_013",
+        "team5b_014",
+        "team5_005"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Recognize overtraining symptoms",
+          "result": "PASS",
+          "reason": "Identifies symptoms correctly"
+        },
+        {
+          "check": "Immediate volume reduction (deload)",
+          "result": "PASS",
+          "reason": "Reduces volume by 50%"
+        },
+        {
+          "check": "Sleep optimization",
+          "result": "PASS",
+          "reason": "Prioritizes sleep"
+        },
+        {
+          "check": "Stress management",
+          "result": "PASS",
+          "reason": "Addresses physiological overload"
+        },
+        {
+          "check": "Return-to-training plan",
+          "result": "PASS",
+          "reason": "Outlines 2-week recovery"
+        },
+        {
+          "check": "4-week race timeline considerations",
+          "result": "PASS",
+          "reason": "Adjusts plan for race"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "recov_03",
+      "category": "Recovery & Injury",
+      "prompt": "My lower back is sore after every sled session. Is this normal?",
+      "checks": [
+        "Not normal \u2014 technique issue likely",
+        "Common cause: too upright on sled push",
+        "Core bracing recommendations",
+        "Form corrections",
+        "Prehab exercises",
+        "When to see a professional"
+      ],
+      "tokens_in": 2934,
+      "tokens_out": 543,
+      "latency_seconds": 13.83,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_004",
+        "team1c_003",
+        "team1c_002",
+        "team5_008",
+        "team5b_013"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Not normal \u2014 technique issue likely",
+          "result": "PASS",
+          "reason": "Identifies technique issue"
+        },
+        {
+          "check": "Common cause: too upright on sled push",
+          "result": "PASS",
+          "reason": "Mentions standing too tall"
+        },
+        {
+          "check": "Core bracing recommendations",
+          "result": "PASS",
+          "reason": "Provides bracing technique"
+        },
+        {
+          "check": "Form corrections",
+          "result": "PASS",
+          "reason": "Offers specific corrections"
+        },
+        {
+          "check": "Prehab exercises",
+          "result": "PASS",
+          "reason": "Recommends exercises"
+        },
+        {
+          "check": "When to see a professional",
+          "result": "FAIL",
+          "reason": "No professional advice given"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "race_01",
+      "category": "Race Strategy",
+      "prompt": "Walk me through the ideal race day from waking up to crossing the finish line. My start time is 11:00 AM and I'm targeting 75 minutes.",
+      "checks": [
+        "Wake time and breakfast timing",
+        "Warm-up protocol",
+        "Arrival time",
+        "Pre-race activation",
+        "Pacing plan station by station",
+        "Hydration/fueling during race",
+        "Mental cues",
+        "Transition strategy"
+      ],
+      "tokens_in": 4028,
+      "tokens_out": 1200,
+      "latency_seconds": 27.15,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team5_022",
+        "team1b_009",
+        "team1b_008",
+        "team1b_011",
+        "team1c_001"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Wake time and breakfast timing",
+          "result": "PASS",
+          "reason": "Detailed morning plan"
+        },
+        {
+          "check": "Warm-up protocol",
+          "result": "PASS",
+          "reason": "Light jog and dynamic mobility"
+        },
+        {
+          "check": "Arrival time",
+          "result": "PASS",
+          "reason": "70 minutes before start"
+        },
+        {
+          "check": "Pre-race activation",
+          "result": "PASS",
+          "reason": "Station priming and sled push"
+        },
+        {
+          "check": "Pacing plan station by station",
+          "result": "PASS",
+          "reason": "Target split timeline provided"
+        },
+        {
+          "check": "Hydration/fueling during race",
+          "result": "PASS",
+          "reason": "Gel and water intake planned"
+        },
+        {
+          "check": "Mental cues",
+          "result": "PASS",
+          "reason": "Calm and focused framework"
+        },
+        {
+          "check": "Transition strategy",
+          "result": "FAIL",
+          "reason": "Not explicitly mentioned"
+        }
+      ],
+      "passed": 7,
+      "total_checks": 8
+    },
+    {
+      "id": "race_02",
+      "category": "Race Strategy",
+      "prompt": "What mistakes do first-timers make on race day? I want to avoid all of them.",
+      "checks": [
+        "Going out too fast on first run/SkiErg",
+        "Not practicing transitions",
+        "Wrong shoes",
+        "Ignoring hydration",
+        "Not knowing the course/station layout",
+        "Ego lifting (sprinting sled push)",
+        "Not training wall balls specifically"
+      ],
+      "tokens_in": 4144,
+      "tokens_out": 1200,
+      "latency_seconds": 27.49,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1b_009",
+        "team1b_007",
+        "team1b_008",
+        "team1b_011",
+        "team1b_010"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Going out too fast on first run/SkiErg",
+          "result": "PASS",
+          "reason": "Mistake 1 mentioned"
+        },
+        {
+          "check": "Not practicing transitions",
+          "result": "PASS",
+          "reason": "Mistake 14 mentioned"
+        },
+        {
+          "check": "Wrong shoes",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Ignoring hydration",
+          "result": "FAIL",
+          "reason": "Not explicitly mentioned"
+        },
+        {
+          "check": "Not knowing the course/station layout",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Ego lifting (sprinting sled push)",
+          "result": "PASS",
+          "reason": "Mistake 6 mentioned"
+        },
+        {
+          "check": "Not training wall balls specifically",
+          "result": "PASS",
+          "reason": "Mistake 4 mentioned"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 7
+    },
+    {
+      "id": "race_03",
+      "category": "Race Strategy",
+      "prompt": "I always hit a wall after station 5 (rowing). The last 3 stations and runs feel impossible. How do I fix this?",
+      "checks": [
+        "Pacing problem in first half",
+        "Energy system depletion",
+        "Fueling during race",
+        "Training the back half specifically",
+        "Race simulation importance",
+        "Mental strategies for suffering"
+      ],
+      "tokens_in": 3372,
+      "tokens_out": 819,
+      "latency_seconds": 19.36,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_011",
+        "team1c_010",
+        "team1c_021",
+        "team1c_001",
+        "team1c_022"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Pacing problem in first half",
+          "result": "PASS",
+          "reason": "Identified pacing issue"
+        },
+        {
+          "check": "Energy system depletion",
+          "result": "PASS",
+          "reason": "Discussed energy management"
+        },
+        {
+          "check": "Fueling during race",
+          "result": "FAIL",
+          "reason": "No mention of fueling"
+        },
+        {
+          "check": "Training the back half specifically",
+          "result": "PASS",
+          "reason": "Provided specific training"
+        },
+        {
+          "check": "Race simulation importance",
+          "result": "PASS",
+          "reason": "Recommended simulation"
+        },
+        {
+          "check": "Mental strategies for suffering",
+          "result": "PASS",
+          "reason": "Offered mindset shift"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "pop_01",
+      "category": "Special Populations",
+      "prompt": "I'm 52 years old and want to do my first Hyrox. Am I too old? What should I worry about?",
+      "checks": [
+        "Not too old \u2014 Hyrox has age group divisions",
+        "Recovery takes longer \u2014 plan accordingly",
+        "Injury prevention priority",
+        "Joint-friendly training modifications",
+        "Realistic expectations",
+        "Warm-up importance"
+      ],
+      "tokens_in": 3675,
+      "tokens_out": 851,
+      "latency_seconds": 19.89,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1a_011",
+        "team2b_synth_009",
+        "team3c_006",
+        "team2b_synth_008",
+        "team3a_synth_007"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Not too old \u2014 Hyrox has age group divisions",
+          "result": "PASS",
+          "reason": "Masters divisions mentioned"
+        },
+        {
+          "check": "Recovery takes longer \u2014 plan accordingly",
+          "result": "PASS",
+          "reason": "48 hours recovery time"
+        },
+        {
+          "check": "Injury prevention priority",
+          "result": "PASS",
+          "reason": "Prehab and mobility emphasized"
+        },
+        {
+          "check": "Joint-friendly training modifications",
+          "result": "PASS",
+          "reason": "Reduced volume and intensity"
+        },
+        {
+          "check": "Realistic expectations",
+          "result": "PASS",
+          "reason": "1:45-2:00 finish goal"
+        },
+        {
+          "check": "Warm-up importance",
+          "result": "PASS",
+          "reason": "10-15 minute warm-up recommended"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "pop_02",
+      "category": "Special Populations",
+      "prompt": "I'm a 28-year-old female, 5'5 140lbs. The women's weights seem light on paper but I struggle with farmer carry and sled push. Is this normal?",
+      "checks": [
+        "Acknowledges the weights are challenging",
+        "Women's specific weight references (correct)",
+        "Grip and upper body often undertrained in women",
+        "Specific training recommendations",
+        "Strength benchmarks to target",
+        "Encouraging but honest"
+      ],
+      "tokens_in": 3114,
+      "tokens_out": 729,
+      "latency_seconds": 18.63,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_004",
+        "team1c_015",
+        "team1a_001",
+        "team1c_013",
+        "team1c_003"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Acknowledges the weights are challenging",
+          "result": "PASS",
+          "reason": "Weights feel heavy"
+        },
+        {
+          "check": "Women's specific weight references (correct)",
+          "result": "PASS",
+          "reason": "Correct weights given"
+        },
+        {
+          "check": "Grip and upper body often undertrained in women",
+          "result": "FAIL",
+          "reason": "Not explicitly stated"
+        },
+        {
+          "check": "Specific training recommendations",
+          "result": "PASS",
+          "reason": "Detailed plan provided"
+        },
+        {
+          "check": "Strength benchmarks to target",
+          "result": "FAIL",
+          "reason": "No specific benchmarks"
+        },
+        {
+          "check": "Encouraging but honest",
+          "result": "PASS",
+          "reason": "Supportive tone used"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 6
+    },
+    {
+      "id": "equip_01",
+      "category": "Equipment",
+      "prompt": "What shoes should I wear for Hyrox? I've heard conflicting advice about running shoes vs cross-trainers.",
+      "checks": [
+        "Hybrid recommendation (cross-trainer with some cushion)",
+        "Specific shoe suggestions or characteristics",
+        "Why pure running shoes are problematic (sled push)",
+        "Why pure lifting shoes are problematic (8km of running)",
+        "Grip considerations for sled work"
+      ],
+      "tokens_in": 3667,
+      "tokens_out": 784,
+      "latency_seconds": 18.65,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team3c_006",
+        "team3c_007",
+        "team3c_002",
+        "team2b_synth_009",
+        "team3c_005"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Hybrid recommendation (cross-trainer with some cushion)",
+          "result": "FAIL",
+          "reason": "No hybrid suggestion"
+        },
+        {
+          "check": "Specific shoe suggestions or characteristics",
+          "result": "PASS",
+          "reason": "Lists specific models"
+        },
+        {
+          "check": "Why pure running shoes are problematic (sled push)",
+          "result": "PASS",
+          "reason": "Less stable base"
+        },
+        {
+          "check": "Why pure lifting shoes are problematic (8km of running)",
+          "result": "PASS",
+          "reason": "Less cushioning"
+        },
+        {
+          "check": "Grip considerations for sled work",
+          "result": "PASS",
+          "reason": "Mentions grip importance"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 5
+    },
+    {
+      "id": "equip_02",
+      "category": "Equipment",
+      "prompt": "What gear do I need for race day? Gloves? Belt? Anything else?",
+      "checks": [
+        "Gloves: pros and cons (grip vs feel)",
+        "No belt needed",
+        "Clothing recommendations",
+        "Hydration vest or belt",
+        "What NOT to bring"
+      ],
+      "tokens_in": 4183,
+      "tokens_out": 702,
+      "latency_seconds": 16.61,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1b_008",
+        "team1b_011",
+        "team5_022",
+        "team8_014",
+        "team1b_009"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Gloves: pros and cons (grip vs feel)",
+          "result": "FAIL",
+          "reason": "No pros mentioned"
+        },
+        {
+          "check": "No belt needed",
+          "result": "FAIL",
+          "reason": "Race belt recommended"
+        },
+        {
+          "check": "Clothing recommendations",
+          "result": "PASS",
+          "reason": "Clear guidelines"
+        },
+        {
+          "check": "Hydration vest or belt",
+          "result": "PASS",
+          "reason": "Soft flask mentioned"
+        },
+        {
+          "check": "What NOT to bring",
+          "result": "PASS",
+          "reason": "List provided"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 5
+    },
+    {
+      "id": "mental_01",
+      "category": "Mental Game",
+      "prompt": "I'm terrified of the wall balls. I've never done 100 in a row and I panic just thinking about it. How do I mentally prepare?",
+      "checks": [
+        "Break it into manageable sets (mental chunking)",
+        "Practice 100 reps in training",
+        "Visualization techniques",
+        "Self-talk strategies",
+        "Process focus (next 10 reps, not remaining 80)",
+        "It's the last station \u2014 dig deep"
+      ],
+      "tokens_in": 3151,
+      "tokens_out": 710,
+      "latency_seconds": 16.85,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1c_019",
+        "team1c_018",
+        "team1c_021",
+        "team2b_synth_005",
+        "team1c_020"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Break it into manageable sets (mental chunking)",
+          "result": "PASS",
+          "reason": "Micro-goals suggested"
+        },
+        {
+          "check": "Practice 100 reps in training",
+          "result": "FAIL",
+          "reason": "Only 50 reps practiced"
+        },
+        {
+          "check": "Visualization techniques",
+          "result": "PASS",
+          "reason": "Success visualization described"
+        },
+        {
+          "check": "Self-talk strategies",
+          "result": "FAIL",
+          "reason": "No self-talk strategies"
+        },
+        {
+          "check": "Process focus (next 10 reps, not remaining 80)",
+          "result": "PASS",
+          "reason": "Focus on small chunks"
+        },
+        {
+          "check": "It's the last station \u2014 dig deep",
+          "result": "FAIL",
+          "reason": "Not mentioned as last station"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 6
+    },
+    {
+      "id": "mental_02",
+      "category": "Mental Game",
+      "prompt": "How do I stay motivated during the middle of the race when everything hurts? Stations 4-6 are where I mentally check out.",
+      "checks": [
+        "Recognize the low point is normal",
+        "Mental cues/mantras",
+        "Focus on process not outcome",
+        "Break race into thirds",
+        "Use other athletes for motivation",
+        "Remind yourself of training"
+      ],
+      "tokens_in": 4414,
+      "tokens_out": 858,
+      "latency_seconds": 20.4,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1b_010",
+        "team1c_021",
+        "team1b_011",
+        "team1b_004",
+        "team1c_009"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Recognize the low point is normal",
+          "result": "PASS",
+          "reason": "Normal low point acknowledged"
+        },
+        {
+          "check": "Mental cues/mantras",
+          "result": "PASS",
+          "reason": "Provides mental frameworks"
+        },
+        {
+          "check": "Focus on process not outcome",
+          "result": "PASS",
+          "reason": "Emphasizes each station"
+        },
+        {
+          "check": "Break race into thirds",
+          "result": "FAIL",
+          "reason": "No thirds mentioned"
+        },
+        {
+          "check": "Use other athletes for motivation",
+          "result": "FAIL",
+          "reason": "No comparison suggested"
+        },
+        {
+          "check": "Remind yourself of training",
+          "result": "FAIL",
+          "reason": "No training reminder"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 6
+    },
+    {
+      "id": "team_01",
+      "category": "Doubles/Team",
+      "prompt": "My partner and I are doing Hyrox Doubles. How should we split the stations? I'm stronger, she's a better runner.",
+      "checks": [
+        "Both run every 1km",
+        "Split stations based on strengths",
+        "Stronger athlete: sled push/pull, farmer carry",
+        "Better runner: could take SkiErg, rowing",
+        "Wall balls and burpees: discuss endurance",
+        "Practice transitions together"
+      ],
+      "tokens_in": 3280,
+      "tokens_out": 550,
+      "latency_seconds": 13.49,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1a_004",
+        "team1a_014",
+        "team3c_007",
+        "team3c_006",
+        "team1a_000"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Both run every 1km",
+          "result": "PASS",
+          "reason": "Running not split"
+        },
+        {
+          "check": "Split stations based on strengths",
+          "result": "PASS",
+          "reason": "Stations split by strength"
+        },
+        {
+          "check": "Stronger athlete: sled push/pull, farmer carry",
+          "result": "PASS",
+          "reason": "Assigned to stronger"
+        },
+        {
+          "check": "Better runner: could take SkiErg, rowing",
+          "result": "PASS",
+          "reason": "Assigned to runner"
+        },
+        {
+          "check": "Wall balls and burpees: discuss endurance",
+          "result": "PASS",
+          "reason": "Endurance discussed"
+        },
+        {
+          "check": "Practice transitions together",
+          "result": "PASS",
+          "reason": "Practice recommended"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "adv_01",
+      "category": "Advanced",
+      "prompt": "I'm an experienced Hyrox athlete with a PR of 63 minutes. I want to break 60 minutes. What does sub-60 training look like?",
+      "checks": [
+        "Specific time targets per station",
+        "Transition time optimization (under 15s)",
+        "Running pace targets (sub 4:00-4:15/km)",
+        "Station speed work",
+        "Specificity over volume",
+        "Race simulation at target pace",
+        "Identifies which 3 minutes to shave"
+      ],
+      "tokens_in": 4099,
+      "tokens_out": 961,
+      "latency_seconds": 23.32,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1a_010",
+        "team1a_011",
+        "team3c_006",
+        "team2b_synth_008",
+        "team1a_014"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Specific time targets per station",
+          "result": "PASS",
+          "reason": "Targets listed"
+        },
+        {
+          "check": "Transition time optimization (under 15s)",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Running pace targets (sub 4:00-4:15/km)",
+          "result": "PASS",
+          "reason": "Pace targets given"
+        },
+        {
+          "check": "Station speed work",
+          "result": "PASS",
+          "reason": "Included in plan"
+        },
+        {
+          "check": "Specificity over volume",
+          "result": "PASS",
+          "reason": "Emphasized in plan"
+        },
+        {
+          "check": "Race simulation at target pace",
+          "result": "PASS",
+          "reason": "Saturday simulation"
+        },
+        {
+          "check": "Identifies which 3 minutes to shave",
+          "result": "PASS",
+          "reason": "Improvement needed listed"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 7
+    },
+    {
+      "id": "adv_02",
+      "category": "Advanced",
+      "prompt": "Should I be doing heart rate zone training for Hyrox? If so, how should my training be distributed across zones?",
+      "checks": [
+        "Zone 2 base building importance",
+        "80/20 or polarized distribution",
+        "Zone-specific session types",
+        "How zones apply to station work",
+        "Heart rate during actual race",
+        "Monitoring tools"
+      ],
+      "tokens_in": 4224,
+      "tokens_out": 882,
+      "latency_seconds": 20.48,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team4_007",
+        "team3c_007",
+        "team3c_006",
+        "team1b_001",
+        "team3c_005"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Zone 2 base building importance",
+          "result": "PASS",
+          "reason": "Clearly emphasized"
+        },
+        {
+          "check": "80/20 or polarized distribution",
+          "result": "PASS",
+          "reason": "Polarized distribution"
+        },
+        {
+          "check": "Zone-specific session types",
+          "result": "PASS",
+          "reason": "Detailed examples given"
+        },
+        {
+          "check": "How zones apply to station work",
+          "result": "PASS",
+          "reason": "Threshold intensity explained"
+        },
+        {
+          "check": "Heart rate during actual race",
+          "result": "FAIL",
+          "reason": "Not directly mentioned"
+        },
+        {
+          "check": "Monitoring tools",
+          "result": "FAIL",
+          "reason": "Not mentioned at all"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 6
+    },
+    {
+      "id": "adv_03",
+      "category": "Advanced",
+      "prompt": "I'm racing 3 Hyrox events this season \u2014 one in 6 weeks, one in 14 weeks, and one in 22 weeks. How do I periodize across all three?",
+      "checks": [
+        "Macro periodization across 22 weeks",
+        "Peak/taper for each race",
+        "Recovery between races",
+        "Base building vs race-specific phases",
+        "Volume management",
+        "Realistic expectations (can't peak for all three)"
+      ],
+      "tokens_in": 3106,
+      "tokens_out": 831,
+      "latency_seconds": 19.52,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team3c_006",
+        "team5_000",
+        "team5_003",
+        "team2b_synth_008",
+        "team1a_000"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Macro periodization across 22 weeks",
+          "result": "PASS",
+          "reason": "Framework provided"
+        },
+        {
+          "check": "Peak/taper for each race",
+          "result": "PASS",
+          "reason": "Taper weeks specified"
+        },
+        {
+          "check": "Recovery between races",
+          "result": "PASS",
+          "reason": "Deload weeks included"
+        },
+        {
+          "check": "Base building vs race-specific phases",
+          "result": "PASS",
+          "reason": "Phases clearly defined"
+        },
+        {
+          "check": "Volume management",
+          "result": "PASS",
+          "reason": "Volume metrics provided"
+        },
+        {
+          "check": "Realistic expectations (can't peak for all three)",
+          "result": "PASS",
+          "reason": "Moderate taper advised"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "edge_01",
+      "category": "Edge Cases",
+      "prompt": "Is Hyrox harder than a marathon? My friend says it's easy compared to running 26.2 miles.",
+      "checks": [
+        "Different type of hard (hybrid vs endurance)",
+        "Hyrox is shorter duration but higher intensity",
+        "Muscular demands vs pure aerobic",
+        "Nuanced answer \u2014 not dismissive of either",
+        "Depends on individual strengths"
+      ],
+      "tokens_in": 3679,
+      "tokens_out": 699,
+      "latency_seconds": 16.73,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team3c_006",
+        "team2b_synth_008",
+        "team2b_synth_009",
+        "team1a_011",
+        "team3c_002"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Different type of hard (hybrid vs endurance)",
+          "result": "PASS",
+          "reason": "Clearly explained difference"
+        },
+        {
+          "check": "Hyrox is shorter duration but higher intensity",
+          "result": "PASS",
+          "reason": "Duration and intensity compared"
+        },
+        {
+          "check": "Muscular demands vs pure aerobic",
+          "result": "PASS",
+          "reason": "Muscle groups and energy systems"
+        },
+        {
+          "check": "Nuanced answer \u2014 not dismissive of either",
+          "result": "PASS",
+          "reason": "Respectful comparison made"
+        },
+        {
+          "check": "Depends on individual strengths",
+          "result": "PASS",
+          "reason": "Implicit in varied demands"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "edge_02",
+      "category": "Edge Cases",
+      "prompt": "Can I just train running and CrossFit and be fine for Hyrox? Or do I need Hyrox-specific training?",
+      "checks": [
+        "CrossFit + running gives a good base BUT...",
+        "Hyrox specificity matters (compromised running, race weights, pacing)",
+        "CrossFit metabolic conditioning is different from Hyrox pacing",
+        "Need to practice actual stations at race weights",
+        "Race simulation is essential"
+      ],
+      "tokens_in": 4990,
+      "tokens_out": 584,
+      "latency_seconds": 14.43,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team3c_002",
+        "team3b_synth_011",
+        "team2b_synth_008",
+        "team3c_008",
+        "team3b_synth_008"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "CrossFit + running gives a good base BUT...",
+          "result": "PASS",
+          "reason": "Base covered"
+        },
+        {
+          "check": "Hyrox specificity matters (compromised running, race weights, pacing)",
+          "result": "PASS",
+          "reason": "Specificity explained"
+        },
+        {
+          "check": "CrossFit metabolic conditioning is different from Hyrox pacing",
+          "result": "PASS",
+          "reason": "Pacing difference noted"
+        },
+        {
+          "check": "Need to practice actual stations at race weights",
+          "result": "PASS",
+          "reason": "Practice at race weight"
+        },
+        {
+          "check": "Race simulation is essential",
+          "result": "PASS",
+          "reason": "Simulation recommended"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "edge_03",
+      "category": "Edge Cases",
+      "prompt": "I just signed up for Hyrox and the race is in 3 weeks. I've never done any of the stations before. What do I do?",
+      "checks": [
+        "Honest about limited improvement in 3 weeks",
+        "Priority: learn each station's technique",
+        "Do at least 1-2 race simulations",
+        "Focus on pacing strategy",
+        "Don't try to get fit \u2014 just get familiar",
+        "Lower expectations but still enjoy it"
+      ],
+      "tokens_in": 3571,
+      "tokens_out": 1200,
+      "latency_seconds": 27.66,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1a_000",
+        "team1b_006",
+        "team1a_002",
+        "team1a_003",
+        "team1c_009"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Honest about limited improvement in 3 weeks",
+          "result": "PASS",
+          "reason": "Acknowledges time limit"
+        },
+        {
+          "check": "Priority: learn each station's technique",
+          "result": "PASS",
+          "reason": "Learn each station safely"
+        },
+        {
+          "check": "Do at least 1-2 race simulations",
+          "result": "PASS",
+          "reason": "Includes half simulations"
+        },
+        {
+          "check": "Focus on pacing strategy",
+          "result": "PASS",
+          "reason": "Build a pacing plan"
+        },
+        {
+          "check": "Don't try to get fit \u2014 just get familiar",
+          "result": "PASS",
+          "reason": "Be functional, not great"
+        },
+        {
+          "check": "Lower expectations but still enjoy it",
+          "result": "PASS",
+          "reason": "Finish with baseline time"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "edge_04",
+      "category": "Edge Cases",
+      "prompt": "What supplements should I take for Hyrox training and race day?",
+      "checks": [
+        "Evidence-based only (caffeine, creatine, beta-alanine)",
+        "Doesn't oversell supplements",
+        "Food-first approach",
+        "Race day: caffeine timing, electrolytes",
+        "No bro-science"
+      ],
+      "tokens_in": 3711,
+      "tokens_out": 681,
+      "latency_seconds": 16.62,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team8_007",
+        "team8_013",
+        "team8_002",
+        "team3c_004",
+        "team8_015"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Evidence-based only (caffeine, creatine, beta-alanine)",
+          "result": "PASS",
+          "reason": "Lists evidence-based supplements"
+        },
+        {
+          "check": "Doesn't oversell supplements",
+          "result": "PASS",
+          "reason": "Provides balanced information"
+        },
+        {
+          "check": "Food-first approach",
+          "result": "FAIL",
+          "reason": "No food emphasis"
+        },
+        {
+          "check": "Race day: caffeine timing, electrolytes",
+          "result": "PASS",
+          "reason": "Caffeine timing correct"
+        },
+        {
+          "check": "No bro-science",
+          "result": "PASS",
+          "reason": "Scientific explanations provided"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 5
+    },
+    {
+      "id": "edge_05",
+      "category": "Edge Cases",
+      "prompt": "My gym doesn't have a ski erg, sleds, or a wall ball wall. How do I train for Hyrox with basic equipment?",
+      "checks": [
+        "Substitute exercises for each station",
+        "SkiErg alternatives (battle ropes, band pulldowns)",
+        "Sled push alternatives (heavy prowler, weighted push)",
+        "Wall ball alternatives (thrusters, med ball throws)",
+        "Farmer carry: heavy dumbbells/kettlebells",
+        "Creative solutions"
+      ],
+      "tokens_in": 4232,
+      "tokens_out": 563,
+      "latency_seconds": 13.76,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team7_011",
+        "team3a_synth_003",
+        "team1a_002",
+        "team3a_synth_007",
+        "team1b_002"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Substitute exercises for each station",
+          "result": "PASS",
+          "reason": "Provides substitutes"
+        },
+        {
+          "check": "SkiErg alternatives (battle ropes, band pulldowns)",
+          "result": "PASS",
+          "reason": "Mentions battle ropes"
+        },
+        {
+          "check": "Sled push alternatives (heavy prowler, weighted push)",
+          "result": "PASS",
+          "reason": "Weighted bear crawl"
+        },
+        {
+          "check": "Wall ball alternatives (thrusters, med ball throws)",
+          "result": "PASS",
+          "reason": "Lists thrusters"
+        },
+        {
+          "check": "Farmer carry: heavy dumbbells/kettlebells",
+          "result": "PASS",
+          "reason": "Heavy DB/KB carries"
+        },
+        {
+          "check": "Creative solutions",
+          "result": "PASS",
+          "reason": "Offers alternatives"
+        }
+      ],
+      "passed": 6,
+      "total_checks": 6
+    },
+    {
+      "id": "persona_01",
+      "category": "Persona",
+      "prompt": "I just finished my first Hyrox in 94 minutes. I feel like I did terrible.",
+      "checks": [
+        "Encouragement \u2014 first race is about finishing",
+        "Contextualizes the time (not bad for first race)",
+        "Identifies areas for improvement",
+        "Motivating tone",
+        "Asks about experience or offers next steps",
+        "Not dismissive of feelings"
+      ],
+      "tokens_in": 4143,
+      "tokens_out": 615,
+      "latency_seconds": 14.07,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team1a_011",
+        "team4_004",
+        "team2b_synth_009",
+        "team1b_000",
+        "team1b_007"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Encouragement \u2014 first race is about finishing",
+          "result": "PASS",
+          "reason": "Finishing emphasized"
+        },
+        {
+          "check": "Contextualizes the time (not bad for first race)",
+          "result": "PASS",
+          "reason": "Time placed in context"
+        },
+        {
+          "check": "Identifies areas for improvement",
+          "result": "PASS",
+          "reason": "Areas listed clearly"
+        },
+        {
+          "check": "Motivating tone",
+          "result": "PASS",
+          "reason": "Tone is uplifting"
+        },
+        {
+          "check": "Asks about experience or offers next steps",
+          "result": "FAIL",
+          "reason": "No questions asked"
+        },
+        {
+          "check": "Not dismissive of feelings",
+          "result": "PASS",
+          "reason": "Feelings acknowledged"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "persona_02",
+      "category": "Persona",
+      "prompt": "Can you just give me a quick yes or no \u2014 is running 5 days a week too much for Hyrox training?",
+      "checks": [
+        "Gives a direct answer (probably yes, too much)",
+        "Brief explanation of why",
+        "Suggests better allocation",
+        "Respects the 'quick answer' request",
+        "Coaching tone, not lecturing"
+      ],
+      "tokens_in": 3616,
+      "tokens_out": 76,
+      "latency_seconds": 3.49,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team3c_007",
+        "team3c_005",
+        "team3c_006",
+        "team2_005",
+        "team2_004"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Gives a direct answer",
+          "result": "PASS",
+          "reason": "Direct yes answer"
+        },
+        {
+          "check": "Brief explanation of why",
+          "result": "PASS",
+          "reason": "Explains fatigue risk"
+        },
+        {
+          "check": "Suggests better allocation",
+          "result": "PASS",
+          "reason": "Provides session plan"
+        },
+        {
+          "check": "Respects the 'quick answer' request",
+          "result": "FAIL",
+          "reason": "Too detailed response"
+        },
+        {
+          "check": "Coaching tone, not lecturing",
+          "result": "PASS",
+          "reason": "Helpful advice tone"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 5
+    },
+    {
+      "id": "persona_03",
+      "category": "Persona",
+      "prompt": "My coach at my CrossFit gym says I should just do more MetCons to prepare for Hyrox. Is he right?",
+      "checks": [
+        "Respectfully disagrees or qualifies",
+        "Explains why MetCons alone aren't sufficient",
+        "Running volume is the gap for most CrossFitters",
+        "Doesn't trash the other coach",
+        "Offers specific alternatives"
+      ],
+      "tokens_in": 3437,
+      "tokens_out": 659,
+      "latency_seconds": 15.86,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team3c_002",
+        "team3c_000",
+        "team3c_001",
+        "team2b_synth_009",
+        "team2b_synth_008"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Respectfully disagrees or qualifies",
+          "result": "PASS",
+          "reason": "Response is respectful"
+        },
+        {
+          "check": "Explains why MetCons alone aren't sufficient",
+          "result": "PASS",
+          "reason": "Provides detailed explanation"
+        },
+        {
+          "check": "Running volume is the gap for most CrossFitters",
+          "result": "PASS",
+          "reason": "Identifies running volume gap"
+        },
+        {
+          "check": "Doesn't trash the other coach",
+          "result": "PASS",
+          "reason": "No personal attack"
+        },
+        {
+          "check": "Offers specific alternatives",
+          "result": "PASS",
+          "reason": "Provides workout alternatives"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "multi_01",
+      "category": "Multi-Turn",
+      "prompt": "I want to get better at Hyrox but I don't know where to start. Can you help?",
+      "checks": [
+        "Asks clarifying questions (current fitness, race date, experience)",
+        "Doesn't give generic advice without info",
+        "Shows coaching instinct to assess before prescribing",
+        "Welcoming and organized"
+      ],
+      "tokens_in": 3597,
+      "tokens_out": 99,
+      "latency_seconds": 4.13,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team3c_004",
+        "team3b_synth_008",
+        "team3c_003",
+        "team3c_002",
+        "team3c_005"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Asks clarifying questions (current fitness, race date, experience)",
+          "result": "PASS",
+          "reason": "Asks relevant questions"
+        },
+        {
+          "check": "Doesn't give generic advice without info",
+          "result": "PASS",
+          "reason": "No advice given"
+        },
+        {
+          "check": "Shows coaching instinct to assess before prescribing",
+          "result": "PASS",
+          "reason": "Assesses before planning"
+        },
+        {
+          "check": "Welcoming and organized",
+          "result": "PASS",
+          "reason": "Clear and friendly tone"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 4
+    },
+    {
+      "id": "multi_02",
+      "category": "Multi-Turn",
+      "prompt": "What's more important for Hyrox \u2014 strength or cardio?",
+      "checks": [
+        "Neither \u2014 it's the hybrid that matters",
+        "Depends on current weakness",
+        "Specific examples of why both matter",
+        "Nuanced answer",
+        "May ask about current profile"
+      ],
+      "tokens_in": 4842,
+      "tokens_out": 90,
+      "latency_seconds": 3.08,
+      "error": null,
+      "is_v2_new": false,
+      "rag_chunks_retrieved": [
+        "team4_004",
+        "team7_014",
+        "team2_013",
+        "team3c_002",
+        "team7_013"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Neither \u2014 it's the hybrid that matters",
+          "result": "FAIL",
+          "reason": "No hybrid mention"
+        },
+        {
+          "check": "Depends on current weakness",
+          "result": "PASS",
+          "reason": "Asks about weakness"
+        },
+        {
+          "check": "Specific examples of why both matter",
+          "result": "FAIL",
+          "reason": "No examples given"
+        },
+        {
+          "check": "Nuanced answer",
+          "result": "PASS",
+          "reason": "Asks for context"
+        },
+        {
+          "check": "May ask about current profile",
+          "result": "PASS",
+          "reason": "Asks about profile"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_equip_01",
+      "category": "Equipment (V2 NEW)",
+      "prompt": "Should I wear Nike Vaporfly or Alphafly for Hyrox? They're my fastest running shoes.",
+      "checks": [
+        "Says NO \u2014 carbon plate racing flats are wrong for Hyrox",
+        "Explains lateral stability issues on sleds",
+        "Explains lack of grip on turf/sled surfaces",
+        "Risk of injury during lateral movements",
+        "Recommends cross-trainers instead (e.g., Nike Metcon, TYR CXT-1, Reebok Nano)"
+      ],
+      "tokens_in": 4973,
+      "tokens_out": 631,
+      "latency_seconds": 14.38,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team4_004",
+        "team3c_005",
+        "team3c_006",
+        "team3c_007",
+        "team3c_008"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Says NO \u2014 carbon plate racing flats are wrong for Hyrox",
+          "result": "PASS",
+          "reason": "Strongly advises against"
+        },
+        {
+          "check": "Explains lateral stability issues on sleds",
+          "result": "PASS",
+          "reason": "Sled push compromises plate"
+        },
+        {
+          "check": "Explains lack of grip on turf/sled surfaces",
+          "result": "FAIL",
+          "reason": "No grip issue mentioned"
+        },
+        {
+          "check": "Risk of injury during lateral movements",
+          "result": "PASS",
+          "reason": "Injury risk explained"
+        },
+        {
+          "check": "Recommends cross-trainers instead (e.g., Nike Metcon, TYR CXT-1, Reebok Nano)",
+          "result": "PASS",
+          "reason": "Cross-trainers recommended"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_equip_02",
+      "category": "Equipment (V2 NEW)",
+      "prompt": "Should I wear a weightlifting belt for the sled push and farmer carry stations?",
+      "checks": [
+        "No belt needed for Hyrox",
+        "Explains it restricts breathing under sustained effort",
+        "Hyrox is endurance-strength, not max effort lifting",
+        "Core should be trained to brace without belt",
+        "Not practical for transitions"
+      ],
+      "tokens_in": 2952,
+      "tokens_out": 339,
+      "latency_seconds": 8.96,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team1c_013",
+        "team1c_015",
+        "team7_015",
+        "team1c_003",
+        "team1c_004"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "No belt needed for Hyrox",
+          "result": "PASS",
+          "reason": "Clearly states no belt needed"
+        },
+        {
+          "check": "Explains it restricts breathing under sustained effort",
+          "result": "PASS",
+          "reason": "Restricts rib cage expansion"
+        },
+        {
+          "check": "Hyrox is endurance-strength, not max effort lifting",
+          "result": "PASS",
+          "reason": "Describes near-maximal efforts"
+        },
+        {
+          "check": "Core should be trained to brace without belt",
+          "result": "FAIL",
+          "reason": "Not explicitly mentioned"
+        },
+        {
+          "check": "Not practical for transitions",
+          "result": "FAIL",
+          "reason": "Not mentioned at all"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_equip_03",
+      "category": "Equipment (V2 NEW)",
+      "prompt": "What specific shoe models do top Hyrox athletes actually wear?",
+      "checks": [
+        "Mentions 2+ real shoe models (e.g., TYR CXT-1, Nike Metcon, Reebok Nano, NOBULL, Puma Fuse)",
+        "Explains cross-trainer category",
+        "Grip for sled work",
+        "Enough cushion for 8km running",
+        "Does NOT recommend Vaporfly, Alphafly, or pure racing flats"
+      ],
+      "tokens_in": 3560,
+      "tokens_out": 725,
+      "latency_seconds": 17.11,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team3c_004",
+        "team3c_003",
+        "team4_004",
+        "team3c_002",
+        "team3b_synth_008"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Mentions 2+ real shoe models",
+          "result": "PASS",
+          "reason": "Multiple models listed"
+        },
+        {
+          "check": "Explains cross-trainer category",
+          "result": "PASS",
+          "reason": "Category explained clearly"
+        },
+        {
+          "check": "Grip for sled work",
+          "result": "PASS",
+          "reason": "Grip mentioned for sled"
+        },
+        {
+          "check": "Enough cushion for 8km running",
+          "result": "PASS",
+          "reason": "Cushion discussed for running"
+        },
+        {
+          "check": "Does NOT recommend Vaporfly, Alphafly, or pure racing flats",
+          "result": "PASS",
+          "reason": "Vaporfly not recommended"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_doubles_01",
+      "category": "Doubles (V2 NEW)",
+      "prompt": "In Hyrox Doubles, can my partner and I alternate the 1km runs \u2014 I run odds, she runs evens?",
+      "checks": [
+        "BOTH partners MUST run ALL 8 runs together",
+        "You cannot split or alternate runs",
+        "Only stations are split (4 each)",
+        "Running together is a key rule",
+        "Pacing to the slower partner's speed"
+      ],
+      "tokens_in": 3552,
+      "tokens_out": 395,
+      "latency_seconds": 10.96,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team1a_004",
+        "team1a_000",
+        "team1b_000",
+        "team3c_006",
+        "team1a_014"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "BOTH partners MUST run ALL 8 runs together",
+          "result": "PASS",
+          "reason": "Clearly stated rule"
+        },
+        {
+          "check": "You cannot split or alternate runs",
+          "result": "PASS",
+          "reason": "Explicitly forbidden"
+        },
+        {
+          "check": "Only stations are split (4 each)",
+          "result": "FAIL",
+          "reason": "Stations split not limited"
+        },
+        {
+          "check": "Running together is a key rule",
+          "result": "PASS",
+          "reason": "Emphasized as important"
+        },
+        {
+          "check": "Pacing to the slower partner's speed",
+          "result": "PASS",
+          "reason": "Recommended strategy"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_doubles_02",
+      "category": "Doubles (V2 NEW)",
+      "prompt": "How does the Relay format work compared to Doubles? We have 4 friends interested.",
+      "checks": [
+        "Relay is 4 athletes, not 2",
+        "Each athlete does 2 runs and 2 stations",
+        "Handoff/transition protocol",
+        "Differs from Doubles (which is 2 athletes, all runs together)"
+      ],
+      "tokens_in": 3317,
+      "tokens_out": 505,
+      "latency_seconds": 12.71,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team1a_004",
+        "team1a_005",
+        "team1a_000",
+        "team1a_006",
+        "team1a_014"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Relay is 4 athletes, not 2",
+          "result": "PASS",
+          "reason": "Clearly states 4-person team"
+        },
+        {
+          "check": "Each athlete does 2 runs and 2 stations",
+          "result": "PASS",
+          "reason": "Sequence outlined"
+        },
+        {
+          "check": "Handoff/transition protocol",
+          "result": "FAIL",
+          "reason": "Not mentioned"
+        },
+        {
+          "check": "Differs from Doubles (which is 2 athletes, all runs together)",
+          "result": "PASS",
+          "reason": "Explained difference"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 4
+    },
+    {
+      "id": "v2_weights_01",
+      "category": "Weights (V2 NEW)",
+      "prompt": "What's the sled push weight versus the sled pull weight for men's open? Are they the same?",
+      "checks": [
+        "Sled push: 152kg / 335lbs",
+        "Sled pull: 103kg / 227lbs",
+        "They are NOT the same \u2014 push is heavier",
+        "Correct distinction between push and pull"
+      ],
+      "tokens_in": 3495,
+      "tokens_out": 260,
+      "latency_seconds": 7.43,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team1a_001",
+        "team1c_004",
+        "team1c_005",
+        "team1c_006",
+        "team1c_002"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Sled push: 152kg / 335lbs",
+          "result": "PASS",
+          "reason": "Weight matches"
+        },
+        {
+          "check": "Sled pull: 103kg / 227lbs",
+          "result": "PASS",
+          "reason": "Weight matches"
+        },
+        {
+          "check": "They are NOT the same \u2014 push is heavier",
+          "result": "PASS",
+          "reason": "Push is heavier"
+        },
+        {
+          "check": "Correct distinction between push and pull",
+          "result": "PASS",
+          "reason": "Explained differences"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 4
+    },
+    {
+      "id": "v2_weights_02",
+      "category": "Weights (V2 NEW)",
+      "prompt": "Give me the complete weight chart for Hyrox women's open division \u2014 every station.",
+      "checks": [
+        "Sled push weight for women",
+        "Sled pull weight for women",
+        "Farmer carry: 2x16kg",
+        "Sandbag: 10kg",
+        "Wall ball: 4kg at 9ft/2.7m target",
+        "Wall ball reps: 75 (not 100)"
+      ],
+      "tokens_in": 3483,
+      "tokens_out": 777,
+      "latency_seconds": 18.5,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team1a_001",
+        "team1c_023",
+        "team1a_004",
+        "team1c_012",
+        "team1a_005"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Sled push weight for women",
+          "result": "PASS",
+          "reason": "Weight matches"
+        },
+        {
+          "check": "Sled pull weight for women",
+          "result": "PASS",
+          "reason": "Weight correct"
+        },
+        {
+          "check": "Farmer carry: 2x16kg",
+          "result": "PASS",
+          "reason": "Weight matches"
+        },
+        {
+          "check": "Sandbag: 10kg",
+          "result": "PASS",
+          "reason": "Weight correct"
+        },
+        {
+          "check": "Wall ball: 4kg at 9ft/2.7m target",
+          "result": "PASS",
+          "reason": "Details match"
+        },
+        {
+          "check": "Wall ball reps: 75 (not 100)",
+          "result": "FAIL",
+          "reason": "Reps incorrect"
+        }
+      ],
+      "passed": 5,
+      "total_checks": 6
+    },
+    {
+      "id": "v2_venue_01",
+      "category": "Venue (V2 NEW)",
+      "prompt": "Is Hyrox always indoors? What's the running surface like? Are there hills?",
+      "checks": [
+        "Always indoors (convention centers, exhibition halls)",
+        "Flat \u2014 no hills",
+        "Running surface is typically artificial turf or similar",
+        "Does NOT claim outdoor courses or hills",
+        "Does NOT hallucinate specific venue names"
+      ],
+      "tokens_in": 3607,
+      "tokens_out": 455,
+      "latency_seconds": 11.73,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team1a_002",
+        "team3c_006",
+        "team1a_000",
+        "team3c_004",
+        "team3c_007"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Always indoors (convention centers, exhibition halls)",
+          "result": "PASS",
+          "reason": "Confirmed indoors"
+        },
+        {
+          "check": "Flat \u2014 no hills",
+          "result": "PASS",
+          "reason": "No hills mentioned"
+        },
+        {
+          "check": "Running surface is typically artificial turf or similar",
+          "result": "FAIL",
+          "reason": "Artificial flooring/carpet"
+        },
+        {
+          "check": "Does NOT claim outdoor courses or hills",
+          "result": "PASS",
+          "reason": "No outdoor claim"
+        },
+        {
+          "check": "Does NOT hallucinate specific venue names",
+          "result": "FAIL",
+          "reason": "Venue names listed"
+        }
+      ],
+      "passed": 3,
+      "total_checks": 5
+    },
+    {
+      "id": "v2_technique_01",
+      "category": "Technique (V2 NEW)",
+      "prompt": "Should I lock my arms out or bend them during the sled push? I've seen coaches disagree on this.",
+      "checks": [
+        "Arms extended/locked for better force transfer",
+        "Acknowledges the debate exists",
+        "Explains biomechanical reasoning",
+        "Not dismissive of other approaches"
+      ],
+      "tokens_in": 4353,
+      "tokens_out": 522,
+      "latency_seconds": 12.91,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team1c_004",
+        "team1c_003",
+        "team1b_004",
+        "team1c_005",
+        "team6_010"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Arms extended/locked for better force transfer",
+          "result": "PASS",
+          "reason": "Mentions locked arms"
+        },
+        {
+          "check": "Acknowledges the debate exists",
+          "result": "PASS",
+          "reason": "Debate acknowledged"
+        },
+        {
+          "check": "Explains biomechanical reasoning",
+          "result": "PASS",
+          "reason": "Explains reasoning"
+        },
+        {
+          "check": "Not dismissive of other approaches",
+          "result": "PASS",
+          "reason": "Presents both sides"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 4
+    },
+    {
+      "id": "v2_technique_02",
+      "category": "Technique (V2 NEW)",
+      "prompt": "What's a realistic burpee broad jump time for an intermediate athlete? Someone told me 2:45 is normal.",
+      "checks": [
+        "2:45 is NOT realistic for intermediate \u2014 that's elite/sub-60 pace",
+        "Intermediate is more like 4:00-5:30",
+        "Provides realistic range by level",
+        "Doesn't agree with unrealistic benchmarks"
+      ],
+      "tokens_in": 3283,
+      "tokens_out": 457,
+      "latency_seconds": 11.75,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team2b_synth_006",
+        "team1a_012",
+        "team1c_008",
+        "team5_009",
+        "team1a_009"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "2:45 is NOT realistic for intermediate \u2014 that's elite/sub-60 pace",
+          "result": "PASS",
+          "reason": "Correctly disputes 2:45 time"
+        },
+        {
+          "check": "Intermediate is more like 4:00-5:30",
+          "result": "PASS",
+          "reason": "Provides accurate range"
+        },
+        {
+          "check": "Provides realistic range by level",
+          "result": "PASS",
+          "reason": "Gives detailed benchmarks"
+        },
+        {
+          "check": "Doesn't agree with unrealistic benchmarks",
+          "result": "PASS",
+          "reason": "Correctly disputes friend's claim"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 4
+    },
+    {
+      "id": "v2_boundary_01",
+      "category": "Boundaries (V2 NEW)",
+      "prompt": "What's the best testosterone booster for Hyrox performance? My buddy takes turkesterone and says it works.",
+      "checks": [
+        "Does not recommend testosterone boosters",
+        "Stays evidence-based",
+        "May redirect to proven strategies (sleep, nutrition, training)",
+        "Professional boundary on supplement claims"
+      ],
+      "tokens_in": 3424,
+      "tokens_out": 339,
+      "latency_seconds": 9.0,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team8_007",
+        "team3c_004",
+        "team2_003",
+        "team2_004",
+        "team4_004"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Does not recommend testosterone boosters",
+          "result": "PASS",
+          "reason": "Clearly states no recommendation"
+        },
+        {
+          "check": "Stays evidence-based",
+          "result": "PASS",
+          "reason": "Cites specific studies"
+        },
+        {
+          "check": "May redirect to proven strategies",
+          "result": "PASS",
+          "reason": "Mentions training and nutrition"
+        },
+        {
+          "check": "Professional boundary on supplement claims",
+          "result": "PASS",
+          "reason": "Avoids endorsement of supplements"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 4
+    },
+    {
+      "id": "v2_boundary_02",
+      "category": "Boundaries (V2 NEW)",
+      "prompt": "I have a herniated disc at L4-L5. Can you design a training program around it?",
+      "checks": [
+        "Does NOT design a full program around a herniated disc",
+        "Recommends seeing a physical therapist or sports medicine doctor",
+        "May offer general guidance but defers to medical professional",
+        "Acknowledges the limitation of coaching vs medical advice"
+      ],
+      "tokens_in": 3785,
+      "tokens_out": 408,
+      "latency_seconds": 10.72,
+      "error": null,
+      "is_v2_new": true,
+      "rag_chunks_retrieved": [
+        "team7_020",
+        "team5b_016",
+        "team3a_synth_011",
+        "team3a_synth_003",
+        "team3a_synth_010"
+      ],
+      "rag_chunk_count": 5,
+      "grades": [
+        {
+          "check": "Does NOT design a full program around a herniated disc",
+          "result": "PASS",
+          "reason": "Lacks medical clearance"
+        },
+        {
+          "check": "Recommends seeing a physical therapist or sports medicine doctor",
+          "result": "PASS",
+          "reason": "Seeks doctor's input"
+        },
+        {
+          "check": "May offer general guidance but defers to medical professional",
+          "result": "PASS",
+          "reason": "Provides general guidance"
+        },
+        {
+          "check": "Acknowledges the limitation of coaching vs medical advice",
+          "result": "PASS",
+          "reason": "Recognizes coaching limits"
+        }
+      ],
+      "passed": 4,
+      "total_checks": 4
+    }
+  ]
+}

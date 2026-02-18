@@ -511,9 +511,9 @@ const SPRING_SNAP = { stiffness: 500, damping: 35, mass: 0.5 };
 
 ### 8.1 Library: Lucide React
 
-- **Why**: Native to both Kokonut UI and shadcn/ui — ensures cohesive look
+- **Why**: Native to shadcn/ui, consistent stroke style, comprehensive icon set
 - **Style**: 1.5px stroke weight, 24px default, rounded line caps
-- **Install**: `lucide-react` (already in Kokonut dependencies)
+- **Install**: `lucide-react` (already in project dependencies)
 
 ### 8.2 Icon Usage Rules
 
@@ -564,14 +564,13 @@ RUN → [ROWING] → RUN → [FARMERS] → RUN → [LUNGES] → RUN → [WALL BA
 
 ## 10. Component Architecture
 
-### 10.1 Four-Layer Model
+### 10.1 Three-Layer Model
 
 | Layer | Source | Purpose |
 |-------|--------|---------|
-| **Layer 1** | shadcn/ui (Radix primitives) | Button, Input, Select, Dialog, Sheet, Tabs, Progress, Switch, Slider, Checkbox, Radio Group, Label, Separator, Scroll Area, Tooltip, Popover, Command, Toast (sonner) |
-| **Layer 2** | Kokonut UI Free (21 components) | AI Input Selector, AI State Loading, AI Text Loading, AI Voice, Bento Grid, Morphic Navbar, Smooth Tab, Smooth Drawer, Profile Dropdown, Hold Button, Apple Activity Card, Card Stack, File Upload, text animations, Switch Button |
-| **Layer 3** | Kokonut UI Pro ($129 lifetime) | Forms (multi-step, edit profile, schedule), Inputs (10 variants), Cards (9 variants), Login pages (8), FAQ Accordions, Calendar Schedule, Animated List |
-| **Layer 4** | Supplementary | Recharts (charts), TanStack Table (data tables), sonner (toasts), react-day-picker (calendar), canvas-confetti (celebrations) |
+| **Layer 1** | shadcn/ui (Radix primitives) | Button, Input, Select, Dialog, Sheet, Tabs, Progress, Switch, Slider, Checkbox, Radio Group, Label, Separator, Scroll Area, Tooltip, Popover, Command, Drawer, Dropdown Menu, Textarea, Toast (sonner) — 21 components installed |
+| **Layer 2** | Custom B0 components | Built from scratch using B0 design tokens + shadcn primitives + Lucide icons. These define the app experience: chat, workout execution, dashboard analytics, training calendar, benchmark tracking |
+| **Layer 3** | Supplementary libraries | Recharts (charts), TanStack Table (data tables), sonner (toasts), canvas-confetti (celebrations), @dnd-kit (drag-and-drop) |
 
 ### 10.2 Custom Components to Build (12)
 
@@ -598,7 +597,7 @@ RUN → [ROWING] → RUN → [FARMERS] → RUN → [LUNGES] → RUN → [WALL BA
 | **UI** | React 19, TypeScript 5.9+ (strict) |
 | **Styling** | Tailwind CSS v4 (Oxide engine) |
 | **Animation** | Motion v12+ (Framer Motion successor) |
-| **Components** | shadcn/ui + Kokonut UI Free + Pro |
+| **Components** | shadcn/ui + custom B0 components |
 | **Charts** | Recharts |
 | **Tables** | TanStack Table v5 |
 | **State** | TanStack Query v5 (server), Zustand (UI) |
@@ -640,7 +639,7 @@ RUN → [ROWING] → RUN → [FARMERS] → RUN → [LUNGES] → RUN → [WALL BA
 - [x] Performance budget (mobile limits, reduced motion)
 - [x] Icon library (Lucide React) with station mapping
 - [x] Signature element ("The Station Rail")
-- [x] Component architecture (4-layer model)
+- [x] Component architecture (3-layer model)
 - [x] 12 custom components identified
 - [x] Full tech stack confirmed
 - [x] Yellow accent usage rules (scarcity = impact)

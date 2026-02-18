@@ -5,19 +5,19 @@ import './globals.css';
 
 const barlowCondensed = Barlow_Condensed({
   subsets: ['latin'],
-  weight: ['700', '800', '900'],
+  weight: ['600', '700'],
   variable: '--font-display',
 });
 
 const ibmPlexSans = IBM_Plex_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  weight: ['400', '500'],
   variable: '--font-body',
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
-  weight: ['400', '700'],
+  weight: ['400'],
   variable: '--font-mono',
 });
 
@@ -32,9 +32,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${barlowCondensed.variable} ${ibmPlexSans.variable} ${jetbrainsMono.variable}`}>
       <body
-        className={`${barlowCondensed.variable} ${ibmPlexSans.variable} ${jetbrainsMono.variable} font-body antialiased`}
+        className="font-body antialiased"
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           {children}

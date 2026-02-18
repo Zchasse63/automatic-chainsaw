@@ -18,6 +18,15 @@ node_modules/
 
 # testing
 /coverage
+/playwright-report/
+/test-results/
+test/e2e/.e2e-credentials.json
+
+# supabase temp
+supabase/.temp/
+
+# deno
+deno.lock
 
 # next.js
 /.next/

@@ -1,0 +1,834 @@
+{
+  "created_at": 1771015061,
+  "id": "resp_33e76a11-cbdf-4254-a25d-d4da2c21d19f",
+  "model": "anthropic/claude-opus-4-6",
+  "object": "response",
+  "output": [
+    {
+      "queries": [
+        "Fireworks AI serverless LoRA inference supported models 2025",
+        "Together AI serverless multi-LoRA supported models 2025",
+        "Nebius AI LoRA fine-tuning serverless inference models"
+      ],
+      "results": [
+        {
+          "date": "2026-02-11",
+          "id": 1,
+          "last_updated": "2026-02-12T22:37:34",
+          "snippet": "### Serverless inferenceFireworks supports serverless inference for popular models like Llama 3.1 405B. These models are pre-deployed by the Fireworks team for the community to use. Take a look at the Models page for the latest list of serverless models. Serverless inference is billed on a per-token basis depending on the model size. See our Pricing page for details.\nCustom base models are not supported for serverless inference.\n\nSince serverless deployments are shared across users, there are no SLA guarantees for up-time or latency. It is best-effort. The Fireworks team may also deprecate models from serverless with at least 2 weeks notice.",
+          "source": "web",
+          "title": "Overview - Fireworks AI Docsdocs.fireworks.ai \u203a models \u203a overview",
+          "url": "https://docs.fireworks.ai/models/overview"
+        },
+        {
+          "date": "2026-01-28",
+          "id": 2,
+          "last_updated": "2026-02-08T10:33:18",
+          "snippet": "",
+          "source": "web",
+          "title": "Fine-tuning - Supported Models - Together.ai Docs",
+          "url": "https://docs.together.ai/docs/fine-tuning-models"
+        },
+        {
+          "date": "2025-10-31",
+          "id": 3,
+          "last_updated": "2025-11-25T00:39:09.177781",
+          "snippet": "## Build specialized AI solutions\n\n### Advanced LoRA fine-tuning\n\nAdapt models to classification tasks, code completion or domain-specific requirements, without extensive prompt engineering. Achieve better results with less data.View documentation\n\n### Seamless model deployment\n\nFine-tune your custom LLM and deploy it instantly \u2014 no complex infrastructure required. Download model checkpoints for local use or auto-deploy serverlessly on our infrastructure. Scale from prototype to production seamlessly as your needs grow.Start fine-tuning",
+          "source": "web",
+          "title": "Fine-tune open models with Nebius Token Factory",
+          "url": "https://nebius.com/services/token-factory/fine-tuning"
+        },
+        {
+          "date": "2025-12-05",
+          "id": 4,
+          "last_updated": "2026-02-12T21:58:59",
+          "snippet": "Supervised Fine-Tuning (SFT) is critical for adapting general-purpose Large Language Models (LLMs) to domain-specific tasks, significantly improving performance in real-world applications. Fireworks AI facilitates easy and scalable SFT through its intuitive APIs and support for Low-Rank Adaptation (LoRA), allowing efficient fine-tuning without full parameter updates.\nLoRA significantly reduces the computational cost of fine-tuning large models by updating only a small subset of parameters in a low-rank structure, making it particularly suitable for large models like LLaMA or DeepSeek.\n\nqLoRA (Quantized LoRA) further improves efficiency by enabling fine-tuning of 4-bit and 8-bit quantized models (dependent on model types) without sacrificing performance, reducing memory requirements even more.\nFireworks AI supports both LoRA and qLoRA tuning, allowing up to 100 LoRA adaptations to run simultaneously on a dedicated deployment without extra cost.\n\n**Step-by-Step Guide to Fine-Tuning with Fireworks AI**\n\nGo to fireworks.ai > Model Library > Filter \u201cTunable\u201d\n\nYou can also filter for \u201cServerless\u201d models if you are planning to run it serverless\nThis ensures that you are selecting models which allow LoRA-based tuning and deployments. These models support uploading LoRA adapters even if they were trained on another platform. You can also upload custom models that have the same architecture as the tunable ones in the list, and those models will also be tunable. For example, a deepseek distilled llama 8b model works just as well as a vanilla llama 8b model.\n**Let\u2019s say we select \u201cDeepSeek R1 Distill Llama 70b\u201d**\n\n**\u26a0\ufe0f Note:** Serverless LoRA is not currently supported (February 2026). Please check our **Documentation Page** for the latest updates on supported features and fine-tuning capabilities.\n\nDatasets must adhere strictly to the JSONL format, where each line represents a complete JSON-formatted training example.\n\n\u2026\n\nSelect the LoRA model from the drop-down list.\n\nClick \u201cContinue\u201d\n\nThen select your deployment. You can either deploy the LoRA model \u201cserverless\u201d or via an \u201con-demand deployment\u201d.\n\nDeployment Options:\n\n\ud83d\udca1 PS: Use an existing on-demand deployment to load the LoRA model onto (instead of serverless)\nPS: As we are fine-tuning the DeepSeek R1 Distill Llama 70B, we will need to deploy the LoRA on -demand, rather than serverless. Use an existing on-demand deployment to load the LoRA model onto (instead of serverless)\n\nEnter the model display name and click \u201cSubmit\u201d\nBy following these steps, you can effectively adapt LLMs to your specific use case using Fireworks AI\u2019s fine-tuning pipeline with LoRA. This approach ensures lower costs, faster training, and scalable deployment for real-world applications.",
+          "source": "web",
+          "title": "Supervised Fine-Tuning (SFT) with LoRA on Fireworks AI",
+          "url": "https://fireworks.ai/blog/supervised-fine-tuning-tutorial"
+        },
+        {
+          "date": "2024-12-18",
+          "id": 5,
+          "last_updated": "2026-02-13T16:34:15",
+          "snippet": "**LoRA (Low-Rank Adaptation) support on Together Serverless**, enabling you to fine-tune and deploy hundreds of custom LoRA adapters while only paying base model per-token prices to run them. Fine-tuning is a powerful tool to improve model performance for specific tasks e.g. style, formatting, and translation \u2013 but managing multiple fine-tuned models traditionally comes with significant complexity and cost. Our platform solves this by letting you serve hundreds of custom LoRA adapters alongside a single base model, dramatically reducing costs while delivering high-performance customized models without the headaches of infrastructure management.\nToday's launch includes:\n\n**Serverless LoRA inference with pay-per-token pricing.**Upload your own LoRA adapters (for example from Hugging Face) and run inference on them with any of our compatible serverless models - including popular models like Llama 3.1 and Qwen 2.5. **Multi-LoRA support**on our serverless platform, enabling dynamic adapter switching at scale.\n\n\u2026\n\nWe're working with leading companies like Salesforce, Zomato and The Washington Post to bring their fine-tuned models from experimentation to production, while partnering with fine-tuning platforms like OpenPipe to power inference for their customers.\n\n*\u201cWe use LoRAs to help our customers to train and deploy heavily customized models faster. Together AI's serverless multi-LoRA inference scales well while maintaining high throughput and low latency. We\u2019re excited to partner with them to enable our customers to bring fine-tuned models directly into production seamlessly.\u201d * **- Kyle Corbitt, Founder of OpenPipe**\n\n{{custom-cta-1}}\n\n## LoRA: A powerful method for efficient fine-tuning\n\n**LoRA (Low-Rank Adaptation)** is an efficient approach to fine-tuning models. Rather than modifying the entire model's weights, LoRA creates lightweight \"adapters\" that require less memory for training and can be dynamically loaded at run-time, while keeping the base model unchanged. This approach significantly reduces infrastructure costs and complexity, as you can use a single base model and swap smaller task-specific adapters as needed.\n\n\u2026\n\n## The power of multi-LoRA: Run custom AI models at scale\n\n**Multi-LoRA** unlocks the ability to serve multiple AI adapters with a single base model and swap between them at runtime. Before, if you had 100 different fine-tuned models, you would need to host and deploy each model on its own infrastructure. With multi-LoRA you can serve hundreds of LoRA adapters on the same infrastructure as the base model, leading to significant cost savings and rapid experimentation.\n\n\u2026\n\nDeploying this multi-LoRA architecture on platforms like Amazon SageMaker requires complex memory and batching configurations to manage GPU resources and adapter swapping. Together Serverless eliminates this complexity by automatically handling the serving and scaling of hundreds of LoRAs while maintaining high performance and efficiency, at the same cost as the base model.\n\n## Why run LoRAs on Together AI\n\n### Cost-efficient model customization\n\nRunning multiple fine-tuned models traditionally requires separate instances and infrastructure for each model. With LoRAs on Together AI, you can serve hundreds of custom adapters at the same cost as running the base model alone. In addition to that, with our serverless infrastructure you only pay-per-token for using your fine-tuned models, eliminating spend on idle infrastructure.\n\n\u2026\n\n### Optimized performance at scale\n\nRunning LoRA adapters dynamically (at run-time) typically introduces some performance overhead, forcing organizations to choose between speed, cost and flexibility when running fine-tuned models. At Together AI, our optimized serving system eliminates this trade-off,\n**maintaining up to 90% of base model performance**, while providing incredibly flexible per-token pricing. These results are driven by the **Together Kernel Collection (TKC)** \u2014 featuring innovations like Together FlashAttention 3 \u2014 and other advanced techniques such as **Cross-LoRA Continuous Batching**, which parallelizes heterogeneous requests to maximize GPU utilization, and **Adapter Prefetching**, which scales seamlessly without overloading GPU memory.\nOur serverless infrastructure is specifically tuned for efficient adapter serving, while our support for **FP8 Turbo** models ensures faster, more memory-efficient inference. **Speculative decoding** further accelerates generation, enabling us to deliver a scalable, high-performance LoRA serving solution despite the inherent challenges of runtime adapter computation.\n\n\u2026\n\n- Configurable LoRA rank: trade off between the fine-tuning capacity and the size of the final adapter\n\n- Layer-specific adapter application for targeted model improvements: apply LoRA to all linear layers, or just a selection of parameters (for example, query/key/value projections in attention)\n\n- Adjustable LoRA alpha parameter to control the fine-tuning strength",
+          "source": "web",
+          "title": "Announcing Serverless Multi-LoRA: Fine-tune and deploy hundreds ...",
+          "url": "https://www.together.ai/blog/serverless-multi-lora-fine-tune-and-deploy-hundreds-of-adapters-for-model-customization-at-scale"
+        },
+        {
+          "date": "2025-07-10",
+          "id": 6,
+          "last_updated": "2025-09-21T08:19:30.796685",
+          "snippet": "`0`. Default:\n\n`0`.\n\n\n\n`lora`(boolean, optional): Whether to enable LoRA (Low-Rank Adaptation) for training. The LoRA method presumes that low-rank matrices are inserted into a pre-trained model. These matrices catch task-specific data during the training. As a result, you only train these matrices; you do not need to retrain the whole model and modify any preset fine-tuning parameters. If",
+          "source": "web",
+          "title": "How to fine-tune your custom model",
+          "url": "https://docs.studio.nebius.com/fine-tuning/how-to-fine-tune"
+        },
+        {
+          "date": "2024-01-02",
+          "id": 7,
+          "last_updated": "2025-09-12T19:05:43.198275",
+          "snippet": "",
+          "source": "web",
+          "title": "Fireworks AI - Fast Inference Platform - Kodus",
+          "url": "https://docs.kodus.io/cookbook/en/fireworks"
+        },
+        {
+          "date": "2025-11-04",
+          "id": 8,
+          "last_updated": "2025-11-29T16:51:25.044351",
+          "snippet": "",
+          "source": "web",
+          "title": "Supported Models - Together.ai Docs",
+          "url": "https://togetherai-52386018.mintlify.app/docs/fine-tuning-models"
+        },
+        {
+          "date": "2025-12-17",
+          "id": 9,
+          "last_updated": "2026-02-03T23:28:57.982190",
+          "snippet": "We\u2019ll cover:\n\n- What fine-tuning really means and when you should use it\n- Why general LLMs don\u2019t work well for enterprise or niche data out of the box\n- How LoRA makes fine-tuning faster and more cost-effective\n- Preparing conversational datasets for fine-tuning\n- Running a fine-tuning job on Nebius Token Factory\n- Deploying your fine-tuned model as a live API endpoint\n- Testing inference using an OpenAI-compatible API",
+          "source": "web",
+          "title": "How to Fine-Tune Open Source LLMs with Nebius Token Factory | Full Tutorial",
+          "url": "https://www.youtube.com/watch?v=gqCZ_sFha7E"
+        },
+        {
+          "id": 10,
+          "last_updated": "2025-11-02T12:33:01.244196",
+          "snippet": "**example**)\n\n- Users can also upload their own custom base models and specify model IDs.\n\n**LoRA (low-rank adaptation) addons:**A LoRA addon is a small, fine-tuned model that significantly reduces the amount of memory required to deploy compared to a fully fine-tuned model. Fireworks supports\n\n**training**,\n\n**uploading**, and\n\n**serving**LoRA addons. LoRA addons must be deployed on a serverless or dedicated deployment for its corresponding base model. Model IDs for LoRAs can be either auto-generated or user-specified.\n\n\u2026\n\n**Serverless deployments:**Fireworks hosts popular base models on shared \u201cserverless\u201d deployments. Users pay-per-token to query these models and do not need to configure GPUs. The most popular serverless deployments also support serverless LoRA addons. See our Quickstart - Serverless guide to get started. **Dedicated deployments:**Dedicated deployments enable users to configure private deployments with a wide array of hardware (see on-demand deployments guide).",
+          "source": "web",
+          "title": "Concepts - Fireworks AI Docs - Introduction",
+          "url": "https://fireworksai-docs.mintlify.app/getting-started/concepts"
+        },
+        {
+          "date": "2025-12-02",
+          "id": 11,
+          "last_updated": "2025-12-04T09:23:39.551720",
+          "snippet": "",
+          "source": "web",
+          "title": "Serverless Models - Together.ai Docs",
+          "url": "https://togetherai-52386018.mintlify.app/docs/serverless-models"
+        },
+        {
+          "date": "2025-01-27",
+          "id": 12,
+          "last_updated": "2026-02-11T11:41:20",
+          "snippet": "# Serverless, Batched LoRA\n\nThis blog introduces the Takeoff Serverless LoRA Inference Engine. This is a LoRA serving framework that allows you to efficiently inference hundreds of fine-tuned LoRA modules on a single GPU instance. Doing this can reduce the cost of serving a large number of LoRA adapters by orders of magnitude, unlocking wide-scale finetuning of self-hosted language models and enabling the deployment of truly differentiated applications at a fraction of the cost.",
+          "source": "web",
+          "title": "Takeoff Serverless LoRA: Efficient inference at scale for ...",
+          "url": "https://www.doubleword.ai/resources/takeoff-serverless-lora-efficient-inference-at-scale-for-fine-tuned-models"
+        },
+        {
+          "id": 13,
+          "last_updated": "2025-12-25T11:34:04.220080",
+          "snippet": "",
+          "source": "web",
+          "title": "Does FLUX support image-to-image generation?",
+          "url": "https://fireworksai-docs.mintlify.app/faq-new/models-inference/flux-image-generation"
+        },
+        {
+          "date": "2025-04-16",
+          "id": 14,
+          "last_updated": "2025-12-08T22:36:18.471229",
+          "snippet": "",
+          "source": "web",
+          "title": "Together Fine-Tuning: Continuously Customize and Optimize Models",
+          "url": "https://www.youtube.com/watch?v=JJSFtci3lEU"
+        },
+        {
+          "date": "2025-03-28",
+          "id": 15,
+          "last_updated": "2025-12-23T15:07:32.348781",
+          "snippet": "",
+          "source": "web",
+          "title": "Make AI work for you: fine-tuning launches on Nebius AI Studio",
+          "url": "https://www.youtube.com/watch?v=wk04TOCsFuw"
+        }
+      ],
+      "type": "search_results"
+    },
+    {
+      "contents": [
+        {
+          "snippet": "## IntroductionA\n\n*model*is a foundational concept of the Fireworks platform, representing a set of weights and metadata that can be deployed on hardware (i.e. a\n\n*deployment*) for inference. Each model has a globally unique name of the form\n\n`accounts/<ACCOUNT_ID>/models/<MODEL_ID>`. The model IDs are:\n\n- Pre-populated for models that Fireworks has uploaded. For example, \u201cllama-v3p1-70b-instruct\u201d is the model ID for the Llama 3.1 70B model that Fireworks provides. It can be found on each model\u2019s page (example)\n\n- Either auto-generated or user-specified for fine-tuned models uploaded or created by users\n\n- User-specified for custom models uploaded by users\n\n- Base models\n\n- Low-rank adaptation (LoRA) addons\n\n### Base modelsA base model consists of the full set of model weights. This may include models pre-trained from scratch as well as full fine-tunes (i.e. continued pre-training). Fireworks has a library of common base models that can be used for serverless inference as well as dedicated deployments. Fireworks also allows you to upload your own custom base models.\n\n### Low-rank adaptation (LoRA) addonsA LoRA addon is a small, fine-tuned model that significantly reduces the amount of memory required to deploy compared to a fully fine-tuned model. Fireworks supports both training, uploading, and serving LoRA addons. LoRA addons must be deployed on a dedicated deployment for its corresponding base model.\n\n## Using models for inferenceA model must be deployed before it can be used for inference. Take a look at the Querying text models guide for a comprehensive overview of making LLM inference.\n\n### Serverless inferenceFireworks supports serverless inference for popular models like Llama 3.1 405B. These models are pre-deployed by the Fireworks team for the community to use. Take a look at the Models page for the latest list of serverless models. Serverless inference is billed on a per-token basis depending on the model size. See our Pricing page for details.\n\nCustom base models are not supported for serverless inference.\n\nSince serverless deployments are shared across users, there are no SLA guarantees for up-time or latency. It is best-effort. The Fireworks team may also deprecate models from serverless with at least 2 weeks notice.\n\n### Dedicated deploymentsDedicated deployments give users the most flexibility and control over what models can be deployed and performance guarantees. These deployments are private to you and give you access to a wide array of hardware. Both LoRA addons and base models can be deployed to dedicated deployments. Dedicated deployments are billed by a GPU-second basis. See our Pricing page for details. Take a look at our On-demand deployments guide for a comprehensive overview.\n\n## Data privacy & securityYour data is your data. No prompt or generated data is logged or stored on Fireworks; only meta-data like the number of tokens in a request is logged, as required to deliver the service. There are two exceptions:\n\n- For our proprietary FireFunction model, input/output data is logged for 30 days only to enable bulk analytics to improve the model, such as tracking the number of functions provided to the model.\n\n- For certain advanced features (e.g. FireOptimizer), users can explicitly opt-in to log data.\n\n",
+          "title": "Overview - Fireworks AI Docsdocs.fireworks.ai \u203a models \u203a overview",
+          "url": "https://docs.fireworks.ai/models/overview"
+        },
+        {
+          "snippet": "**Note:**This list is different from the models that support Serverless LoRA inference, which allows you to perform LoRA fine-tuning and run inference immediately. See the LoRA inference page for the list of supported base models for serverless LoRA.\n\n**Important:**When uploading LoRA adapters for serverless inference, you must use base models from the serverless LoRA list, not the fine-tuning models list. Using an incompatible base model (such as Turbo variants) will result in a \u201cNo lora_model specified\u201d error during upload. For example, use\n\n`meta-llama/Meta-Llama-3.1-8B-Instruct-Reference` instead of\n\n`meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo` for serverless LoRA adapters.\n\n- For batch sizes of 1, Gradient accumulation 8 is used, so effectively you will get batch size 8 (iteration time is slower).\n\n- Long-context fine-tuning of Llama 3.1 (8B) Reference, Llama 3.1 (70B) Reference, Llama 3.1 Instruct (70B) Reference for context sizes of 32K-131K is only supported using the LoRA method.\n\n- For Llama 3.1 (405B) Fine-tuning, please contact us.\n\n*Request a model*\n\n## LoRA Fine-tuning\n\n|Organization|Model Name|Model String for API|Context Length (SFT)|Context Length (DPO)|Max Batch Size (SFT)|Max Batch Size (DPO)|Min Batch Size|\n|--|--|--|--|--|--|--|--|\n|Moonshot AI|Kimi K2 Thinking|moonshotai/Kimi-K2-Thinking|65536|32768|1|1|1|\n|Moonshot AI|Kimi K2 Instruct-0905|moonshotai/Kimi-K2-Instruct-0905|65536|32768|1|1|1|\n|Moonshot AI|Kimi K2 Instruct|moonshotai/Kimi-K2-Instruct|65536|32768|1|1|1|\n|Moonshot AI|Kimi K2 Base|moonshotai/Kimi-K2-Base|65536|32768|1|1|1|\n|Z.ai|GLM-4.7|zai-org/GLM-4.7|128000|64000|1|1|1|\n|Z.ai|GLM-4.6|zai-org/GLM-4.6|128000|64000|1|1|1|\n|OpenAI|gpt-oss-20b|openai/gpt-oss-20b|16384|8192|8|8|8|\n|OpenAI|gpt-oss-120b|openai/gpt-oss-120b|16384|8192|16|16|16|\n|DeepSeek|DeepSeek-R1-0528|deepseek-ai/DeepSeek-R1-0528|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-R1|deepseek-ai/DeepSeek-R1|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-V3.1|deepseek-ai/DeepSeek-V3.1|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-V3-0324|deepseek-ai/DeepSeek-V3-0324|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-V3|deepseek-ai/DeepSeek-V3|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-V3.1-Base|deepseek-ai/DeepSeek-V3.1-Base|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-V3-Base|deepseek-ai/DeepSeek-V3-Base|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-R1-Distill-Llama-70B|deepseek-ai/DeepSeek-R1-Distill-Llama-70B|24576|12288|8|8|8|\n|DeepSeek|DeepSeek-R1-Distill-Llama-70B|deepseek-ai/DeepSeek-R1-Distill-Llama-70B-32k|32768|16384|1|1|1|\n|DeepSeek|DeepSeek-R1-Distill-Llama-70B|deepseek-ai/DeepSeek-R1-Distill-Llama-70B-131k|131072|16384|1|1|1|\n|DeepSeek|DeepSeek-R1-Distill-Qwen-14B|deepseek-ai/DeepSeek-R1-Distill-Qwen-14B|65536|49152|8|8|8|\n|DeepSeek|DeepSeek-R1-Distill-Qwen-1.5B|deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B|131072|131072|8|8|8|\n|Meta|Llama-4-Scout-17B-16E|meta-llama/Llama-4-Scout-17B-16E|16384|12288|8|8|8|\n|Meta|Llama-4-Scout-17B-16E-Instruct|meta-llama/Llama-4-Scout-17B-16E-Instruct|16384|12288|8|8|8|\n|Meta|Llama-4-Scout-17B-16E-Instruct-VLM|meta-llama/Llama-4-Scout-17B-16E-Instruct-VLM|16384|12288|8|8|8|\n|Meta|Llama-4-Maverick-17B-128E|meta-llama/Llama-4-Maverick-17B-128E|16384|24576|16|16|16|\n|Meta|Llama-4-Maverick-17B-128E-Instruct|meta-llama/Llama-4-Maverick-17B-128E-Instruct|16384|24576|16|16|16|\n|Meta|Llama-4-Maverick-17B-128E-Instruct-VLM|meta-llama/Llama-4-Maverick-17B-128E-Instruct-VLM|16384|24576|16|16|16|\n|gemma-3-270m|google/gemma-3-270m|32768|32768|128|128|8|\n|gemma-3-270m-it|google/gemma-3-270m-it|32768|32768|128|128|8|\n|gemma-3-1b-it|google/gemma-3-1b-it|32768|32768|32|32|8|\n|gemma-3-1b-pt|google/gemma-3-1b-pt|32768|32768|32|32|8|\n|gemma-3-4b-it|google/gemma-3-4b-it|131072|65536|8|8|8|\n|gemma-3-4b-it-VLM|google/gemma-3-4b-it-VLM|131072|65536|8|8|8|\n|gemma-3-4b-pt|google/gemma-3-4b-pt|131072|65536|8|8|8|\n|gemma-3-12b-it|google/gemma-3-12b-it|16384|49152|8|8|8|\n|gemma-3-12b-it-VLM|google/gemma-3-12b-it-VLM|16384|49152|8|8|8|\n|gemma-3-12b-pt|google/gemma-3-12b-pt|65536|49152|8|8|8|\n|gemma-3-27b-it|google/gemma-3-27b-it|49152|24576|8|8|8|\n|gemma-3-27b-it-VLM|google/gemma-3-27b-it-VLM|49152|24576|8|8|8|\n|gemma-3-27b-pt|google/gemma-3-27b-pt|49152|24576|8|8|8|\n|Qwen|Qwen3-Next-80B-A3B-Instruct|Qwen/Qwen3-Next-80B-A3B-Instruct|65536|16384|8|8|8|\n|Qwen|Qwen3-Next-80B-A3B-Thinking|Qwen/Qwen3-Next-80B-A3B-Thinking|65536|16384|8|8|8|\n|Qwen|Qwen3-0.6B|Qwen/Qwen3-0.6B|32768|40960|64|64|8|\n|Qwen|Qwen3-0.6B-Base|Qwen/Qwen3-0.6B-Base|32768|32768|64|64|8|\n|Qwen|Qwen3-1.7B|Qwen/Qwen3-1.7B|32768|40960|32|32|8|\n|Qwen|Qwen3-1.7B-Base|Qwen/Qwen3-1.7B-Base|32768|32768|32|32|8|\n|Qwen|Qwen3-4B|Qwen/Qwen3-4B|32768|40960|16|16|8|\n|Qwen|Qwen3-4B-Base|Qwen/Qwen3-4B-Base|32768|32768|16|16|8|\n|Qwen|Qwen3-8B|Qwen/Qwen3-8B|32768|40960|8|8|8|\n|Qwen|Qwen3-8B-Base|Qwen/Qwen3-8B-Base|32768|32768|16|16|8|\n|Qwen|Qwen3-14B|Qwen/Qwen3-14B|32768|40960|8|8|8|\n|Qwen|Qwen3-14B-Base|Qwen/Qwen3-14B-Base|32768|40960|8|8|8|\n|Qwen|Qwen3-32B|Qwen/Qwen3-32B|24576|24576|8|8|8|\n|Qwen|Qwen3-30B-A3B-Base|Qwen/Qwen3-30B-A3B-Base|8192|32768|16|16|8|\n|Qwen|Qwen3-30B-A3B|Qwen/Qwen3-30B-A3B|8192|32768|16|16|8|\n|Qwen|Qwen3-30B-A3B-Instruct-2507|Qwen/Qwen3-30B-A3B-Instruct-2507|8192|32768|16|16|8|\n|Qwen|Qwen3-235B-A22B|Qwen/Qwen3-235B-A22B|32768|24576|1|1|1|\n|Qwen|Qwen3-235B-A22B-Instruct-2507|Qwen/Qwen3-235B-A22B-Instruct-2507|32768|24576|1|1|1|\n|Qwen|Qwen3-Coder-30B-A3B-Instruct|Qwen/Qwen3-Coder-30B-A3B-Instruct|8192|8192|16|16|8|\n|Qwen|Qwen3-Coder-480B-A35B-Instruct|Qwen/Qwen3-Coder-480B-A35B-Instruct|131072|32768|1|1|1|\n|Qwen|Qwen3-VL-8B-Instruct|Qwen/Qwen3-VL-8B-Instruct|32768|40960|8|8|8|\n|Qwen|Qwen3-VL-32B-Instruct|Qwen/Qwen3-VL-32B-Instruct|24576|24576|8|8|8|\n|Qwen|Qwen3-VL-30B-A3B-Instruct|Qwen/Qwen3-VL-30B-A3B-Instruct|8192|32768|16|16|8|\n|Qwen|Qwen3-VL-235B-A22B-Instruct|Qwen/Qwen3-VL-235B-A22B-Instruct|16384|12288|16|16|16|\n|Meta|Llama-3.3-70B-Instruct-Reference|meta-llama/Llama-3.3-70B-Instruct-Reference|24576|8192|8|8|8|\n|Meta|Llama-3.3-70B-32k-Instruct-Reference|meta-llama/Llama-3.3-70B-32k-Instruct-Reference|32768|65536|1|1|1|\n|Meta|Llama-3.3-70B-131k-Instruct-Reference|meta-llama/Llama-3.3-70B-131k-Instruct-Reference|131072|65536|1|1|1|\n|Meta|Llama-3.2-3B-Instruct|meta-llama/Llama-3.2-3B-Instruct|131072|65536|8|8|8|\n|Meta|Llama-3.2-3B|meta-llama/Llama-3.2-3B|131072|65536|8|8|8|\n|Meta|Llama-3.2-1B-Instruct|meta-llama/Llama-3.2-1B-Instruct|131072|131072|8|8|8|\n|Meta|Llama-3.2-1B|meta-llama/Llama-3.2-1B|131072|131072|8|8|8|\n|Meta|Meta-Llama-3.1-8B-Instruct-Reference|meta-llama/Meta-Llama-3.1-8B-Instruct-Reference|131072|65536|8|8|8|\n|Meta|Meta-Llama-3.1-8B-131k-Instruct-Reference|meta-llama/Meta-Llama-3.1-8B-131k-Instruct-Reference|131072|131072|4|4|1|\n|Meta|Meta-Llama-3.1-8B-Reference|meta-llama/Meta-Llama-3.1-8B-Reference|131072|65536|8|8|8|\n|Meta|Meta-Llama-3.1-8B-131k-Reference|meta-llama/Meta-Llama-3.1-8B-131k-Reference|131072|131072|4|4|1|\n|Meta|Meta-Llama-3.1-70B-Instruct-Reference|meta-llama/Meta-Llama-3.1-70B-Instruct-Reference|24576|12288|8|8|8|\n|Meta|Meta-Llama-3.1-70B-32k-Instruct-Reference|meta-llama/Meta-Llama-3.1-70B-32k-Instruct-Reference|32768|32768|1|1|1|\n|Meta|Meta-Llama-3.1-70B-131k-Instruct-Reference|meta-llama/Meta-Llama-3.1-70B-131k-Instruct-Reference|131072|65536|1|1|1|\n|Meta|Meta-Llama-3.1-70B-Reference|meta-llama/Meta-Llama-3.1-70B-Reference|24576|12288|8|8|8|\n|Meta|Meta-Llama-3.1-70B-32k-Reference|meta-llama/Meta-Llama-3.1-70B-32k-Reference|32768|32768|1|1|1|\n|Meta|Meta-Llama-3.1-70B-131k-Reference|meta-llama/Meta-Llama-3.1-70B-131k-Reference|131072|65536|1|1|1|\n|Meta|Meta-Llama-3-8B-Instruct|meta-llama/Meta-Llama-3-8B-Instruct|8192|8192|64|64|8|\n|Meta|Meta-Llama-3-8B|meta-llama/Meta-Llama-3-8B|8192|8192|64|64|8|\n|Meta|Meta-Llama-3-70B-Instruct|meta-llama/Meta-Llama-3-70B-Instruct|8192|8192|8|8|8|\n|Qwen|Qwen2.5-72B-Instruct|Qwen/Qwen2.5-72B-Instruct|32768|12288|8|8|8|\n|Qwen|Qwen2.5-72B|Qwen/Qwen2.5-72B|24576|12288|8|8|8|\n|Qwen|Qwen2.5-32B-Instruct|Qwen/Qwen2.5-32B-Instruct|32768|32768|8|8|8|\n|Qwen|Qwen2.5-32B|Qwen/Qwen2.5-32B|49152|32768|8|8|8|\n|Qwen|Qwen2.5-14B-Instruct|Qwen/Qwen2.5-14B-Instruct|32768|32768|8|8|8|\n|Qwen|Qwen2.5-14B|Qwen/Qwen2.5-14B|65536|49152|8|8|8|\n|Qwen|Qwen2.5-7B-Instruct|Qwen/Qwen2.5-7B-Instruct|32768|32768|16|16|8|\n|Qwen|Qwen2.5-7B|Qwen/Qwen2.5-7B|131072|65536|8|8|8|\n|Qwen|Qwen2.5-3B-Instruct|Qwen/Qwen2.5-3B-Instruct|32768|32768|32|32|8|\n|Qwen|Qwen2.5-3B|Qwen/Qwen2.5-3B|32768|32768|32|32|8|\n|Qwen|Qwen2.5-1.5B-Instruct|Qwen/Qwen2.5-1.5B-Instruct|32768|32768|32|32|8|\n|Qwen|Qwen2.5-1.5B|Qwen/Qwen2.5-1.5B|32768|131072|8|8|8|\n|Qwen|Qwen2-72B-Instruct|Qwen/Qwen2-72B-Instruct|32768|12288|16|16|16|\n|Qwen|Qwen2-72B|Qwen/Qwen2-72B|32768|12288|16|16|16|\n|Qwen|Qwen2-7B-Instruct|Qwen/Qwen2-7B-Instruct|32768|32768|8|8|8|\n|Qwen|Qwen2-7B|Qwen/Qwen2-7B|131072|24576|8|8|8|\n|Qwen|Qwen2-1.5B-Instruct|Qwen/Qwen2-1.5B-Instruct|32768|32768|32|32|8|\n|Qwen|Qwen2-1.5B|Qwen/Qwen2-1.5B|131072|131072|8|8|8|\n|Mistral|Mixtral-8x7B-Instruct-v0.1|mistralai/Mixtral-8x7B-Instruct-v0.1|32768|32768|8|8|8|\n|Mistral|Mixtral-8x7B-v0.1|mistralai/Mixtral-8x7B-v0.1|32768|32768|8|8|8|\n|Mistral|Mistral-7B-Instruct-v0.2|mistralai/Mistral-7B-Instruct-v0.2|32768|32768|16|16|8|\n|Mistral|Mistral-7B-v0.1|mistralai/Mistral-7B-v0.1|32768|32768|16|16|8|\n|Teknium|OpenHermes-2p5-Mistral-7B|teknium/OpenHermes-2p5-Mistral-7B|32768|32768|16|16|8|\n|Meta|CodeLlama-7b-hf|codellama/CodeLlama-7b-hf|16384|16384|16|16|8|\n|Together|llama-2-7b-chat|togethercomputer/llama-2-7b-chat|4096|4096|64|64|8|\n## LoRA Long-context Fine-tuning\n\n|Organization|Model Name|Model String for API|Context Length (SFT)|Context Length (DPO)|Max Batch Size (SFT)|Max Batch Size (DPO)|Min Batch Size|\n|--|--|--|--|--|--|--|--|\n|DeepSeek|DeepSeek-R1-0528|deepseek-ai/DeepSeek-R1-0528|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-R1|deepseek-ai/DeepSeek-R1|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-V3.1|deepseek-ai/DeepSeek-V3.1|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-V3-0324|deepseek-ai/DeepSeek-V3-0324|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-V3|deepseek-ai/DeepSeek-V3|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-V3.1-Base|deepseek-ai/DeepSeek-V3.1-Base|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-V3-Base|deepseek-ai/DeepSeek-V3-Base|131072|32768|1|1|1|\n|DeepSeek|DeepSeek-R1-Distill-Llama-70B|deepseek-ai/DeepSeek-R1-Distill-Llama-70B-32k|32768|16384|1|1|1|\n|DeepSeek|DeepSeek-R1-Distill-Llama-70B|deepseek-ai/DeepSeek-R1-Distill-Llama-70B-131k|131072|16384|1|1|1|\n|Qwen|Qwen3-235B-A22B|Qwen/Qwen3-235B-A22B|32768|24576|1|1|1|\n|Qwen|Qwen3-235B-A22B-Instruct-2507|Qwen/Qwen3-235B-A22B-Instruct-2507|32768|24576|1|1|1|\n|Qwen|Qwen3-Coder-480B-A35B-Instruct|Qwen/Qwen3-Coder-480B-A35B-Instruct|131072|32768|1|1|1|\n|Meta|Llama-3.3-70B-32k-Instruct-Reference|meta-llama/Llama-3.3-70B-32k-Instruct-Reference|32768|65536|1|1|1|\n|Meta|Llama-3.3-70B-131k-Instruct-Reference|meta-llama/Llama-3.3-70B-131k-Instruct-Reference|131072|65536|1|1|1|\n|Meta|Meta-Llama-3.1-8B-131k-Instruct-Reference|meta-llama/Meta-Llama-3.1-8B-131k-Instruct-Reference|131072|131072|4|4|1|\n|Meta|Meta-Llama-3.1-8B-131k-Reference|meta-llama/Meta-Llama-3.1-8B-131k-Reference|131072|131072|4|4|1|\n|Meta|Meta-Llama-3.1-70B-32k-Instruct-Reference|meta-llama/Meta-Llama-3.1-70B-32k-Instruct-Reference|32768|32768|1|1|1|\n|Meta|Meta-Llama-3.1-70B-131k-Instruct-Reference|meta-llama/Meta-Llama-3.1-70B-131k-Instruct-Reference|131072|65536|1|1|1|\n|Meta|Meta-Llama-3.1-70B-32k-Reference|meta-llama/Meta-Llama-3.1-70B-32k-Reference|32768|32768|1|1|1|\n|Meta|Meta-Llama-3.1-70B-131k-Reference|meta-llama/Meta-Llama-3.1-70B-131k-Reference|131072|65536|1|1|1|\n## Full Fine-tuning\n\n|Organization|Model Name|Model String for API|Context Length (SFT)|Context Length (DPO)|Max Batch Size (SFT)|Max Batch Size (DPO)|Min Batch Size|\n|--|--|--|--|--|--|--|--|\n|DeepSeek|DeepSeek-R1-Distill-Llama-70B|deepseek-ai/DeepSeek-R1-Distill-Llama-70B|24576|12288|32|32|32|\n|DeepSeek|DeepSeek-R1-Distill-Qwen-14B|deepseek-ai/DeepSeek-R1-Distill-Qwen-14B|65536|49152|8|8|8|\n|DeepSeek|DeepSeek-R1-Distill-Qwen-1.5B|deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B|131072|131072|8|8|8|\n|gemma-3-270m|google/gemma-3-270m|32768|32768|128|128|8|\n|gemma-3-270m-it|google/gemma-3-270m-it|32768|32768|128|128|8|\n|gemma-3-1b-it|google/gemma-3-1b-it|32768|32768|64|64|8|\n|gemma-3-1b-pt|google/gemma-3-1b-pt|32768|32768|64|64|8|\n|gemma-3-4b-it|google/gemma-3-4b-it|131072|65536|8|8|8|\n|gemma-3-4b-it-VLM|google/gemma-3-4b-it-VLM|131072|65536|8|8|8|\n|gemma-3-4b-pt|google/gemma-3-4b-pt|131072|65536|8|8|8|\n|gemma-3-12b-it|google/gemma-3-12b-it|16384|49152|8|8|8|\n|gemma-3-12b-it-VLM|google/gemma-3-12b-it-VLM|16384|49152|8|8|8|\n|gemma-3-12b-pt|google/gemma-3-12b-pt|65536|49152|8|8|8|\n|gemma-3-27b-it|google/gemma-3-27b-it|49152|24576|16|16|16|\n|gemma-3-27b-it-VLM|google/gemma-3-27b-it-VLM|49152|24576|16|16|16|\n|gemma-3-27b-pt|google/gemma-3-27b-pt|49152|24576|16|16|16|\n|Qwen|Qwen3-0.6B|Qwen/Qwen3-0.6B|32768|40960|64|64|8|\n|Qwen|Qwen3-0.6B-Base|Qwen/Qwen3-0.6B-Base|32768|32768|64|64|8|\n|Qwen|Qwen3-1.7B|Qwen/Qwen3-1.7B|32768|40960|32|32|8|\n|Qwen|Qwen3-1.7B-Base|Qwen/Qwen3-1.7B-Base|32768|32768|32|32|8|\n|Qwen|Qwen3-4B|Qwen/Qwen3-4B|32768|40960|16|16|8|\n|Qwen|Qwen3-4B-Base|Qwen/Qwen3-4B-Base|32768|32768|16|16|8|\n|Qwen|Qwen3-8B|Qwen/Qwen3-8B|32768|40960|8|8|8|\n|Qwen|Qwen3-8B-Base|Qwen/Qwen3-8B-Base|32768|32768|16|16|8|\n|Qwen|Qwen3-14B|Qwen/Qwen3-14B|32768|40960|8|8|8|\n|Qwen|Qwen3-14B-Base|Qwen/Qwen3-14B-Base|32768|40960|8|8|8|\n|Qwen|Qwen3-32B|Qwen/Qwen3-32B|24576|24576|16|16|16|\n|Qwen|Qwen3-30B-A3B-Base|Qwen/Qwen3-30B-A3B-Base|8192|32768|8|8|8|\n|Qwen|Qwen3-30B-A3B|Qwen/Qwen3-30B-A3B|8192|32768|8|8|8|\n|Qwen|Qwen3-30B-A3B-Instruct-2507|Qwen/Qwen3-30B-A3B-Instruct-2507|8192|32768|8|8|8|\n|Qwen|Qwen3-Coder-30B-A3B-Instruct|Qwen/Qwen3-Coder-30B-A3B-Instruct|8192|8192|8|8|8|\n|Qwen|Qwen3-VL-8B-Instruct|Qwen/Qwen3-VL-8B-Instruct|32768|40960|8|8|8|\n|Qwen|Qwen3-VL-32B-Instruct|Qwen/Qwen3-VL-32B-Instruct|24576|24576|16|16|16|\n|Qwen|Qwen3-VL-30B-A3B-Instruct|Qwen/Qwen3-VL-30B-A3B-Instruct|8192|32768|8|8|8|\n|Meta|Llama-3.3-70B-Instruct-Reference|meta-llama/Llama-3.3-70B-Instruct-Reference|24576|8192|32|32|32|\n|Meta|Llama-3.2-3B-Instruct|meta-llama/Llama-3.2-3B-Instruct|131072|65536|8|8|8|\n|Meta|Llama-3.2-3B|meta-llama/Llama-3.2-3B|131072|65536|8|8|8|\n|Meta|Llama-3.2-1B-Instruct|meta-llama/Llama-3.2-1B-Instruct|131072|131072|8|8|8|\n|Meta|Llama-3.2-1B|meta-llama/Llama-3.2-1B|131072|131072|8|8|8|\n|Meta|Meta-Llama-3.1-8B-Instruct-Reference|meta-llama/Meta-Llama-3.1-8B-Instruct-Reference|131072|65536|8|8|8|\n|Meta|Meta-Llama-3.1-8B-Reference|meta-llama/Meta-Llama-3.1-8B-Reference|131072|65536|8|8|8|\n|Meta|Meta-Llama-3.1-70B-Instruct-Reference|meta-llama/Meta-Llama-3.1-70B-Instruct-Reference|24576|12288|32|32|32|\n|Meta|Meta-Llama-3.1-70B-Reference|meta-llama/Meta-Llama-3.1-70B-Reference|24576|12288|32|32|32|\n|Meta|Meta-Llama-3-8B-Instruct|meta-llama/Meta-Llama-3-8B-Instruct|8192|8192|64|64|8|\n|Meta|Meta-Llama-3-8B|meta-llama/Meta-Llama-3-8B|8192|8192|64|64|8|\n|Meta|Meta-Llama-3-70B-Instruct|meta-llama/Meta-Llama-3-70B-Instruct|8192|8192|32|32|32|\n|Qwen|Qwen2-7B-Instruct|Qwen/Qwen2-7B-Instruct|32768|32768|8|8|8|\n|Qwen|Qwen2-7B|Qwen/Qwen2-7B|131072|24576|8|8|8|\n|Qwen|Qwen2-1.5B-Instruct|Qwen/Qwen2-1.5B-Instruct|32768|32768|32|32|8|\n|Qwen|Qwen2-1.5B|Qwen/Qwen2-1.5B|131072|131072|8|8|8|\n|Mistral|Mixtral-8x7B-Instruct-v0.1|mistralai/Mixtral-8x7B-Instruct-v0.1|32768|32768|16|16|16|\n|Mistral|Mixtral-8x7B-v0.1|mistralai/Mixtral-8x7B-v0.1|32768|32768|16|16|16|\n|Mistral|Mistral-7B-Instruct-v0.2|mistralai/Mistral-7B-Instruct-v0.2|32768|32768|16|16|8|\n|Mistral|Mistral-7B-v0.1|mistralai/Mistral-7B-v0.1|32768|32768|16|16|8|\n|Teknium|OpenHermes-2p5-Mistral-7B|teknium/OpenHermes-2p5-Mistral-7B|32768|32768|16|16|8|\n|Meta|CodeLlama-7b-hf|codellama/CodeLlama-7b-hf|16384|16384|16|16|8|\n|Together|llama-2-7b-chat|togethercomputer/llama-2-7b-chat|4096|4096|64|64|8|\n",
+          "title": "Fine-tuning - Supported Models - Together.ai Docs",
+          "url": "https://docs.together.ai/docs/fine-tuning-models"
+        }
+      ],
+      "type": "fetch_url_results"
+    },
+    {
+      "queries": [
+        "Together AI serverless LoRA supported base models list 2025",
+        "Fireworks AI serverless LoRA supported models list tunable",
+        "Together AI LoRA inference pricing per token 2025"
+      ],
+      "results": [
+        {
+          "date": "2026-01-28",
+          "id": 1,
+          "last_updated": "2026-02-08T10:33:18",
+          "snippet": "**Note:**This list is different from the models that support Serverless LoRA inference, which allows you to perform LoRA fine-tuning and run inference immediately. See the LoRA inference page for the list of supported base models for serverless LoRA.\n\n**Important:**When uploading LoRA adapters for serverless inference, you must use base models from the serverless LoRA list, not the fine-tuning models list. Using an incompatible base model (such as Turbo variants) will result in a \u201cNo lora_model specified\u201d error during upload. For example, use",
+          "source": "web",
+          "title": "Fine-tuning - Supported Models - Together.ai Docs",
+          "url": "https://docs.together.ai/docs/fine-tuning-models"
+        },
+        {
+          "date": "2025-12-05",
+          "id": 2,
+          "last_updated": "2026-02-12T21:58:59",
+          "snippet": "Supervised Fine-Tuning (SFT) is critical for adapting general-purpose Large Language Models (LLMs) to domain-specific tasks, significantly improving performance in real-world applications. Fireworks AI facilitates easy and scalable SFT through its intuitive APIs and support for Low-Rank Adaptation (LoRA), allowing efficient fine-tuning without full parameter updates.\n\n\u2026\n\nFireworks AI supports both LoRA and qLoRA tuning, allowing up to 100 LoRA adaptations to run simultaneously on a dedicated deployment without extra cost.\n\n**Step-by-Step Guide to Fine-Tuning with Fireworks AI**\n\nGo to fireworks.ai > Model Library > Filter \u201cTunable\u201d\n\nYou can also filter for \u201cServerless\u201d models if you are planning to run it serverless\nThis ensures that you are selecting models which allow LoRA-based tuning and deployments. These models support uploading LoRA adapters even if they were trained on another platform. You can also upload custom models that have the same architecture as the tunable ones in the list, and those models will also be tunable. For example, a deepseek distilled llama 8b model works just as well as a vanilla llama 8b model.\n**Let\u2019s say we select \u201cDeepSeek R1 Distill Llama 70b\u201d**\n\n**\u26a0\ufe0f Note:** Serverless LoRA is not currently supported (February 2026). Please check our **Documentation Page** for the latest updates on supported features and fine-tuning capabilities.\n\nDatasets must adhere strictly to the JSONL format, where each line represents a complete JSON-formatted training example.\n\n\u2026\n\nSelect the LoRA model from the drop-down list.\n\nClick \u201cContinue\u201d\n\nThen select your deployment. You can either deploy the LoRA model \u201cserverless\u201d or via an \u201con-demand deployment\u201d.\n\nDeployment Options:\n\n\ud83d\udca1 PS: Use an existing on-demand deployment to load the LoRA model onto (instead of serverless)\nPS: As we are fine-tuning the DeepSeek R1 Distill Llama 70B, we will need to deploy the LoRA on -demand, rather than serverless. Use an existing on-demand deployment to load the LoRA model onto (instead of serverless)\n\nEnter the model display name and click \u201cSubmit\u201d",
+          "source": "web",
+          "title": "Supervised Fine-Tuning (SFT) with LoRA on Fireworks AI",
+          "url": "https://fireworks.ai/blog/supervised-fine-tuning-tutorial"
+        },
+        {
+          "date": "2026-01-01",
+          "id": 3,
+          "last_updated": "2026-02-13T15:38:34",
+          "snippet": "## Fine-tuning\n\nPrice per 1M tokens\n\n|Supervised Fine-Tuning|Direct Preference Optimization|Size|LoRA|Full Fine-Tuning|LoRA|Full Fine-Tuning|\n|--|--|--|--|--|--|--|\n|Up to 16B|$0.48|$0.54|$1.20|$1.35|\n|17B-69B|$1.50|$1.65|$3.75|$4.12|\n|70-100B|$2.90|$3.20|$7.25|$8.00|\nPrice is based on the sum of tokens processed in the fine-tuning training dataset (training dataset size * number of epochs) plus any tokens in the optional evaluation dataset (validation dataset size * number of evaluations).\nFine-tuning for the models below incurs minimum charges and is limited to LoRA fine-tuning.\n\nPrice per 1M tokens\n\n\u2026\n\n|Qwen3-235B-A22B Qwen3-235B-A22B-Instruct-2507|$6.00|$15.00|No min price|\nPrice is based on the sum of tokens processed in the fine-tuning training dataset (training dataset size * number of epochs) plus any tokens in the optional evaluation dataset (validation dataset size * number of evaluations).",
+          "source": "web",
+          "title": "Pricing - Together AI",
+          "url": "https://www.together.ai/pricing"
+        },
+        {
+          "date": "2026-02-13",
+          "id": 4,
+          "last_updated": "2026-02-13T20:27:54",
+          "snippet": "",
+          "source": "web",
+          "title": "Audio models",
+          "url": "https://docs.together.ai/docs/serverless-models"
+        },
+        {
+          "date": "2026-02-11",
+          "id": 5,
+          "last_updated": "2026-02-12T22:37:34",
+          "snippet": "### Low-rank adaptation (LoRA) addonsA LoRA addon is a small, fine-tuned model that significantly reduces the amount of memory required to deploy compared to a fully fine-tuned model. Fireworks supports both training, uploading, and serving LoRA addons. LoRA addons must be deployed on a dedicated deployment for its corresponding base model.",
+          "source": "web",
+          "title": "Overview - Fireworks AI Docsdocs.fireworks.ai \u203a models \u203a overview",
+          "url": "https://docs.fireworks.ai/models/overview"
+        },
+        {
+          "date": "2026-01-01",
+          "id": 6,
+          "last_updated": "2026-02-13T12:04:53",
+          "snippet": "",
+          "source": "web",
+          "title": "Together AI | The AI Native Cloud",
+          "url": "https://www.together.ai"
+        },
+        {
+          "date": "2025-12-02",
+          "id": 7,
+          "last_updated": "2025-12-04T09:23:39.551720",
+          "snippet": "|Organization|Modality|Model Name|Model String for API|\n|--|--|--|--|\n|Canopy Labs|Text-to-Speech|Orpheus 3B|canopylabs/orpheus-3b-0.1-ft|\n|Kokoro|Text-to-Speech|Kokoro|hexgrad/Kokoro-82M|\n|Cartesia|Text-to-Speech|Cartesia Sonic 2|cartesia/sonic-2|\n|Cartesia|Text-to-Speech|Cartesia Sonic|cartesia/sonic|\n|OpenAI|Speech-to-Text|Whisper Large v3|openai/whisper-large-v3|\n\n\u2026\n\n|BGE-Large-EN-v1.5|BAAI/bge-large-en-v1.5|326M|1024|512|\n|BGE-Base-EN-v1.5|BAAI/bge-base-en-v1.5|102M|768|512|\n|GTE-Modernbert-base|Alibaba-NLP/gte-modernbert-base|149M|768|8192|",
+          "source": "web",
+          "title": "Serverless Models - Together.ai Docs",
+          "url": "https://togetherai-52386018.mintlify.app/docs/serverless-models"
+        },
+        {
+          "date": "2025-05-12",
+          "id": 8,
+          "last_updated": "2026-02-12T12:47:05",
+          "snippet": "Lara is a gamecher\n{ts:18} when it comes to fine-tuning large models. Instead of updating all model parameters, it trains small low rank\n{ts:25} matrices making it much cheaper and faster. Fireworks AI supports up to 100 Laura adapters per base model on\n{ts:32} dedicated deployments, which means you can scale with zero added deployment cost.\n\n\u2026\n\n{ts:86} page. You can also click on the drop-own list and see what other models are tunable even from this dashboard. Do\n{ts:92} note that this model does not support serverless Laura deployment and you need to create an ondemand Laura deployment\n{ts:97} for this.",
+          "source": "web",
+          "title": "Supervised Fine Tuning on Fireworks AI",
+          "url": "https://www.youtube.com/watch?v=FpRd6eFmjjs"
+        },
+        {
+          "date": "2025-11-16",
+          "id": 9,
+          "last_updated": "2025-12-03T15:02:29.453908",
+          "snippet": "",
+          "source": "web",
+          "title": "Together AI Review 2025: Pricing, Features & Alternatives",
+          "url": "https://www.rankncompare.com/tools/together-ai"
+        },
+        {
+          "date": "2025-11-04",
+          "id": 10,
+          "last_updated": "2025-11-29T16:51:25.044351",
+          "snippet": "**Note:**This list is different from the models that support Serverless LoRA inference, which allows you to perform LoRA fine-tuning and run inference immediately. See the LoRA inference page for the list of supported base models for serverless LoRA.\n\n**Important:**When uploading LoRA adapters for serverless inference, you must use base models from the serverless LoRA list, not the fine-tuning models list. Using an incompatible base model (such as Turbo variants) will result in a \u201cNo lora_model specified\u201d error during upload. For example, use",
+          "source": "web",
+          "title": "Supported Models - Together.ai Docs",
+          "url": "https://togetherai-52386018.mintlify.app/docs/fine-tuning-models"
+        },
+        {
+          "id": 11,
+          "last_updated": "2025-11-02T12:33:01.244196",
+          "snippet": "**example**)\n\n- Users can also upload their own custom base models and specify model IDs.\n\n**LoRA (low-rank adaptation) addons:**A LoRA addon is a small, fine-tuned model that significantly reduces the amount of memory required to deploy compared to a fully fine-tuned model. Fireworks supports\n\n**training**,\n\n**uploading**, and\n\n**serving**LoRA addons. LoRA addons must be deployed on a serverless or dedicated deployment for its corresponding base model. Model IDs for LoRAs can be either auto-generated or user-specified.",
+          "source": "web",
+          "title": "Concepts - Fireworks AI Docs - Introduction",
+          "url": "https://fireworksai-docs.mintlify.app/getting-started/concepts"
+        },
+        {
+          "date": "2024-10-04",
+          "id": 12,
+          "last_updated": "2024-10-31T17:11:02.573119",
+          "snippet": "**Cost of Meta-Llama 3.1-8B Instruct Turbo on HuggingFace**\n\nFor users looking to deploy the Meta-Llama model via HuggingFace, the cost is calculated based on\n\n**Tokens Per Million (TPM)**. **Price on TogetherAI**: $0.18 per million tokens\n\n\u2026\n\n**Cost Calculation Formula:**\n\nWhere:\n\n**Price Per Million Tokens**= $0.18 **Tokens Used**= Tokens processed within a specific period\n\n**Scenario 1: Tier 2 ($50 paid)** **Maximum Tokens per Minute (TPM)**: 2,000,000 TPM **Price per Million Tokens**: $0.18\n**Scenario 2: Tier 3 ($100 paid)** **Maximum Tokens per Minute (TPM)**: 10,000,000 TPM **Price per Million Tokens**: $0.18\n\n**Scenario 3: Tier 4 ($250 paid)** **Maximum Tokens per Minute (TPM)**: 10,000,000 TPM **Price per Million Tokens**: $0.18\n**Scenario 4: Tier 5 ($1,000 paid)** **Maximum Tokens per Minute (TPM)**: 20,000,000 TPM **Price per Million Tokens**: $0.18\n\n**Summary of Costs**\n|Tier|Tokens per Minute (TPM)|Cost per Minute|Cost per Hour|Cost per Day|\n|--|--|--|--|--|\n|Tier 2|2,000,000|$0.36|$21.60|$518.40|\n|Tier 3|10,000,000|$1.80|$108.00|$2,592.00|",
+          "source": "web",
+          "title": "Together AI API Pricing and Rate Limits",
+          "url": "https://hassandevops.site/together-ai-api-pricing-and-rate-limits-1"
+        },
+        {
+          "date": "2026-01-01",
+          "id": 13,
+          "last_updated": "2026-02-13T08:15:06",
+          "snippet": "|Available Models|\n|--|\n|`stabilityai/stable-diffusion-xl-base-1.0`|\n|`black-forest-labs/FLUX.1-dev`|\n|`black-forest-labs/FLUX.1-dev-lora`|\n|`black-forest-labs/FLUX.1-schnell`|",
+          "source": "web",
+          "title": "Together.ai provider - AI SDK",
+          "url": "https://ai-sdk.dev/providers/ai-sdk-providers/togetherai"
+        },
+        {
+          "id": 14,
+          "last_updated": "2026-02-13T09:04:28",
+          "snippet": "",
+          "source": "web",
+          "title": "Fireworks AI",
+          "url": "https://docs.litellm.ai/docs/providers/fireworks_ai"
+        },
+        {
+          "date": "2026-01-21",
+          "id": 15,
+          "last_updated": "2026-02-12T09:06:26",
+          "snippet": "Additionally, Together AI supports usage-based pricing for inference and training:\n\nModel inference is charged per million tokens, with separate input and output pricing.\n\nFine-tuning is billed per million training tokens, varying by model size and method (e.g., full training vs. LoRA).\n\nDedicated GPU endpoints are billed per minute of usage, with high-end GPUs (H100, H200) priced accordingly.\n\nBatch inference is offered at a 50% discount to encourage bulk processing.\n\nThis hybrid model - combining predictable per-token costs with flexible infrastructure pricing - gives customers precise control over usage and spend.",
+          "source": "web",
+          "title": "What is Together AI? Features, Pricing, and Use Cases - Walturn",
+          "url": "https://www.walturn.com/insights/what-is-together-ai-features-pricing-and-use-cases"
+        }
+      ],
+      "type": "search_results"
+    },
+    {
+      "contents": [
+        {
+          "snippet": "## OverviewLoRA (Low-Rank Adaptation) enables efficient fine-tuning of large language models by training only a small set of additional parameters while keeping the original model weights frozen. This approach delivers several key advantages:\n\n**Reduced training costs**: Trains fewer parameters than full fine-tuning, using less GPU memory **Faster deployment**: Produces compact adapter files that can be quickly shared and deployed\n\nImportant: Adapters trained before December 17, 2024, require migration to work with the current serverless infrastructure. As a temporary workaround, you can download and re-upload these adapters following the instructions in our adapter upload guide.\n\n## Quick startThis guide demonstrates how to fine-tune a model using LoRA and deploy it for serverless inference. For comprehensive fine-tuning options and best practices, refer to the Fine-Tuning Guide.\n\n### Prerequisites\n\n- Together AI API key\n\n- Training data in the JSONL format\n\n- Compatible base model selection\n\n### Step 1: Upload Training DataFirst, upload your training dataset to Together AI:\n\n```\n\ntogether files upload \"your-datafile.jsonl\"\n\n```\n\n### Step 2: Create Fine-tuning JobLaunch a LoRA fine-tuning job using the uploaded file ID:\n\n```\n\ntogether fine-tuning create \\\n\n--training-file \"file-629e58b4-ff73-438c-b2cc-f69542b27980\" \\\n\n--model \"meta-llama/Meta-Llama-3.1-8B-Instruct-Reference\" \\\n\n--lora\n\n```\n\nOnce you submit the fine-tuning job you should be able to see the model\n\nNote: If you plan to use a validation set, make sure to set the\n\n`--validation-file`and\n\n`--n-evals`(the number of evaluations over the entire job) parameters.\n\n`--n-evals`needs to be set as a number above 0 in order for your validation set to be used.\n\n`output_name` and\n\n`job_id` in the response:\n\n```\n\n\n\n\"id\": \"ft-44129430-ac08-4136-9774-aed81e0164a4\",\n\n\"training_file\": \"file-629e58b4-ff73-438c-b2cc-f69542b27980\",\n\n\"validation_file\": \"\",\n\n\"model\": \"meta-llama/Meta-Llama-3.1-8B-Instruct-Reference\",\n\n\"output_name\": \"zainhas/Meta-Llama-3.1-8B-Instruct-Reference-my-demo-finetune-4224205a\",\n\n...\n\n\n\n```\n\n### Step 3: Getting the output modelOnce you submit the fine-tuning job you should be able to see the model\n\n`output_name` and\n\n`job_id` in the response:\n\nYou can also see the status of the job and get the model name if you navigate to your fine-tuned model in the \u2018Model\u2019 or \u2018Jobs\u2019 tab in the Together dashboard.\n\n```\n\n\n\n\"id\": \"ft-44129430-ac08-4136-9774-aed81e0164a4\",\n\n\"training_file\": \"file-629e58b4-ff73-438c-b2cc-f69542b27980\",\n\n\"validation_file\": \"\",\n\n\"model\": \"meta-llama/Meta-Llama-3.1-8B-Instruct-Reference\",\n\n\"output_name\": \"zainhas/Meta-Llama-3.1-8B-Instruct-Reference-my-demo-finetune-4224205a\",\n\n...\n\n\n\n```\n\n### Step 4: Running LoRA inferenceOnce the fine-tuning job is completed, your model is immediately available for inference.\n\nExpected Response:\n\n```\n\nMODEL_NAME_FOR_INFERENCE=\"zainhas/Meta-Llama-3.1-8B-Instruct-Reference-my-demo-finetune-4224205a\"\n\ncurl -X POST https://api.together.xyz/v1/chat/completions \\\n\n-H \"Authorization: Bearer $TOGETHER_API_KEY\" \\\n\n-H \"Content-Type: application/json\" \\\n\n--data @- <<EOF\n\n\n\n\"model\": \"$MODEL_NAME_FOR_INFERENCE\",\n\n\"messages\": [\n\n{ \"role\": \"user\", \"content\": \"debate the pros and cons of AI\" }\n\n],\n\n\"max_tokens\": 128\n\n\n\nEOF\n\n```\n\n```\n\n\n\n\"id\": \"8f2cb236c80ea20e-YYZ\",\n\n\"object\": \"text.completion\",\n\n\"created\": 1734331375,\n\n\"model\": \"zainhas/Meta-Llama-3.1-8B-Instruct-Reference-my-demo-finetune-4224205a\",\n\n\"prompt\": [],\n\n\"choices\": [\n\n\n\n\"text\": \"Here's a debate on the pros and cons of AI:\\n\\n**Moderator:** Welcome to today's debate on the pros and cons of AI. We have two debaters, Alex and Ben, who will present their arguments on the topic. Alex will argue in favor of AI, while Ben will argue against it. Let's begin with opening statements.\\n\\n**Alex (In Favor of AI):** Thank you, Moderator. AI has revolutionized the way we live and work. It has improved efficiency, productivity, and accuracy in various industries, such as healthcare, finance, and transportation. AI-powered systems can analyze vast amounts of data, identify\",\n\n\"finish_reason\": \"length\",\n\n\"seed\": 5626645655383684000,\n\n\"logprobs\": null,\n\n\"index\": 0\n\n\n\n],\n\n\"usage\": {\n\n\"prompt_tokens\": 18,\n\n\"completion_tokens\": 128,\n\n\"total_tokens\": 146,\n\n\"cache_hit_rate\": 0\n\n\n\n```\n\n## Performance Characteristics\n\n### Latency Expectations\n\n**Cold start:**Initial requests may experience 5-10 seconds of latency **Warm requests:**Subsequent queries typically respond under 1 second **Optimization tip:**Send a warmup query after deployment to minimize cold starts for production traffic\n\n## Best Practices\n\n**Data Preparation**: Ensure your training data follows the correct JSONL format for your chosen model **Validation Sets**: Always include validation data to monitor training quality **Model Naming**: Use descriptive names for easy identification in production **Warmup Queries**: Run test queries immediately after deployment to optimize response times **Monitoring**: Track inference metrics through the Together dashboard\n\n## Frequently Asked Questions\n\n### Which base models support LoRA fine-tuning?Together AI supports LoRA fine-tuning on a curated selection of high-performance base models. See the complete list for current options.\n\n### What are typical inference latencies?After an initial cold start period (5-10 seconds for the first request), subsequent requests typically achieve sub-second response times. Latency remains consistently low for warm models.\n\n### Can I use streaming responses?Yes, streaming is fully supported. Add\n\n`\"stream\": true` to your request parameters to receive incremental responses.\n\n### How do I migrate pre-December 2024 adapters?Download your existing adapter files and re-upload them using our adapter upload workflow. We\u2019re working on automated migration for legacy adapters.\n\n### What\u2019s the difference between LoRA and full fine-tuning?LoRA trains only a small set of additional parameters (typically 0.1-1% of model size), resulting in faster training, lower costs, and smaller output files, while full fine-tuning updates all model parameters for maximum customization at higher computational cost.\n\n## Next Steps\n\n- Explore advanced fine-tuning parameters for optimizing model performance\n\n- Learn about uploading custom adapters trained outside Together AI\n\n",
+          "title": "Serverless LoRA Inference",
+          "url": "https://docs.together.ai/docs/lora-inference"
+        },
+        {
+          "snippet": "## Serverless Inference\n\nState-of-the-art language and multimodal models.\n\nPrice per 1M tokens\n\nBatch API price\n\n|Model|Input|Output|\n|--|--|--|\n|Llama 4 Maverick Llama|$0.27|$0.85|\n|Kimi K2.5 Kimi|$0.50|$2.80|\n|Qwen3-Coder-Next Qwen|0.50|1.20|\n|Llama 3.3 70B Llama|$0.88|$0.88|\n|Llama 3.2 3B Instruct Turbo Llama|$0.06|$0.06|\n|Llama 3.1 405B Llama|$3.50|$3.50|\n|Llama 3.1 70B Llama|$0.88|$0.88|\n|Llama 3.1 8B Llama|$0.18|$0.18|\n|Llama 3 8B Instruct Lite Llama|$0.10|$0.10|\n|DeepSeek-R1-0528 DeepSeek|$3.00|$7.00|\n|DeepSeek-V3.1 DeepSeek|$0.60|$1.70|\n|DeepSeek-V3-0324 DeepSeek|$1.25|$1.25|\n|gpt-oss-120B GPT-OSS|$0.15|$0.60|\n|gpt-oss-20B GPT-OSS|$0.05|$0.20|\n|Qwen3-Next-80B-A3B-Instruct Qwen|$0.15|$1.50|\n|Qwen3-Next-80B-A3B-Thinking Qwen|$0.15|$1.50|\n|Qwen3-VL-32B-Instruct Qwen|$0.50|$1.50|\n|Qwen3-Coder 480B A35B Instruct Qwen|$2.00|$2.00|\n|Qwen3 235B A22B Instruct 2507 FP8 Qwen|$0.20|$0.60|\n|Qwen3 235B A22B Thinking 2507 FP8 Qwen|$0.65|$3.00|\n|Qwen2.5 7B Instruct Turbo Qwen|$0.30|$0.30|\n|GLM-4.7 GLM|$0.45|$2.00|\n|Kimi K2 Instruct Kimi|$1.00|$3.00|\n|GLM-4.5-Air GLM|$0.20|$1.10|\n|Kimi K2 Thinking Kimi|$1.20|$4.00|\n|Mistral (7B) Instruct v0.2 Mistral|$0.20|$0.20|\n|Mistral Small 3 Mistral|$0.10|$0.30|\n|Gemma 3n E4B Instruct Gemma|$0.02|$0.04|\nLooks like there are no models for this filter.\n\nDisplayed prices refer to the lowest resolution/duration settings. Actual prices might vary.\n\nGenerate stunning visuals with the latest and greatest image models.\n\nPrice per MP\n\n|Model|Input|Images Per $1 (1MP)|Default steps|\n|--|--|--|--|\n|FLUX.1 Krea [dev]|$0.025|-|28|\n|FLUX.1 Kontext [dev]|$0.025|-|28|\n|FLUX.1 Kontext [pro]|$0.04|-|28|\n|FLUX.1 Kontext [max]|$0.08|-|28|\n|FLUX1.1 [pro]|$0.04|-|-|\n|FLUX.1 [dev]|$0.025|-|28|\n|FLUX.1 [schnell]|$0.0027|-|4|\n|FLUX.1 Canny [pro]|$0.05|-|-|\n|Google Imagen 4.0 Preview|$0.04|-|-|\n|Google Imagen 4.0 Fast|$0.02|-|-|\n|Google Imagen 4.0 Ultra|$0.06|-|-|\n|Gemini Flash Image 2.5 (Nano Banana)|$0.039|-|-|\n|ByteDance Seedream 3.0|$0.018|-|-|\n|ByteDance Seedream 4.0|$0.03|-|-|\n|ByteDance SeedEdit|$0.03|-|-|\n|Qwen Image Edit|$0.0032|-|-|\n|Qwen Image|$0.0058|-|-|\n|Juggernaut Pro Flux|$0.0049|-|-|\n|Juggernaut Lightning Flux|$0.0017|-|-|\n|HiDream-I1-Full|$0.009|-|-|\n|HiDream-I1-Dev|$0.0045|-|-|\n|HiDream-I1-Fast|$0.0032|-|-|\n|Ideogram 3.0|$0.06|-|-|\n|Dreamshaper|$0.0006|-|-|\n|SD XL|$0.0019|-|-|\n|Stable Diffusion 3|$0.0019|-|-|\n*Prices include default steps shown above. Additional costs apply only when exceeding default steps. * *See full pricing details \u2192*\n\nSpeech synthesis and processing models.\n\nPrice per 1M Characters\n\n|Model|Price|\n|--|--|\n|Cartesia Sonic-2|$65.00|\n|Cartesia Sonic-3|$65.00|\nUse our video generation API to create high-quality videos.\n\nPrice per video\n\n|Model|Price|\n|--|--|\n|MiniMax 01 Director|$0.28|\n|MiniMax Hailuo 02|$0.49|\n|Google Veo 2.0|$2.50|\n|Google Veo 3.0|$1.60|\n|Google Veo 3.0 + Audio|$3.20|\n|Google Veo 3.0 Fast|$0.80|\n|Google Veo 3.0 Fast + Audio|$1.20|\n|ByteDance Seedance 1.0 Lite|$0.14|\n|ByteDance Seedance 1.0 Pro|$0.57|\n|PixVerse v5|$0.30|\n|Kling 2.1 Master|$0.92|\n|Kling 2.1 Standard|$0.18|\n|Kling 2.1 Pro|$0.32|\n|Kling 2.0 Master|$0.92|\n|Kling 1.6 Standard|$0.19|\n|Kling 1.6 Pro|$0.32|\n|Wan 2.2 I2V|$0.31|\n|Wan 2.2 T2V|$0.66|\n|Vidu 2.0|$0.28|\n|Vidu Q1|$0.22|\n|Sora 2|$0.80|\n|Sora 2 Pro|$2.40|\nModels for automatic speech recognition (ASR) and speech translation.\n\nPrice per audio minute\n\nBatch API price\n\n|Model|Price|\n|--|--|\n|Whisper Large v3|$0.0015|\nVector embeddings for semantic search and RAG.\n\nPrice per 1M tokens\n\n|Model|Price|\n|--|--|\n|BGE-Base-EN v1.5|$0.01|\n|BGE-Large-EN v1.5|$0.02|\n|GTE ModernBERT base|$0.08|\n|Multilingual e5 large instruct|$0.02|\nImprove search relevance with reranking models.\n\nPrice per 1M tokens\n\n|Model|Price|\n|--|--|\n|Mxbai Rerank Large V2|$0.10|\nFilter and classify content for safety and compliance.\n\nPrice per 1M tokens\n\n|Model|Price|\n|--|--|\n|VirtueGuard Text Lite|$0.20|\n|Llama Guard 4 12B|$0.20|\n|Llama Guard 3 11B Vision Turbo|$0.18|\n|Llama Guard 3 8B|$0.20|\n|Llama Guard 2 8B|$0.20|\nDeploy models on custom hardware with guaranteed performance and full control.\n\nGuaranteed performance (no sharing)\n\nSupport for custom models\n\nAutoscaling & traffic spike handling\n\n|Hardware Type|Price/Hour|\n|--|--|\n|1x H200 141GB|$4.99|\n|1x H100 80GB|$3.36|\n|1x A100 SXM 80GB|$2.56|\n|1x A100 SXM 40GB|$2.40|\n|1x A100 PCIe 80GB|$2.40|\n|1x L40S 48GB|$2.10|\n## Fine-tuning\n\nPrice per 1M tokens\n\n|Supervised Fine-Tuning|Direct Preference Optimization|Size|LoRA|Full Fine-Tuning|LoRA|Full Fine-Tuning|\n|--|--|--|--|--|--|--|\n|Up to 16B|$0.48|$0.54|$1.20|$1.35|\n|17B-69B|$1.50|$1.65|$3.75|$4.12|\n|70-100B|$2.90|$3.20|$7.25|$8.00|\nPrice is based on the sum of tokens processed in the fine-tuning training dataset (training dataset size * number of epochs) plus any tokens in the optional evaluation dataset (validation dataset size * number of evaluations).\n\nFine-tuning for the models below incurs minimum charges and is limited to LoRA fine-tuning.\n\nPrice per 1M tokens\n\n|Model|Supervised Fine-Tuning (LoRA)|Direct Preference Optimization (LoRA)|Minimum charge|\n|--|--|--|--|\n|DeepSeek-R1 DeepSeek-R1-0528 DeepSeek-V3 DeepSeek-V3-0324 DeepSeek-V3.1 DeepSeek-V3.1-Base|$10.00|$25.00|$20.00|\n|GLM-4.6 GLM-4.7|$9.00|$22.50|$27.00|\n|gpt-oss-120B|$5.00|$12.50|$6.00|\n|Kimi K2 Thinking Kimi K2 Instruct-0905 Kimi K2 Instruct Kimi K2 Base|$15.00|$37.50|$60.00|\n|Llama 4 Maverick Llama 4 Maverick Instruct|$8.00|$20.00|$16.00|\n|Llama 4 Scout Llama 4 Scout Instruct|$3.00|$7.50|$6.00|\n|Qwen3-Coder-480B-A35B-Instruct|$9.00|$22.50|$18.00|\n|Qwen3-235B-A22B Qwen3-235B-A22B-Instruct-2507|$6.00|$15.00|No min price|\nPrice is based on the sum of tokens processed in the fine-tuning training dataset (training dataset size * number of epochs) plus any tokens in the optional evaluation dataset (validation dataset size * number of evaluations).\n\n## Code Execution\n\nCustomize a deployment of VM sandboxes for large development environments.\n\nPrice per hour\n\n|Price|\n|--|\n|Per vCPU|$0.0446|\n|Per GiB RAM|$0.0149|\nExecute LLM-generated code securely using our API.\n\nPrice per session\n\n|Price|\n|--|\n|Session (60 minutes)|$0.03|\n## GPU Cloud\n\nChoice of Kubernetes or Slurm on Kubernetes\n\nFree network ingress and egress\n\nNVIDIA InfiniBand and NVLink networking\n\nAll Together Instant and Reserved Clusters feature: choice of Kubernetes or Slurm on Kubernetes, free network ingress and egress, NVIDIA InfiniBand, and NVLink networking.\n\nReady to use, self-service GPUs.\n\nPrice per hour per GPU\n\n|Hardware|1 Week - 3 Months|1 - 6 Days|Hourly|\n|--|--|--|--|\n|NVIDIA HGX H100 SXM|$2.20|$2.50|$2.99|\n|NVIDIA HGX H200|$3.15|$3.45|$3.79|\n|NVIDIA HGX B200|$4.50|$4.90|$5.50|\nDedicated capacity, with expert support.\n\nPrice per hour\n\n|Hardware|GPU Memory|Price|\n|--|--|--|\n|NVIDIA GB200 NVL72|384GB HBM3e|Contact us|\n|NVIDIA B200|192GB HBM3e|Contact us|\n|NVIDIA H200|141GB HBM3e|Starting at $2.09|\n|NVIDIA H100|80GB HBM2e|Starting at $1.75|\n|NVIDIA A100|80GB HBM2e|Starting at $1.30|\nLarge-scale, custom-built private GPU clusters. 1K \u2192 10K \u2192 100K+ NVIDIA GPUs.\n\nHigh-bandwidth, parallel filesystem colocated with your compute.\n\n|Item|Price|Unit|\n|--|--|--|\n|Shared Filesystem|$0.16|GiB/month|\n",
+          "title": "Pricing - Together AI",
+          "url": "https://www.together.ai/pricing"
+        }
+      ],
+      "type": "fetch_url_results"
+    },
+    {
+      "queries": [
+        "Together AI serverless LoRA base models list compatible models",
+        "Replicate fine-tuning LoRA supported models 2025",
+        "Modal LoRA serving inference models 2025"
+      ],
+      "results": [
+        {
+          "date": "2026-01-28",
+          "id": 1,
+          "last_updated": "2026-02-08T10:33:18",
+          "snippet": "**Note:**This list is different from the models that support Serverless LoRA inference, which allows you to perform LoRA fine-tuning and run inference immediately. See the LoRA inference page for the list of supported base models for serverless LoRA.\n\n**Important:**When uploading LoRA adapters for serverless inference, you must use base models from the serverless LoRA list, not the fine-tuning models list. Using an incompatible base model (such as Turbo variants) will result in a \u201cNo lora_model specified\u201d error during upload. For example, use",
+          "source": "web",
+          "title": "Fine-tuning - Supported Models - Together.ai Docs",
+          "url": "https://docs.together.ai/docs/fine-tuning-models"
+        },
+        {
+          "date": "2021-01-01",
+          "id": 2,
+          "last_updated": "2026-02-13T14:47:43",
+          "snippet": "LoRA works by keeping the original model frozen and only adding small, trainable layers to the model. Think of it like applying a filter to a camera lens: the base model remains unchanged, but the filter tweaks the output in a specific way. This allows LoRAs to capture new styles or subjects without needing to retrain everything from scratch.\n\nThis approach makes fine-tuning more efficient, reducing memory and compute requirements without sacrificing quality. It also means multiple LoRAs can be swapped in and out of a model, allowing for quick customization without permanent changes.\n\n\u2026\n\n## Combine LoRAs when generating images with Flux\n\nA little-known feature of Flux fine-tunes on Replicate is that you can combine multiple LoRA styles in a single output image. LoRA stands for \u201cLow-Rank Adaptation\u201d. I won\u2019t go into technical detail about how LoRAs work here, but the important thing to know is that it\u2019s become an industry term for \u201ctrained weights\u201d in the context of fine-tuning image models. When you refer to \u201ca LoRA\u201d, you\u2019re talking about a specific set of trained weights that get added to the base Flux model to constitute a \u201cfine-tuned model\u201d.\n\n\u2026\n\n- Create a fine-tuned model with whatever training data you have available.\n\n- Explore LoRA fine-tunes from the community and pick a few that you like.\n\n- Generate images with your fine-tuned model, combining it with the other LoRAs you selected.\n\n- Comb through the outputs and select the ones that meet your expectations.\n\n- Run a new training job using those outputs as training data.\n\nTo find LoRAs to combine with your model, check out the Flux fine-tunes on Replicate and Replicate LoRA fine-tunes on Hugging Face.",
+          "source": "web",
+          "title": "Combine LoRAs when...",
+          "url": "https://replicate.com/docs/guides/extend/working-with-loras"
+        },
+        {
+          "id": 3,
+          "last_updated": "2026-02-04T10:08:04.177135",
+          "snippet": "## Inference with LoRAs\n\nWe define a\n\n`StableDiffusionLoRA` class to organize our inference code.\n\nWe load Stable Diffusion XL 1.0 as a base model, then, when doing inference,\n\nwe load whichever LoRA the user specifies from the S3 bucket.\n\nFor more on the decorators we use on the methods below to speed up building and booting,",
+          "source": "web",
+          "title": "Create a LoRA Playground with Modal, Gradio, and S3",
+          "url": "https://modal.com/docs/examples/cloud_bucket_mount_loras"
+        },
+        {
+          "date": "2026-02-13",
+          "id": 4,
+          "last_updated": "2026-02-13T20:27:54",
+          "snippet": "",
+          "source": "web",
+          "title": "Audio models",
+          "url": "https://docs.together.ai/docs/serverless-models"
+        },
+        {
+          "date": "2025-01-24",
+          "id": 5,
+          "last_updated": "2026-02-12T15:31:45",
+          "snippet": "",
+          "source": "web",
+          "title": "You can now fine-tune open-source video models \u2013 Replicate blog",
+          "url": "https://replicate.com/blog/fine-tune-video"
+        },
+        {
+          "date": "2026-02-11",
+          "id": 6,
+          "last_updated": "2026-02-12T12:16:05",
+          "snippet": "",
+          "source": "web",
+          "title": "Products - Inference - Modal",
+          "url": "https://modal.com/products/inference"
+        },
+        {
+          "date": "2025-12-02",
+          "id": 7,
+          "last_updated": "2025-12-04T09:23:39.551720",
+          "snippet": "|Organization|Modality|Model Name|Model String for API|\n|--|--|--|--|\n|Canopy Labs|Text-to-Speech|Orpheus 3B|canopylabs/orpheus-3b-0.1-ft|\n|Kokoro|Text-to-Speech|Kokoro|hexgrad/Kokoro-82M|",
+          "source": "web",
+          "title": "Serverless Models - Together.ai Docs",
+          "url": "https://togetherai-52386018.mintlify.app/docs/serverless-models"
+        },
+        {
+          "date": "2025-07-09",
+          "id": 8,
+          "last_updated": "2026-02-10T10:44:24",
+          "snippet": "",
+          "source": "web",
+          "title": "How To Train a LoRa on Replicate",
+          "url": "https://www.youtube.com/watch?v=QSgC7Db84ZM"
+        },
+        {
+          "date": "2026-01-29",
+          "id": 9,
+          "last_updated": "2026-02-13T12:13:26",
+          "snippet": "By encoding task-specific behavior into the model, LoRA adapters can reduce prompt length, eliminate the need for repeated context, and improve inference efficiency.\n\nLoRA adapters also enable you to serve a single base model with multiple specializations, minimizing memory usage and simplifying deployment.\n\nAdapters are especially effective at capturing specialized vocabulary, tone, or structure, and can help address model drift through targeted fine-tuning in production.",
+          "source": "web",
+          "title": "Using LoRA adapters - Modular Docs",
+          "url": "https://docs.modular.com/max/serve/lora-adapters/"
+        },
+        {
+          "date": "2025-11-04",
+          "id": 10,
+          "last_updated": "2025-11-29T16:51:25.044351",
+          "snippet": "**Note:**This list is different from the models that support Serverless LoRA inference, which allows you to perform LoRA fine-tuning and run inference immediately. See the LoRA inference page for the list of supported base models for serverless LoRA.\n\n**Important:**When uploading LoRA adapters for serverless inference, you must use base models from the serverless LoRA list, not the fine-tuning models list. Using an incompatible base model (such as Turbo variants) will result in a \u201cNo lora_model specified\u201d error during upload. For example, use",
+          "source": "web",
+          "title": "Supported Models - Together.ai Docs",
+          "url": "https://togetherai-52386018.mintlify.app/docs/fine-tuning-models"
+        },
+        {
+          "date": "2025-04-17",
+          "id": 11,
+          "last_updated": "2025-08-21T14:01:39.528295",
+          "snippet": "",
+          "source": "web",
+          "title": "Fine Tune a Flux model with Replicate.com - Generate any image with your face on it",
+          "url": "https://www.youtube.com/watch?v=EWZN4vU1E1M"
+        },
+        {
+          "date": "2024-10-31",
+          "id": 12,
+          "last_updated": "2025-12-27T14:41:52.390057",
+          "snippet": "",
+          "source": "web",
+          "title": "Building a Stable Diffusion + LoRA image generation pipeline on Modal",
+          "url": "https://www.youtube.com/watch?v=sHSKArbiKmU"
+        },
+        {
+          "date": "2026-01-01",
+          "id": 13,
+          "last_updated": "2026-02-13T08:15:06",
+          "snippet": "|Available Models|\n|--|\n|`stabilityai/stable-diffusion-xl-base-1.0`|\n|`black-forest-labs/FLUX.1-dev`|\n|`black-forest-labs/FLUX.1-dev-lora`|\n|`black-forest-labs/FLUX.1-schnell`|",
+          "source": "web",
+          "title": "Together.ai provider - AI SDK",
+          "url": "https://ai-sdk.dev/providers/ai-sdk-providers/togetherai"
+        },
+        {
+          "date": "2023-01-31",
+          "id": 14,
+          "last_updated": "2025-05-18T20:11:41.057795",
+          "snippet": "",
+          "source": "web",
+          "title": "lora-training/README.md at main \u00b7 replicate/lora-training",
+          "url": "https://github.com/replicate/lora-training/blob/main/README.md"
+        },
+        {
+          "date": "2023-09-14",
+          "id": 15,
+          "last_updated": "2025-06-02T18:12:00.105800",
+          "snippet": "",
+          "source": "web",
+          "title": "llm-finetuning/README.md at main \u00b7 modal-labs/llm-finetuning",
+          "url": "https://github.com/modal-labs/llm-finetuning/blob/main/README.md"
+        }
+      ],
+      "type": "search_results"
+    },
+    {
+      "contents": [
+        {
+          "snippet": "## Chat models\n\nIn the table below, models marked as \u201cTurbo\u201d are quantized to FP8 and those marked as \u201cLite\u201d are INT4. All our other models are at full precision (FP16).If you\u2019re not sure which chat model to use, we currently recommend\n\n**Llama 3.3 70B Turbo**(\n\n`meta-llama/Llama-3.3-70B-Instruct-Turbo`) to get started.\n\n* The Free version of Llama 3.3 70B Instruct Turbo has a reduced rate limit of .6 requests/minute (36/hour) for users on the free tier and 3 requests/minute for any user who has added a credit card on file. *Deprecated model, see Deprecations for more details\n\n|Organization|Model Name|API Model String|Context length|Quantization|\n|--|--|--|--|--|\n|Moonshot|Kimi K2 Instruct 0905|moonshotai/Kimi-K2-Instruct-0905|262144|FP8|\n|Moonshot|Kimi K2 Thinking|moonshotai/Kimi-K2-Thinking|262144|INT4|\n|Moonshot|Kimi K2.5|moonshotai/Kimi-K2.5|262144|INT4|\n|DeepSeek|DeepSeek-V3.1|deepseek-ai/DeepSeek-V3.1|128000|FP8|\n|OpenAI|GPT-OSS 120B|openai/gpt-oss-120b|128000|MXFP4|\n|OpenAI|GPT-OSS 20B|openai/gpt-oss-20b|128000|MXFP4|\n|Moonshot|Kimi K2 Instruct|moonshotai/Kimi-K2-Instruct|128000|FP8|\n|Z.ai|GLM-5|zai-org/GLM-5|202752|FP4|\n|Z.ai|GLM 4.7|zai-org/GLM-4.7|202752|FP8|\n|Z.ai|GLM 4.5 Air|zai-org/GLM-4.5-Air-FP8|131072|FP8|\n|Qwen|Qwen3 235B-A22B Thinking 2507|Qwen/Qwen3-235B-A22B-Thinking-2507|262144|FP8|\n|Qwen|Qwen3-Coder 480B-A35B Instruct|Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8|256000|FP8|\n|Qwen|Qwen3-Coder-Next|Qwen/Qwen3-Coder-Next-FP8|262144|FP8|\n|Qwen|Qwen3 235B-A22B Instruct 2507|Qwen/Qwen3-235B-A22B-Instruct-2507-tput|262144|FP8|\n|Qwen|Qwen3-Next-80B-A3B-Instruct|Qwen/Qwen3-Next-80B-A3B-Instruct|262144|BF16|\n|Qwen|Qwen3-Next-80B-A3B-Thinking|Qwen/Qwen3-Next-80B-A3B-Thinking|262144|BF16|\n|DeepSeek|DeepSeek-R1-0528|deepseek-ai/DeepSeek-R1|163839|FP8|\n|Meta|Llama 4 Maverick (17Bx128E)|meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8|1048576|FP8|\n|Meta|Llama 3.3 70B Instruct Turbo|meta-llama/Llama-3.3-70B-Instruct-Turbo|131072|FP8|\n|Deep Cogito|Cogito v2.1 671B|deepcogito/cogito-v2-1-671b|32768|FP8|\n|Mistral AI|Ministral 3 14B Instruct 2512|mistralai/Ministral-3-14B-Instruct-2512|262144|BF16|\n|Marin Community|Marin 8B Instruct|marin-community/marin-8b-instruct|4096|FP16|\n|Essential AI|Rnj-1 Instruct|essentialai/rnj-1-instruct|32768|BF16|\n|Mistral AI|Mistral Small 3 Instruct (24B)|mistralai/Mistral-Small-24B-Instruct-2501|32768|FP16|\n|Meta|Llama 3.1 8B Instruct Turbo|meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo|131072|FP8|\n|Qwen|Qwen 2.5 7B Instruct Turbo|Qwen/Qwen2.5-7B-Instruct-Turbo|32768|FP8|\n|Arcee|Arcee AI Trinity Mini|arcee-ai/trinity-mini|32768|-|\n|Meta|Llama 3.2 3B Instruct Turbo|meta-llama/Llama-3.2-3B-Instruct-Turbo|131072|FP16|\n|Meta|Llama 3 8B Instruct Lite|meta-llama/Meta-Llama-3-8B-Instruct-Lite|8192|INT4|\n|Meta|Llama 3 70B Instruct Reference|meta-llama/Llama-3-70b-chat-hf|8192|FP16|\n|Gemma Instruct (2B)|google/gemma-2b-it*|8192|FP16|\n|Gemma 3N E4B Instruct|google/gemma-3n-E4B-it|32768|FP8|\n|Gryphe|MythoMax-L2 (13B)|Gryphe/MythoMax-L2-13b*|4096|FP16|\n|Mistral AI|Mistral (7B) Instruct v0.2|mistralai/Mistral-7B-Instruct-v0.2|32768|FP16|\n|NVIDIA|Nemotron Nano 9B v2|nvidia/NVIDIA-Nemotron-Nano-9B-v2|131072|BF16|\n**Chat Model Examples**\n\n- PDF to Chat App - Chat with your PDFs (blogs, textbooks, papers)\n\n- Open Deep Research Notebook - Generate long form reports using a single prompt\n\n- RAG with Reasoning Models Notebook - RAG with DeepSeek-R1\n\n- Fine-tuning Chat Models Notebook - Tune Language models for conversation\n\n- Building Agents - Agent workflows with language models\n\n## Image modelsUse our Images endpoint for Image Models.\n\nNote: Image models can only be used with credits. Users are unable to call Image models with a zero or negative balance.\n\n|Organization|Model Name|Model String for API|Default steps|\n|--|--|--|--|\n|Imagen 4.0 Preview|google/imagen-4.0-preview|-|\n|Imagen 4.0 Fast|google/imagen-4.0-fast|-|\n|Imagen 4.0 Ultra|google/imagen-4.0-ultra|-|\n|Flash Image 2.5 (Nano Banana)|google/flash-image-2.5|-|\n|Gemini 3 Pro Image (Nano Banana 2)|google/gemini-3-pro-image|-|\n|Black Forest Labs|Flux.1 [schnell] (Turbo)|black-forest-labs/FLUX.1-schnell|4|\n|Black Forest Labs|Flux.1 Dev|black-forest-labs/FLUX.1-dev|28|\n|Black Forest Labs|Flux1.1 [pro]|black-forest-labs/FLUX.1.1-pro|-|\n|Black Forest Labs|Flux.1 Kontext [pro]|black-forest-labs/FLUX.1-kontext-pro|28|\n|Black Forest Labs|Flux.1 Kontext [max]|black-forest-labs/FLUX.1-kontext-max|28|\n|Black Forest Labs|Flux.1 Kontext [dev]|black-forest-labs/FLUX.1-kontext-dev|28|\n|Black Forest Labs|FLUX.1 Krea [dev]|black-forest-labs/FLUX.1-krea-dev|28|\n|Black Forest Labs|FLUX.2 [pro]|black-forest-labs/FLUX.2-pro|-|\n|Black Forest Labs|FLUX.2 [dev]|black-forest-labs/FLUX.2-dev|-|\n|Black Forest Labs|FLUX.2 [flex]|black-forest-labs/FLUX.2-flex|-|\n|ByteDance|Seedream 3.0|ByteDance-Seed/Seedream-3.0|-|\n|ByteDance|Seedream 4.0|ByteDance-Seed/Seedream-4.0|-|\n|Qwen|Qwen Image|Qwen/Qwen-Image|-|\n|RunDiffusion|Juggernaut Pro Flux|RunDiffusion/Juggernaut-pro-flux|-|\n|RunDiffusion|Juggernaut Lightning Flux|Rundiffusion/Juggernaut-Lightning-Flux|-|\n|HiDream|HiDream-I1-Full|HiDream-ai/HiDream-I1-Full|-|\n|HiDream|HiDream-I1-Dev|HiDream-ai/HiDream-I1-Dev|-|\n|HiDream|HiDream-I1-Fast|HiDream-ai/HiDream-I1-Fast|-|\n|Ideogram|Ideogram 3.0|ideogram/ideogram-3.0|-|\n|Lykon|Dreamshaper|Lykon/DreamShaper|-|\n|Stability AI|Stable Diffusion 3|stabilityai/stable-diffusion-3-medium|-|\n|Stability AI|SD XL|stabilityai/stable-diffusion-xl-base-1.0|-|\n**Image Model Examples**\n\n- Blinkshot.io - A realtime AI image playground built with Flux Schnell\n\n- Logo Creator - An logo generator that creates professional logos in seconds using Flux Pro 1.1\n\n- PicMenu - A menu visualizer that takes a restaurant menu and generates nice images for each dish.\n\n- Flux LoRA Inference Notebook - Using LoRA fine-tuned image generations models\n\n**How FLUX pricing works**For FLUX models (except for pro) pricing is based on the size of generated images (in megapixels) and the number of steps used (if the number of steps exceed the default steps). **Default pricing:**The listed per megapixel prices are for the default number of steps. **Using more or fewer steps:**Costs are adjusted based on the number of steps used **only if you go above the default steps**. If you use more steps, the cost increases proportionally using the formula below. If you use fewer steps, the cost *does not*decrease and is based on the default rate.\n\n- MP = (Width \u00d7 Height \u00f7 1,000,000)\n\n- Price per MP = Cost for generating one megapixel at the default steps\n\n- Steps = The number of steps used for the image generation. This is only factored in if going above default steps.\n\n**How Pricing works for Gemini 3 Pro Image**Gemini 3 Pro Image offers pricing based on the resolution of the image.\n\n- 1080p and 2K: $0.134/image\n\n- 4K resolution: $0.24 /image\n\n## Vision modelsIf you\u2019re not sure which vision model to use, we currently recommend\n\n**Llama 4 Maverick**(\n\n`meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8`) to get started. For model specific rate limits, navigate here.\n\n|Organization|Model Name|API Model String|Context length|\n|--|--|--|--|\n|Meta|Llama 4 Maverick (17Bx128E)|meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8|524288|\n|Qwen|Qwen3-VL-32B-Instruct|Qwen/Qwen3-VL-32B-Instruct|256000|\n|Qwen|Qwen3-VL-8B-Instruct|Qwen/Qwen3-VL-8B-Instruct|262100|\n**Vision Model Examples**\n\n- LlamaOCR - A tool that takes documents (like receipts) and outputs markdown\n\n- Wireframe to Code - A wireframe to app tool that takes in a UI mockup of a site and give you React code.\n\n- Extracting Structured Data from Images - Extract information from images as JSON\n\n## Video models\n\n|Organization|Model Name|Model String for API|Resolution / Duration|\n|--|--|--|--|\n|MiniMax|MiniMax 01 Director|minimax/video-01-director|720p / 5s|\n|MiniMax|MiniMax Hailuo 02|minimax/hailuo-02|768p / 10s|\n|Veo 2.0|google/veo-2.0|720p / 5s|\n|Veo 3.0|google/veo-3.0|720p / 8s|\n|Veo 3.0 + Audio|google/veo-3.0-audio|720p / 8s|\n|Veo 3.0 Fast|google/veo-3.0-fast|1080p / 8s|\n|Veo 3.0 Fast + Audio|google/veo-3.0-fast-audio|1080p / 8s|\n|ByteDance|Seedance 1.0 Lite|ByteDance/Seedance-1.0-lite|720p / 5s|\n|ByteDance|Seedance 1.0 Pro|ByteDance/Seedance-1.0-pro|1080p / 5s|\n|PixVerse|PixVerse v5|pixverse/pixverse-v5|1080p / 5s|\n|Kuaishou|Kling 2.1 Master|kwaivgI/kling-2.1-master|1080p / 5s|\n|Kuaishou|Kling 2.1 Standard|kwaivgI/kling-2.1-standard|720p / 5s|\n|Kuaishou|Kling 2.1 Pro|kwaivgI/kling-2.1-pro|1080p / 5s|\n|Kuaishou|Kling 2.0 Master|kwaivgI/kling-2.0-master|1080p / 5s|\n|Kuaishou|Kling 1.6 Standard|kwaivgI/kling-1.6-standard|720p / 5s|\n|Kuaishou|Kling 1.6 Pro|kwaivgI/kling-1.6-pro|1080p / 5s|\n|Wan-AI|Wan 2.2 I2V|Wan-AI/Wan2.2-I2V-A14B|-|\n|Wan-AI|Wan 2.2 T2V|Wan-AI/Wan2.2-T2V-A14B|-|\n|Vidu|Vidu 2.0|vidu/vidu-2.0|720p / 8s|\n|Vidu|Vidu Q1|vidu/vidu-q1|1080p / 5s|\n|OpenAI|Sora 2|openai/sora-2|720p / 8s|\n|OpenAI|Sora 2 Pro|openai/sora-2-pro|1080p / 8s|\n## Audio modelsUse our Audio endpoint for text-to-speech models. For speech-to-text models see Transcription and Translations\n\n|Organization|Modality|Model Name|Model String for API|\n|--|--|--|--|\n|Canopy Labs|Text-to-Speech|Orpheus 3B|canopylabs/orpheus-3b-0.1-ft|\n|Kokoro|Text-to-Speech|Kokoro|hexgrad/Kokoro-82M|\n|Cartesia|Text-to-Speech|Cartesia Sonic 2|cartesia/sonic-2|\n|Cartesia|Text-to-Speech|Cartesia Sonic|cartesia/sonic|\n|OpenAI|Speech-to-Text|Whisper Large v3|openai/whisper-large-v3|\n|Mistral AI|Speech-to-Text|Voxtral Mini 3B|mistralai/Voxtral-Mini-3B-2507|\n**Audio Model Examples**\n\n- PDF to Podcast Notebook - Generate a NotebookLM style podcast given a PDF\n\n- Audio Podcast Agent Workflow - Agent workflow to generate audio files given input content\n\n## Embedding models\n\n|Model Name|Model String for API|Model Size|Embedding Dimension|Context Window|\n|--|--|--|--|--|\n|BGE-Base-EN-v1.5|BAAI/bge-base-en-v1.5|102M|768|512|\n|GTE-Modernbert-base|Alibaba-NLP/gte-modernbert-base|149M|768|8192|\n|Multilingual-e5-large-instruct|intfloat/multilingual-e5-large-instruct|560M|1024|514|\n**Embedding Model Examples**\n\n- Contextual RAG - An open source implementation of contextual RAG by Anthropic\n\n- Code Generation Agent - An agent workflow to generate and iteratively improve code\n\n- Multimodal Search and Image Generation - Search for images and generate more similar ones\n\n- Visualizing Embeddings - Visualizing and clustering vector embeddings\n\n## Rerank modelsOur Rerank API has built-in support for the following models, that we host via our serverless endpoints.\n\n|Organization|Model Name|Model Size|Model String for API|Max Doc Size (tokens)|Max Docs|\n|--|--|--|--|--|--|\n|MixedBread|Rerank Large|1.6B|mixedbread-ai/Mxbai-Rerank-Large-V2|32768|-|\n**Rerank Model Examples**\n\n- Search and Reranking - Simple semantic search pipeline improved using a reranker\n\n- Implementing Hybrid Search Notebook - Implementing semantic + lexical search along with reranking\n\n## Moderation modelsUse our Completions endpoint to run a moderation model as a standalone classifier, or use it alongside any of the other models above as a filter to safeguard responses from 100+ models, by specifying the parameter\n\n`\"safety_model\": \"MODEL_API_STRING\"`\n\n|Organization|Model Name|Model String for API|Context length|\n|--|--|--|--|\n|Meta|Llama Guard 4 (12B)|meta-llama/Llama-Guard-4-12B|1048576|\n|Virtue AI|Virtue Guard|VirtueAI/VirtueGuard-Text-Lite|32768|\n",
+          "title": "Audio models",
+          "url": "https://docs.together.ai/docs/serverless-models"
+        },
+        {
+          "snippet": "",
+          "title": "",
+          "url": "https://docs.together.ai/docs/lora-adapter-upload"
+        }
+      ],
+      "type": "fetch_url_results"
+    },
+    {
+      "queries": [
+        "Together AI serverless LoRA compatible base models list page",
+        "Fireworks AI pricing per token models 2025 2026",
+        "Nebius AI Studio fine-tuning models supported list pricing"
+      ],
+      "results": [
+        {
+          "date": "2026-01-28",
+          "id": 1,
+          "last_updated": "2026-02-08T10:33:18",
+          "snippet": "**Note:**This list is different from the models that support Serverless LoRA inference, which allows you to perform LoRA fine-tuning and run inference immediately. See the LoRA inference page for the list of supported base models for serverless LoRA.\n\n**Important:**When uploading LoRA adapters for serverless inference, you must use base models from the serverless LoRA list, not the fine-tuning models list. Using an incompatible base model (such as Turbo variants) will result in a \u201cNo lora_model specified\u201d error during upload. For example, use",
+          "source": "web",
+          "title": "Fine-tuning - Supported Models - Together.ai Docs",
+          "url": "https://docs.together.ai/docs/fine-tuning-models"
+        },
+        {
+          "date": "2025-09-24",
+          "id": 2,
+          "last_updated": "2026-02-13T11:05:26",
+          "snippet": "|Base model|$ / 1M tokens|\n|--|--|\n|Less than 4B parameters|$0.10|\n|4B - 16B parameters|$0.20|\n|More than 16B parameters|$0.90|\n|MoE 0B - 56B parameters (e.g. Mixtral 8x7B)|$0.50|\n\n\u2026\n\n|GLM-5|$1.00 input, $0.20 cached input, $3.20 output|\n|Qwen3 VL 30B A3B|$0.15 input, $0.60 output|\n|Kimi K2 Instruct, Kimi K2 Thinking|$0.60 input, $2.50 output|\n|Kimi K2.5|$0.60 input, $0.10 cached input, $3.00 output|\n|OpenAI gpt-oss-120b|$0.15 input, $0.60 output|\n|OpenAI gpt-oss-20b|$0.07 input, $0.30 output|\n\n\u2026\n\n|Base model parameter count|$ / 1M input tokens|\n|--|--|\n|up to 150M|$0.008|\n|150M - 350M|$0.016|\n|Qwen3 8B|$0.1|\nServe fine-tuned models for the same price as base models.\nPriced per 1M training tokens\n\n|Base Model|Supervised Fine Tuning|Direct Preference Optimization|\n|--|--|--|\n|Models up to 16B parameters|$0.50|$1.00|\n|Models 16.1B - 80B|$3.00|$6.00|\n|Models 80B - 300B (e.g. Qwen3-235B, gpt-oss-120B)|$6.00|$12.00|",
+          "source": "web",
+          "title": "Pricing - Fireworks AI",
+          "url": "https://fireworks.ai/pricing"
+        },
+        {
+          "date": "2025-07-10",
+          "id": 3,
+          "last_updated": "2025-09-13T09:32:38.879500",
+          "snippet": "",
+          "source": "web",
+          "title": "Fine-tuning in Nebius AI Studio: Overview",
+          "url": "https://docs.studio.nebius.com/fine-tuning/overview"
+        },
+        {
+          "date": "2026-02-13",
+          "id": 4,
+          "last_updated": "2026-02-13T20:27:54",
+          "snippet": "",
+          "source": "web",
+          "title": "Audio models",
+          "url": "https://docs.together.ai/docs/serverless-models"
+        },
+        {
+          "date": "2024-03-06",
+          "id": 5,
+          "last_updated": "2026-02-13T05:01:30",
+          "snippet": "Blended Price ($/M tokens): Qwen3 8B ($0.20) and gpt-oss-120B (low) ($0.26) are the cheapest models offered by Fireworks, followed by gpt-oss-120B (high), Qwen3 30B & Qwen3\n\n\u2026\n\nPrice per token, represented as USD per million Tokens. Price is a blend of Input & Output token prices (3:1 ratio).\n\nPrice per token generated by the model (received from the API), represented as USD per million Tokens.\n\nPrice per token included in the request/message sent to the API, represented as USD per million Tokens.",
+          "source": "web",
+          "title": "Fireworks: Models Intelligence, Performance & Price",
+          "url": "https://artificialanalysis.ai/providers/fireworks"
+        },
+        {
+          "date": "2025-10-31",
+          "id": 6,
+          "last_updated": "2025-11-25T00:39:09.177781",
+          "snippet": "## Developer-friendly workflow\n\nMove from selection to deployment in minutes with our OpenAI-compatible API, intuitive UI and transparent per-token pricing.\n\n\u2026\n\n## Transparent, competitive pricing\n\nPay only for the compute resources you use during LoRA fine-tuning and inference. No monthly fees, infrastructure costs or hidden charges.\n\n## Start your journey with these in-depth guides\n\n### Beyond prompting: fine-tuning LLMs\n\nLearn how to customize open-source models for your specific requirements and improve performance on domain-specific tasks.\n\n### Make AI work for you\n\nDiscover how Nebius Token Factory' fine-tuning service transforms generic models into specialized solutions with 30+ leading open-source models.\n\n\u2026\n\nWe offer 30+ leading open source models, including Llama 3 series (1B to 70B), Qwen series (1.5B to 72B) and specialized models like DeepSeek Coder. All models support LoRA, with full fine-tuning available for models under 20B parameters.\nOur pricing is token-based and depends on model size, training data size, and number of epochs. We offer competitive rates with no hidden costs. Both training and deployment costs are clearly defined upfront.\n\nChoose from serverless deployment via Nebius Token Factory, on-demand GPU instances or reserved clusters via Nebius AI Cloud. Easily switch between options as your needs evolve, with automatic scaling and infrastructure management. Our dedicated technical team is here to help.",
+          "source": "web",
+          "title": "Fine-tune open models with Nebius Token Factory",
+          "url": "https://nebius.com/services/token-factory/fine-tuning"
+        },
+        {
+          "date": "2025-12-02",
+          "id": 7,
+          "last_updated": "2025-12-04T09:23:39.551720",
+          "snippet": "|Organization|Modality|Model Name|Model String for API|\n|--|--|--|--|\n|Canopy Labs|Text-to-Speech|Orpheus 3B|canopylabs/orpheus-3b-0.1-ft|\n|Kokoro|Text-to-Speech|Kokoro|hexgrad/Kokoro-82M|",
+          "source": "web",
+          "title": "Serverless Models - Together.ai Docs",
+          "url": "https://togetherai-52386018.mintlify.app/docs/serverless-models"
+        },
+        {
+          "date": "2026-02-13",
+          "id": 8,
+          "last_updated": "2026-02-13T20:27:55",
+          "snippet": "#### Frequently asked questions\n\nFireworks AI pricing is primarily pay-as-you-go, based directly on your usage. It's broken down into per-token fees for serverless inference, hourly rates for dedicated GPU deployments, and one-off fees for fine-tuning models. Batch processing also offers a discounted rate.\n\nThe Fireworks AI pricing model is most cost-effective for technical teams building custom AI applications from scratch, especially if they can efficiently manage GPU utilization. For specific, off-the-shelf solutions like support automation, a tool with predictable monthly plans might offer better overall value.",
+          "source": "web",
+          "title": "Fireworks AI: Features, and Pricing",
+          "url": "https://www.eesel.ai/blog/fireworks-ai-pricing"
+        },
+        {
+          "date": "2025-03-28",
+          "id": 9,
+          "last_updated": "2025-12-23T15:07:32.348781",
+          "snippet": "- 30+ leading models, including Llama 3, Qwen and Mistral AI\n- Both LoRA and full fine-tuning approaches\n- High-performance GPU infrastructure\n- OpenAI SDK compatibility\n- Transparent, usage-based pricing\n\n\ud83d\udca1 Why it matters: You can now create AI solutions that truly understand your domain, reducing costs while improving accuracy. Instead of complex prompts and large context windows, get models that inherently understand your requirements.\n\n\u27a1\ufe0f Learn more: https://nebius.com/services/studio-fine-tuning\n\n\u2026\n\n{ts:81} console,  you'll  see  the  prices  of \n training  1  million  tokens  of  the\n{ts:84} \n selected  model.  Click  on  the  create  job \n\n{ts:86} button  in  the  lower  panel  to  initiate \n your  finetuning\n{ts:92} \n run.  There  you  have  it.  Your  tuning  job",
+          "source": "web",
+          "title": "Make AI work for you: fine-tuning launches on Nebius AI Studio",
+          "url": "https://www.youtube.com/watch?v=wk04TOCsFuw"
+        },
+        {
+          "date": "2025-11-04",
+          "id": 10,
+          "last_updated": "2025-11-29T16:51:25.044351",
+          "snippet": "**Note:**This list is different from the models that support Serverless LoRA inference, which allows you to perform LoRA fine-tuning and run inference immediately. See the LoRA inference page for the list of supported base models for serverless LoRA.\n\n**Important:**When uploading LoRA adapters for serverless inference, you must use base models from the serverless LoRA list, not the fine-tuning models list. Using an incompatible base model (such as Turbo variants) will result in a \u201cNo lora_model specified\u201d error during upload. For example, use",
+          "source": "web",
+          "title": "Supported Models - Together.ai Docs",
+          "url": "https://togetherai-52386018.mintlify.app/docs/fine-tuning-models"
+        },
+        {
+          "date": "2024-02-12",
+          "id": 11,
+          "last_updated": "2025-06-26T21:13:27.913449",
+          "snippet": "",
+          "source": "web",
+          "title": "Cost structure - Fireworks AI Docs",
+          "url": "https://fireworks.ai/docs/faq/billing-pricing-usage/pricing/cost-structure"
+        },
+        {
+          "date": "2024-11-11",
+          "id": 12,
+          "last_updated": "2025-08-12T07:47:51.146944",
+          "snippet": "",
+          "source": "web",
+          "title": "Nebius. The ultimate cloud for AI explorers",
+          "url": "https://preprod.nebius.ai"
+        },
+        {
+          "date": "2026-01-01",
+          "id": 13,
+          "last_updated": "2026-02-13T08:15:06",
+          "snippet": "# Together.ai Provider\n\nThe Together.ai provider contains support for 200+ open-source models through the Together.ai API.\n\n## Setup\n\nThe Together.ai provider is available via the\n\n`@ai-sdk/togetherai` module. You can\n\ninstall it with\n\npnpm add @ai-sdk/togetherai\n\n\u2026\n\n## Model Capabilities\n\n|Model|Image Input|Object Generation|Tool Usage|Tool Streaming|\n|--|--|--|--|--|\n|`meta-llama/Llama-3.3-70B-Instruct-Turbo`|\n|`meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo`|\n\n\u2026\n\n|Available Models|\n|--|\n|`stabilityai/stable-diffusion-xl-base-1.0`|\n|`black-forest-labs/FLUX.1-dev`|\n|`black-forest-labs/FLUX.1-dev-lora`|\n|`black-forest-labs/FLUX.1-schnell`|",
+          "source": "web",
+          "title": "Together.ai provider - AI SDK",
+          "url": "https://ai-sdk.dev/providers/ai-sdk-providers/togetherai"
+        },
+        {
+          "date": "2026-01-21",
+          "id": 14,
+          "last_updated": "2026-02-13T07:02:14",
+          "snippet": "## Pricing and Commercial Strategy\n\nFireworks AI employs a usage-based pricing model, with transparent per-token and per-inference-step rates across a wide range of models and hardware options:\n\n**Text Model Inference**:\n\nEntry-tier models (<4B parameters): $0.10 per 1M tokens\n\nMid-tier models (4B\u201316B): $0.20 per 1M tokens\nHigh-end models (>16B): Up to $0.90\u2013$1.20 per 1M tokens\n\nMoE Models (e.g., Mixtral, DBRX): Tiered rates based on parameter count and complexity\n\n**Fine-Tuning**:\n\nTraining costs start at $0.50 per 1M tokens for models up to 16B parameters, with premium rates for larger architectures or more complex training techniques.",
+          "source": "web",
+          "title": "What is Fireworks AI? Features, Pricing, and Use Cases",
+          "url": "https://www.walturn.com/insights/what-is-fireworks-ai-features-pricing-and-use-cases"
+        },
+        {
+          "date": "2025-04-11",
+          "id": 15,
+          "last_updated": "2025-08-12T18:00:43.822517",
+          "snippet": "### Fine-tuning: Now available for everyone\n\nAfter an extensive beta period, we\u2019re thrilled to announce that fine-tuning is now generally available on Nebius AI Studio. This powerful capability allows you to transform generic AI models into specialized solutions that work precisely for your unique needs.\n\nWith our fine-tuning system, you can:\n\n\u2026\n\nFine-tuned models deliver significant advantages over generic models: they become more compact, responsive and domain-specialized; understanding your industry terminology and without complex prompting. The end result is improved accuracy, reduced costs and more consistent outputs.\n\nOur developer-friendly workflow lets you move from model selection to fine-tuning and deployment in minutes by using our OpenAI-compatible API. You can download model checkpoints for local use or instantly deploy models like Llama 3.3-70B, Meta-Llama-3.1-8B and Qwen2.5-72B on our infrastructure, in just one click.",
+          "source": "web",
+          "title": "Nebius AI Studio Q1 2025 roundup: Fine-tuning, new models and major expansions",
+          "url": "https://preprod.nebius.ai/blog/posts/q1-2025-studio-updates"
+        }
+      ],
+      "type": "search_results"
+    },
+    {
+      "contents": [
+        {
+          "snippet": "",
+          "title": "",
+          "url": "https://docs.together.ai/docs/lora-supported-models"
+        },
+        {
+          "snippet": "Start building in seconds, self-serve. Contact us for enterprise deployments with faster speeds, lower costs, and higher rate limits.\n\nGet started in seconds with per token pricing, zero setup and no cold starts\n\nPay per token, with high rate limits and postpaid billing. Get started with $1 in free credits.\n\n|Base model|$ / 1M tokens|\n|--|--|\n|Less than 4B parameters|$0.10|\n|4B - 16B parameters|$0.20|\n|More than 16B parameters|$0.90|\n|MoE 0B - 56B parameters (e.g. Mixtral 8x7B)|$0.50|\n|MoE 56.1B - 176B parameters (e.g. DBRX, Mixtral 8x22B)|$1.20|\n|DeepSeek V3 family|$0.56 input, $1.68 output|\n|GLM-4.7|$0.60 input, $2.20 output|\n|GLM-5|$1.00 input, $0.20 cached input, $3.20 output|\n|Qwen3 VL 30B A3B|$0.15 input, $0.60 output|\n|Kimi K2 Instruct, Kimi K2 Thinking|$0.60 input, $2.50 output|\n|Kimi K2.5|$0.60 input, $0.10 cached input, $3.00 output|\n|OpenAI gpt-oss-120b|$0.15 input, $0.60 output|\n|OpenAI gpt-oss-20b|$0.07 input, $0.30 output|\n|MiniMax M2 family|$0.30 input, $0.03 cached input, $1.20 output|\nPay per second of audio input\n\n|Model|$ / audio minute (billed per second)|\n|--|--|\n|Whisper-v3-large|$0.0015|\n|Whisper-v3-large-turbo|$0.0009|\n|Image model name|$ / step|Approx $ / image|\n|--|--|--|\n|All Non-Flux Models (SDXL, Playground, etc)|$0.00013 per step ($0.0039 per 30 step image)|$0.0002 per step ($0.006 per 30 step image)|\n|FLUX.1 [dev]|$0.0005 per step ($0.014 per 28 step image)|N/A on serverless|\n|FLUX.1 [schnell]|$0.00035 per step ($0.0014 per 4 step image)|N/A on serverless|\n|FLUX.1 Kontext Pro|$0.04 per image|N/A|\n|FLUX.1 Kontext Max|$0.08 per image|N/A|\n|Base model parameter count|$ / 1M input tokens|\n|--|--|\n|up to 150M|$0.008|\n|150M - 350M|$0.016|\n|Qwen3 8B|$0.1|\nServe fine-tuned models for the same price as base models.\n\nPriced per 1M training tokens\n\n|Base Model|Supervised Fine Tuning|Direct Preference Optimization|\n|--|--|--|\n|Models up to 16B parameters|$0.50|$1.00|\n|Models 16.1B - 80B|$3.00|$6.00|\n|Models 80B - 300B (e.g. Qwen3-235B, gpt-oss-120B)|$6.00|$12.00|\n|Models >300B (e.g. DeepSeek V3, Kimi K2)|$10.00|$20.00|\nReinforcement fine tuning jobs are priced per GPU hour (billed per second), at the same price as Fireworks on-demand deployment. Please see the section below for details on RFT pricing.\n\nPay per GPU second, with no extra charges for start-up times\n\n|GPU Type|$ / hour (billed per second)|\n|--|--|\n|A100 80 GB GPU|$2.90|\n|H100 80 GB GPU|$4.00|\n|H200 141 GB GPU|$6.00|\n|B200 180 GB GPU|$9.00|\n",
+          "title": "Pricing - Fireworks AI",
+          "url": "https://fireworks.ai/pricing"
+        }
+      ],
+      "type": "fetch_url_results"
+    },
+    {
+      "queries": [
+        "Together AI lora-supported-models serverless LoRA base models",
+        "site:docs.together.ai lora supported models serverless",
+        "Fireworks AI serverless LoRA models which models support serverless lora"
+      ],
+      "results": [
+        {
+          "date": "2026-01-28",
+          "id": 1,
+          "last_updated": "2026-02-08T10:33:18",
+          "snippet": "**Note:**This list is different from the models that support Serverless LoRA inference, which allows you to perform LoRA fine-tuning and run inference immediately. See the LoRA inference page for the list of supported base models for serverless LoRA.\n\n**Important:**When uploading LoRA adapters for serverless inference, you must use base models from the serverless LoRA list, not the fine-tuning models list. Using an incompatible base model (such as Turbo variants) will result in a \u201cNo lora_model specified\u201d error during upload. For example, use",
+          "source": "web",
+          "title": "Fine-tuning - Supported Models - Together.ai Docs",
+          "url": "https://docs.together.ai/docs/fine-tuning-models"
+        },
+        {
+          "date": "2026-01-28",
+          "id": 2,
+          "last_updated": "2026-02-03T01:34:34.165176",
+          "snippet": "## Serverless modelsSet\n\n`model_source = \"serverless\"` to use Together\u2019s serverless inference.\n\nAny Together serverless model that supports structured outputs can be used, including LoRA serverless variants and LoRA fine-tuned models. See LoRA serverless for supported models.\n\n**Example configuration:**\n\nPython",
+          "source": "web",
+          "title": "Evaluations Supported Models",
+          "url": "https://docs.together.ai/docs/evaluations-supported-models"
+        },
+        {
+          "date": "2026-02-11",
+          "id": 3,
+          "last_updated": "2026-02-13T20:37:49",
+          "snippet": "### Serverless inferenceFireworks supports serverless inference for popular models like Llama 3.1 405B. These models are pre-deployed by the Fireworks team for the community to use. Take a look at the Models page for the latest list of serverless models. Serverless inference is billed on a per-token basis depending on the model size. See our Pricing page for details.",
+          "source": "web",
+          "title": "Overview - Fireworks AI Docs",
+          "url": "https://docs.fireworks.ai/models/overview"
+        },
+        {
+          "date": "2026-01-28",
+          "id": 4,
+          "last_updated": "2026-02-13T20:27:54",
+          "snippet": "## Quick startThis guide demonstrates how to fine-tune a model using LoRA and deploy it for serverless inference. For comprehensive fine-tuning options and best practices, refer to the Fine-Tuning Guide.\n\n### Prerequisites\n\n- Together AI API key\n\n- Training data in the JSONL format\n\n- Compatible base model selection",
+          "source": "web",
+          "title": "Step 4: Running LoRA inference",
+          "url": "https://docs.together.ai/docs/lora-training-and-inference"
+        },
+        {
+          "date": "2026-02-07",
+          "id": 5,
+          "last_updated": "2026-02-13T20:38:15",
+          "snippet": "## OverviewTogether AI supports uploading and running inference on custom LoRA (Low-Rank Adaptation) adapters that you\u2019ve trained independently or obtained from sources like the Hugging Face Hub.\n\n### Key benefits\n\n**Serverless deployment**: No infrastructure management required **Fast inference**: Optimized for low latency **Private models**: Your adapters remain private to your account **Multiple sources**: Support for AWS S3 and Hugging Face Hub repositories\n\n\u2026\n\n**Make Together API call to the model:**\n\nExpected response:\n\n```\n\nMODEL_NAME_FOR_INFERENCE=\"devuser/test-lora-model-creation-8b\"\n\ncurl -X POST https://api.together.xyz/v1/chat/completions \\\n\n-H \"Authorization: Bearer $TOGETHER_API_KEY\" \\\n\n-H \"Content-Type: application/json\" \\\n\n-d '{\n\n\"model\": \"'$MODEL_NAME_FOR_INFERENCE'\",\n\n\"prompt\": \"Q: The capital of France is?\\nA:\",\n\n\"temperature\": 0.8,\n\n\"max_tokens\": 128\n\n}'\n\n```",
+          "source": "web",
+          "title": "Upload a LoRA Adapter - Together.ai Docs",
+          "url": "https://docs.together.ai/docs/adapter-upload"
+        },
+        {
+          "id": 6,
+          "last_updated": "2025-11-02T12:33:01.244196",
+          "snippet": "**Serverless deployments:**Fireworks hosts popular base models on shared \u201cserverless\u201d deployments. Users pay-per-token to query these models and do not need to configure GPUs. The most popular serverless deployments also support serverless LoRA addons. See our Quickstart - Serverless guide to get started. **Dedicated deployments:**Dedicated deployments enable users to configure private deployments with a wide array of hardware (see on-demand deployments guide).",
+          "source": "web",
+          "title": "Concepts - Fireworks AI Docs - Introduction",
+          "url": "https://fireworksai-docs.mintlify.app/getting-started/concepts"
+        },
+        {
+          "date": "2025-11-04",
+          "id": 7,
+          "last_updated": "2025-11-29T16:51:25.044351",
+          "snippet": "**Note:**This list is different from the models that support Serverless LoRA inference, which allows you to perform LoRA fine-tuning and run inference immediately. See the LoRA inference page for the list of supported base models for serverless LoRA.\n\n**Important:**When uploading LoRA adapters for serverless inference, you must use base models from the serverless LoRA list, not the fine-tuning models list. Using an incompatible base model (such as Turbo variants) will result in a \u201cNo lora_model specified\u201d error during upload. For example, use",
+          "source": "web",
+          "title": "Supported Models - Together.ai Docs",
+          "url": "https://togetherai-52386018.mintlify.app/docs/fine-tuning-models"
+        },
+        {
+          "date": "2025-04-03",
+          "id": 8,
+          "last_updated": "2026-02-13T08:50:10",
+          "snippet": "## Using a Fine-tuned ModelOnce your fine-tuning job completes, your model will be available for use:\n\n**Option 1: Serverless LoRA Inference**If you used LoRA fine-tuning and the model supports serverless LoRA inference, you can immediately use your model without deployment. We can call it just like any other model on the Together AI platform, by providing the unique fine-tuned model\n\n\u2026\n\nIf you continue a LoRA fine-tuning job with the same LoRA hyperparameters (rank, alpha, selected modules), the trained model will be available for LoRA Serverless. However, if you change any of these parameters or continue with Full training, LoRA Serverless will be disabled. Additionally, if you continue a Full fine-tuning job, LoRA Serverless will remain disabled. *Note: The feature is disabled when parameters change because the Fine-tuning API merges the parent fine-tuning adapter to the base model when it detects different adapter hyperparameters, ensuring optimal training quality.",
+          "source": "web",
+          "title": "Fine-tuning Guide - Together.ai Docs",
+          "url": "https://docs.together.ai/docs/fine-tuning-quickstart"
+        },
+        {
+          "id": 9,
+          "last_updated": "2025-11-02T12:35:47.161463",
+          "snippet": "```\n\nllm = LLM(model=\"llama4-maverick-instruct-basic\", deployment_type=\"auto\")\n\nprint(llm.is_available_on_serverless()) # True\n\nllm = LLM(model=\"qwen2p5-7b-instruct\", deployment_type=\"auto\")\n\n# Error will be raised saying: \"LLM(id=...) must be provided when deployment_strategy is on-demand\"\n\n# Which means the model is not available on serverless if the\n\n# deployment_strategy was resolved as \"on-demand\" when the deployment_type was\n\n# \"auto\"\n\n```",
+          "source": "web",
+          "title": "How to check if a model is available on serverless? - Fireworks AI ...",
+          "url": "https://fireworksai-docs.mintlify.app/faq-new/models-inference/how-to-check-if-a-model-is-available-on-serverless"
+        },
+        {
+          "date": "2025-12-02",
+          "id": 10,
+          "last_updated": "2025-12-04T09:23:39.551720",
+          "snippet": "",
+          "source": "web",
+          "title": "Serverless Models - Together.ai Docs",
+          "url": "https://togetherai-52386018.mintlify.app/docs/serverless-models"
+        },
+        {
+          "date": "2026-02-13",
+          "id": 11,
+          "last_updated": "2026-02-13T18:53:16",
+          "snippet": "## February, 2026\n\nFeb 13\n\n/serverless-models\n\n**Serverless Model Bring Ups**The following models have been added:\n\n`zai-org/GLM-5`\n\nFeb 4\n\nPython SDK v2.0\n\n**Python SDK v2.0 General Availability**Together AI is releasing the\n\n\u2026\n\nSep 8\n\n/evaluation\n\n**Serverless LoRA and Dedicated Endpoints support for Evaluations**You can now run evaluations:\n\n- Using Serverless LoRA models, including supported LoRA fine-tuned models\n\n- Using Dedicated Endpoints, including fine-tuned models deployed via dedicated endpoints\n\nSep 5\n\n/chat/completions\n\n**Kimi-K2-Instruct-0905 Model Release**Upgraded version of Moonshot\u2019s 1 trillion parameter MoE model with enhanced performance. Read more\n\n- Model ID:\n\n`moonshot-ai/Kimi-K2-Instruct-0905`",
+          "source": "web",
+          "title": "Changelog",
+          "url": "https://docs.together.ai/docs/changelog"
+        },
+        {
+          "date": "2025-05-12",
+          "id": 12,
+          "last_updated": "2026-02-12T12:47:05",
+          "snippet": "",
+          "source": "web",
+          "title": "Supervised Fine Tuning on Fireworks AI",
+          "url": "https://www.youtube.com/watch?v=FpRd6eFmjjs"
+        },
+        {
+          "date": "2024-12-24",
+          "id": 13,
+          "last_updated": "2025-05-24T23:15:38.860682",
+          "snippet": "Together.AI \u0e1c\u0e39\u0e49\u0e43\u0e2b\u0e49\u0e1a\u0e23\u0e34\u0e01\u0e32\u0e23\u0e04\u0e25\u0e32\u0e27\u0e14\u0e4c\u0e1b\u0e31\u0e0d\u0e0d\u0e32\u0e1b\u0e23\u0e30\u0e14\u0e34\u0e29\u0e10\u0e4c\u0e40\u0e1b\u0e34\u0e14\u0e1a\u0e23\u0e34\u0e01\u0e32\u0e23\u0e1b\u0e23\u0e31\u0e1a\u0e41\u0e15\u0e48\u0e07\u0e42\u0e21\u0e40\u0e14\u0e25 (finetune) \u0e41\u0e1a\u0e1a LoRA \u0e40\u0e15\u0e47\u0e21\u0e23\u0e39\u0e1b\u0e41\u0e1a\u0e1a \u0e42\u0e14\u0e22\u0e17\u0e31\u0e49\u0e07\u0e01\u0e32\u0e23\u0e1d\u0e36\u0e01\u0e42\u0e21\u0e40\u0e14\u0e25\u0e41\u0e25\u0e30\u0e01\u0e32\u0e23\u0e23\u0e31\u0e19\u0e42\u0e21\u0e40\u0e14\u0e25\u0e17\u0e35\u0e48\u0e1b\u0e23\u0e31\u0e1a\u0e41\u0e15\u0e48\u0e07\u0e21\u0e32\u0e41\u0e25\u0e49\u0e27\n\u0e1a\u0e23\u0e34\u0e01\u0e32\u0e23 Severless LoRA \u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e43\u0e0a\u0e49 adapter \u0e17\u0e35\u0e48\u0e1b\u0e23\u0e31\u0e1a\u0e41\u0e15\u0e48\u0e07\u0e21\u0e32\u0e41\u0e25\u0e49\u0e27\u0e08\u0e32\u0e01\u0e17\u0e35\u0e48\u0e2d\u0e37\u0e48\u0e19\u0e44\u0e14\u0e49 \u0e42\u0e14\u0e22\u0e04\u0e34\u0e14\u0e04\u0e48\u0e32\u0e23\u0e31\u0e19\u0e15\u0e32\u0e21\u0e42\u0e17\u0e40\u0e04\u0e47\u0e19\u0e40\u0e17\u0e48\u0e32\u0e01\u0e31\u0e1a\u0e42\u0e21\u0e40\u0e14\u0e25\u0e2b\u0e25\u0e31\u0e01\u0e40\u0e17\u0e48\u0e32\u0e19\u0e31\u0e49\u0e19 \u0e41\u0e25\u0e30\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\u0e44\u0e14\u0e49\u0e01\u0e31\u0e1a\u0e17\u0e38\u0e01\u0e42\u0e21\u0e40\u0e14\u0e25\u0e17\u0e35\u0e48\u0e17\u0e32\u0e07 Together.AI \u0e43\u0e2b\u0e49\u0e1a\u0e23\u0e34\u0e01\u0e32\u0e23\u0e41\u0e1a\u0e1a serverless \u0e2d\u0e22\u0e39\u0e48 \u0e40\u0e0a\u0e48\u0e19 Llama \u0e41\u0e25\u0e30 Qwen\n\u0e2a\u0e48\u0e27\u0e19\u0e01\u0e32\u0e23\u0e17\u0e33 finetune \u0e1a\u0e19 Together.AI \u0e01\u0e47\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e2d\u0e31\u0e1e\u0e42\u0e2b\u0e25\u0e14\u0e0a\u0e38\u0e14\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e02\u0e36\u0e49\u0e19\u0e44\u0e1b\u0e1d\u0e36\u0e01\u0e41\u0e1a\u0e1a LoRA \u0e44\u0e14\u0e49 \u0e42\u0e14\u0e22\u0e04\u0e34\u0e14\u0e04\u0e48\u0e32\u0e1a\u0e23\u0e34\u0e01\u0e32\u0e23\u0e15\u0e32\u0e21\u0e02\u0e19\u0e32\u0e14\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e41\u0e25\u0e30\u0e08\u0e33\u0e19\u0e27\u0e19\u0e23\u0e2d\u0e1a\u0e01\u0e32\u0e23\u0e1d\u0e36\u0e01 \u0e2b\u0e25\u0e31\u0e01\u0e1d\u0e36\u0e01\u0e1d\u0e36\u0e01\u0e40\u0e2a\u0e23\u0e47\u0e08\u0e41\u0e25\u0e49\u0e27 \u0e42\u0e21\u0e40\u0e14\u0e25\u0e08\u0e30\u0e19\u0e33\u0e44\u0e1b\u0e23\u0e31\u0e19\u0e44\u0e14\u0e49\u0e17\u0e31\u0e19\u0e17\u0e35\u0e2b\u0e23\u0e37\u0e2d\u0e08\u0e30\u0e14\u0e32\u0e27\u0e19\u0e4c\u0e42\u0e2b\u0e25\u0e14 adapter \u0e44\u0e1b\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\u0e17\u0e35\u0e48\u0e2d\u0e37\u0e48\u0e19\u0e01\u0e47\u0e44\u0e14\u0e49\u0e40\u0e0a\u0e48\u0e19\u0e01\u0e31\u0e19\n\u0e42\u0e14\u0e22\u0e1b\u0e01\u0e15\u0e34\u0e41\u0e25\u0e49\u0e27\u0e1a\u0e23\u0e34\u0e01\u0e32\u0e23\u0e04\u0e25\u0e32\u0e27\u0e14\u0e4c\u0e1b\u0e31\u0e0d\u0e0d\u0e32\u0e1b\u0e23\u0e30\u0e14\u0e34\u0e29\u0e10\u0e4c\u0e17\u0e35\u0e48\u0e23\u0e2d\u0e07\u0e23\u0e31\u0e1a\u0e01\u0e32\u0e23\u0e17\u0e33 finetune \u0e21\u0e31\u0e01\u0e04\u0e34\u0e14\u0e04\u0e48\u0e32\u0e1a\u0e23\u0e34\u0e01\u0e32\u0e23\u0e42\u0e2e\u0e2a\u0e15\u0e4c\u0e42\u0e21\u0e40\u0e14\u0e25\u0e2b\u0e32\u0e01\u0e44\u0e21\u0e48\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19 \u0e17\u0e32\u0e07 Together.AI \u0e23\u0e30\u0e1a\u0e38\u0e27\u0e48\u0e32\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e1b\u0e23\u0e31\u0e1a\u0e41\u0e15\u0e48\u0e07\u0e08\u0e19\u0e23\u0e31\u0e19 LoRA \u0e19\u0e31\u0e1a\u0e23\u0e49\u0e2d\u0e22\u0e0a\u0e38\u0e14\u0e44\u0e14\u0e49\u0e1e\u0e23\u0e49\u0e2d\u0e21\u0e01\u0e31\u0e19 \u0e17\u0e33\u0e43\u0e2b\u0e49\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e43\u0e2b\u0e49\u0e1a\u0e23\u0e34\u0e01\u0e32\u0e23\u0e25\u0e39\u0e01\u0e04\u0e49\u0e32\u0e42\u0e14\u0e22\u0e04\u0e34\u0e14\u0e23\u0e32\u0e04\u0e32\u0e40\u0e17\u0e48\u0e32\u0e46 \u0e01\u0e31\u0e1a\u0e42\u0e21\u0e40\u0e14\u0e25\u0e1e\u0e37\u0e49\u0e19\u0e10\u0e32\u0e19 \u0e1b\u0e23\u0e30\u0e2a\u0e34\u0e17\u0e18\u0e34\u0e20\u0e32\u0e1e\u0e01\u0e32\u0e23\u0e23\u0e31\u0e19\u0e2d\u0e22\u0e39\u0e48\u0e17\u0e35\u0e48 90% \u0e02\u0e2d\u0e07\u0e42\u0e21\u0e40\u0e14\u0e25\u0e2b\u0e25\u0e31\u0e01\n\u0e17\u0e35\u0e48\u0e21\u0e32 - Together.AI\n\n\n\n\u0e2b\u0e25\u0e31\u0e07\u0e1d\u0e36\u0e01\u0e40\u0e2a\u0e23\u0e47\u0e08\u0e41\u0e25\u0e49\u0e27\n\n\u0e40\u0e08\u0e4b\u0e07\u0e40\u0e25\u0e22\u0e22\u0e22",
+          "source": "web",
+          "title": "Together.AI \u0e40\u0e1b\u0e34\u0e14\u0e1a\u0e23\u0e34\u0e01\u0e32\u0e23 Serverless LoRA \u0e44\u0e21\u0e48\u0e04\u0e34\u0e14\u0e04\u0e48\u0e32\u0e42\u0e2e\u0e2a\u0e15\u0e4c\u0e42\u0e21\u0e40\u0e14\u0e25\u0e17\u0e35\u0e48\u0e1b\u0e23\u0e31\u0e1a\u0e41\u0e15\u0e48\u0e07\u0e41\u0e25\u0e49\u0e27 \u0e04\u0e34\u0e14\u0e41\u0e15\u0e48\u0e04\u0e48\u0e32\u0e23\u0e31\u0e19\u0e15\u0e32\u0e21\u0e42\u0e17\u0e40\u0e04\u0e47\u0e19",
+          "url": "https://www.blognone.com/node/143814"
+        },
+        {
+          "date": "2026-01-28",
+          "id": 14,
+          "last_updated": "2026-02-10T17:02:24",
+          "snippet": "To use your model, you can either:\n\n- Host it on Together AI as a dedicated endpoint(DE) for an hourly usage fee\n\n- Run it immediately if the model supports Serverless LoRA Inference\n\n- Download your model and run it locally\n\n\u2026\n\n## Serverless LoRA InferenceIf you fine-tuned the model using parameter efficient LoRA fine-tuning you can select the model in the models dashbaord and can click\n\n`OPEN IN PLAYGROUND` to quickly test the fine-tuned model.\n\nYou can also call the model directly just like any other model on the Together AI platform, by providing the unique fine-tuned model",
+          "source": "web",
+          "title": "Deploying a Fine-tuned Model - Together.ai Docs",
+          "url": "https://docs.together.ai/docs/deploying-a-fine-tuned-model"
+        },
+        {
+          "date": "2024-04-24",
+          "id": 15,
+          "last_updated": "2025-11-29T10:23:37.096574",
+          "snippet": "",
+          "source": "web",
+          "title": "Does anyone know which (if any) serverless providers ...",
+          "url": "https://news.ycombinator.com/item?id=40139694"
+        }
+      ],
+      "type": "search_results"
+    },
+    {
+      "contents": [
+        {
+          "snippet": "## OverviewTogether AI supports uploading and running inference on custom LoRA (Low-Rank Adaptation) adapters that you\u2019ve trained independently or obtained from sources like the Hugging Face Hub.\n\n### Key benefits\n\n**Serverless deployment**: No infrastructure management required **Fast inference**: Optimized for low latency **Private models**: Your adapters remain private to your account **Multiple sources**: Support for AWS S3 and Hugging Face Hub repositories\n\n### Supported base modelsCurrently, LoRA inference is supported for adapters based on the following base models in Together API. Whether using pre-fine-tuned models or bringing your own adapters, these are the only compatible models:\n\n|Organization|Base Model Name|Base Model String|Quantization|\n|--|--|--|--|\n|Meta|Llama 4 Maverick Instruct|meta-llama/Llama-4-Maverick-17B-128E-Instruct|FP8|\n|Meta|Llama 3.1 8B Instruct|meta-llama/Meta-Llama-3.1-8B-Instruct-Reference|BF16|\n|Meta|Llama 3.1 70B Instruct|meta-llama/Meta-Llama-3.1-70B-Instruct-Reference|BF16|\n|Alibaba|Qwen2.5 72B Instruct|Qwen/Qwen2.5-72B-Instruct|FP8|\n|Alibaba|Qwen3 235B A22B Instruct 2507|Qwen/Qwen3-235B-A22B-Instruct-2507-tput|FP8|\n## Implemenation guide\n\n### Prerequisites\n\n- Together AI API key\n\n- Compatible LoRA adapter files:\n\nIf you are getting the adapter from Hugging Face Hub you can find information about the base model there as well.\n\nYou need to make sure that the adapter you are trying to upload has an\n\n`adapter_config.json`and\n\n`adapter_model.safetensors`files.\n\n- Adapter hosted on AWS S3 or Hugging Face Hub\n\n### Upload from S3\n\n```\n\n#!/bin/bash\n\n# uploadadapter.sh\n\n# Generate presigned adapter url\n\nADAPTER_URL=\"s3://test-s3-presigned-adapter/my-70B-lora-1.zip\"\n\nPRESIGNED_ADAPTER_URL=$(aws s3 presign ${ADAPTER_URL})\n\n# Specify additional params\n\nMODEL_TYPE=\"adapter\"\n\nADAPTER_MODEL_NAME=\"test-lora-model-70B-1\"\n\nBASE_MODEL=\"meta-llama/Meta-Llama-3.1-70B-Instruct\"\n\nDESCRIPTION=\"test_70b_lora_description\" # Lazy curl replace below, don't put spaces here.\n\n# Upload\n\ncurl -v https://api.together.xyz/v0/models \\\n\n-H 'Content-Type: application/json' \\\n\n-H \"Authorization: Bearer $TOGETHER_API_KEY\" \\\n\n-d '{\n\n\"model_name\": \"'${ADAPTER_MODEL_NAME}'\",\n\n\"model_source\": \"'${PRESIGNED_ADAPTER_URL}'\",\n\n\"model_type\": \"'${MODEL_TYPE}'\",\n\n\"base_model\": \"'${BASE_MODEL}'\",\n\n\"description\": \"'${DESCRIPTION}'\"\n\n}'\n\n```\n\n### Upload from the Hugging Face HubMake sure that the adapter contains\n\n`adapter_config.json` and\n\n`adapter_model.safetensors` files in Files and versions tab on the Hugging Face Hub.\n\n```\n\n# From the Hugging Face Hub\n\nHF_URL=\"https://huggingface.co/reissbaker/llama-3.1-8b-abliterated-lora\"\n\nMODEL_TYPE=\"adapter\"\n\nBASE_MODEL=\"meta-llama/Meta-Llama-3.1-8B-Instruct-Reference\"\n\nDESCRIPTION=\"test_lora_8B\"\n\nADAPTER_MODEL_NAME=test-lora-model-creation-8b\n\nHF_TOKEN=hf_token\n\nTOGETHER_API_KEY=together-api-key\n\n# Upload\n\ncurl -v https://api.together.xyz/v0/models \\\n\n-H 'Content-Type: application/json' \\\n\n-H \"Authorization: Bearer $TOGETHER_API_KEY\" \\\n\n-d '{\n\n\"model_name\": \"'${ADAPTER_MODEL_NAME}'\",\n\n\"model_source\": \"'${HF_URL}'\",\n\n\"model_type\": \"'${MODEL_TYPE}'\",\n\n\"description\": \"'${DESCRIPTION}'\",\n\n\"hf_token\": \"'${HF_TOKEN}'\"\n\n}'\n\n```\n\n### Upload responseSuccessful upload returns:\n\n```\n\n\n\n\"data\": {\n\n\"job_id\": \"job-b641db51-38e8-40f2-90a0-5353aeda6f21\", <------- Job ID\n\n\"model_name\": \"devuser/test-lora-model-creation-8b\",\n\n\"model_source\": \"remote_archive\"\n\n},\n\n\"message\": \"job created\"\n\n\n\n```\n\n### Monitor upload progressYou can poll the API using the\n\n`job_id` until the adapter has finished uploading.\n\nResponse when ready:\n\n```\n\ncurl https://api.together.xyz/v1/jobs/job-b641db51-38e8-40f2-90a0-5353aeda6f21 \\\n\n-H \"Authorization: Bearer $TOGETHER_API_KEY\" | jq .\n\n```\n\n```\n\n\n\n\"type\": \"adapter_upload\",\n\n\"job_id\": \"job-b641db51-38e8-40f2-90a0-5353aeda6f21\",\n\n\"status\": \"Complete\",\n\n\"status_updates\": []\n\n\n\n```\n\n### Run LoRA inference:Use the\n\n`model_name` string from the adapter upload.\n\n```\n\n\n\n\"data\": {\n\n\"job_id\": \"job-b641db51-38e8-40f2-90a0-5353aeda6f21\",\n\n\"model_name\": \"devuser/test-lora-model-creation-8b\", <------ Model Name\n\n\"model_source\": \"remote_archive\"\n\n},\n\n\"message\": \"job created\"\n\n\n\n```\n\n**Make Together API call to the model:**\n\nExpected response:\n\n```\n\nMODEL_NAME_FOR_INFERENCE=\"devuser/test-lora-model-creation-8b\"\n\ncurl -X POST https://api.together.xyz/v1/chat/completions \\\n\n-H \"Authorization: Bearer $TOGETHER_API_KEY\" \\\n\n-H \"Content-Type: application/json\" \\\n\n-d '{\n\n\"model\": \"'$MODEL_NAME_FOR_INFERENCE'\",\n\n\"prompt\": \"Q: The capital of France is?\\nA:\",\n\n\"temperature\": 0.8,\n\n\"max_tokens\": 128\n\n}'\n\n```\n\n```\n\n\n\n\"id\": \"8f3317dd3c3a39ef-YYZ\",\n\n\"object\": \"text.completion\",\n\n\"created\": 1734398453,\n\n\"model\": \"devuser/test-lora-model-creation-8b\",\n\n\"prompt\": [],\n\n\"choices\": [\n\n\n\n\"text\": \" Paris\\nB: Berlin\\nC: Warsaw\\nD: London\\nAnswer: A\",\n\n\"finish_reason\": \"eos\",\n\n\"seed\": 13424880326038300000,\n\n\"logprobs\": null,\n\n\"index\": 0\n\n\n\n],\n\n\"usage\": {\n\n\"prompt_tokens\": 10,\n\n\"completion_tokens\": 18,\n\n\"total_tokens\": 28,\n\n\"cache_hit_rate\": 0\n\n\n\n```\n\n## Troubleshooting\n\n#### 1. \u201cModel name already exists\u201d Error\n\n**Problem:**Attempting to upload with a duplicate model name\n\n**Solution:**Choose a unique model name for your adapter\n\n#### 2. Missing Required Files\n\n**Problem:**Adapter missing\n\n`adapter_config.json` or\n\n`adapter_model.safetensors`\n\n**Solution:**Ensure both files are present in your source location before uploading\n\n#### 3. Base Model Incompatibility\n\n**Problem:**Adapter trained on unsupported base model\n\n**Solution:**Verify your adapter was trained on one of the supported base models listed above\n\n#### 4. Upload Job Stuck in \u201cProcessing\u201d\n\n**Problem:**Job status remains \u201cProcessing\u201d for extended period\n\n**Solution:**\n\n- Check if file size exceeds limits for your tier\n\n- Verify presigned URL hasn\u2019t expired (for S3)\n\n- Ensure Hugging Face token has proper permissions (for private repos)\n\n#### 5. Authentication Errors\n\n**Problem:**401 or 403 errors during upload\n\n**Solution:**\n\n- Verify your Together API key is valid\n\n- For Hugging Face Hub private repos, ensure HF token is included\n\n- For S3, check presigned URL is properly generated\n\n",
+          "title": "Upload a LoRA Adapter - Together.ai Docs",
+          "url": "https://docs.together.ai/docs/adapter-upload"
+        },
+        {
+          "snippet": "Nebius AI Studio documentation home page\n\nSearch...\n\n\u2318K\n\nContact us\n\nNebius AI Studio\n\nNebius AI Studio\n\nSearch...\n\nNavigation\n\nFine-tuning\n\nFine-tuning in Nebius AI Studio: Overview\n\nGuides\n\nAPI Reference\n\nLegal\n\nCookbook\n\nLinkedIn\n\nDiscord Community\n\nX\n\nGet Started\n\nQuickstart\n\nAI models inference\n\nOverview\n\nFunction calling & Tools\n\nStructured output & JSON\n\nBatch inference\n\nRate Limits & Scaling\n\nUI & Playground\n\nGenerating consistent images with LoRA adapters\n\nUtilities\n\nPrompt presets\n\nFine-tuning\n\nOverview\n\nHow to fine-tune\n\nModels\n\nDatasets\n\nDeploy LoRA\n\nOther capabilities\n\nBilling\n\nEnterprise\n\nIntegrations\n\nOverview\n\nAisuite\n\nContinue\n\nHelicone\n\nHugging Face\n\nPostman\n\nPortkey\n\nLlamaIndex\n\nFine-tuning in Nebius AI Studio allows you to train models, so they can outperform generic models and fit domain-specific tasks better. Due to training on a large amount of data, fine-tuned models return outputs of higher accuracy, and the possibility of AI hallucinations lowers.\n\nFine-tuning provides a way to train a model on a dataset. It serves as an alternative to prompting because fine-tuning does not suffer from a limited number of input examples that you can use in a prompt. As fine-tuning supports a larger number of examples, it eliminates the need for further extensive prompt engineering. As a result, fine-tuning lowers operational costs and reduces request latency.\n\nFor more information about how to fine-tune a model, see the following:\n\nGeneral instructions\n\nFine-tuning LLMs with Nebius AI Studio\n\nVideo tutorial: Fine-tuning launches on Nebius AI Studio\n\nPrompt presets\n\nHow to fine-tune\n\nAssistant\n\n",
+          "title": "Fine-tuning in Nebius AI Studio: Overview",
+          "url": "https://docs.studio.nebius.com/fine-tuning/overview"
+        }
+      ],
+      "type": "fetch_url_results"
+    },
+    {
+      "content": [
+        {
+          "text": "Now I have the Together AI serverless LoRA supported base models. Let me get Nebius details and check other platforms.",
+          "type": "output_text"
+        }
+      ],
+      "id": "msg_7cd84483-fe23-43b1-9999-0a84b910a7da",
+      "role": "assistant",
+      "status": "completed",
+      "type": "message"
+    }
+  ],
+  "status": "completed",
+  "usage": {
+    "cost": {
+      "currency": "USD",
+      "input_cost": 0.4456,
+      "output_cost": 0.00305,
+      "tool_calls_cost": 0.027,
+      "total_cost": 0.47565
+    },
+    "input_tokens": 89119,
+    "output_tokens": 122,
+    "tool_calls_details": {
+      "fetch_url": {
+        "invocation": 4
+      },
+      "search_web": {
+        "invocation": 5
+      }
+    },
+    "total_tokens": 89241
+  }
+}
