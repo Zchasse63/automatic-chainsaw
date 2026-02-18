@@ -3,24 +3,43 @@
 import { ThumbsUp, ThumbsDown, Bot } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ToolResultRenderer } from './tool-result-renderer';
+import { TrainingPlanCard } from './training-plan-card';
 import { isToolUIPart, getToolName, type UIMessage } from 'ai';
+
+/** Detect if the message text contains a structured training plan (3+ "Week N" mentions). */
+function containsTrainingPlan(text: string): boolean {
+  const weekMatches = text.match(/week\s*\d+/gi) || [];
+  return weekMatches.length >= 3;
+}
 
 interface ChatMessageProps {
   message: UIMessage;
+  conversationId?: string | null;
   onFeedback?: (
     messageId: string,
     feedback: 'positive' | 'negative' | null
   ) => void;
 }
 
-export function ChatMessage({ message, onFeedback }: ChatMessageProps) {
+export function ChatMessage({ message, conversationId, onFeedback }: ChatMessageProps) {
   const [currentFeedback, setCurrentFeedback] = useState<string | null>(null);
   const isUser = message.role === 'user';
   const isToolRunning = message.parts?.some(
     (p) => isToolUIPart(p) && p.state !== 'output-available'
   );
+
+  // Gather all text content for plan detection
+  const fullText = useMemo(
+    () =>
+      message.parts
+        ?.filter((p) => p.type === 'text')
+        .map((p) => (p as { type: 'text'; text: string }).text)
+        .join('') ?? '',
+    [message.parts]
+  );
+  const hasPlan = !isUser && !isToolRunning && containsTrainingPlan(fullText);
 
   async function handleFeedback(type: 'positive' | 'negative') {
     if (!message.id || !onFeedback) return;
@@ -30,17 +49,11 @@ export function ChatMessage({ message, onFeedback }: ChatMessageProps) {
   }
 
   if (isUser) {
-    const content =
-      message.parts
-        ?.filter((p) => p.type === 'text')
-        .map((p) => (p as { type: 'text'; text: string }).text)
-        .join('') ?? '';
-
     return (
       <div className="flex justify-end">
         <div className="max-w-[80%] md:max-w-[70%] bg-hyrox-yellow/10 border border-hyrox-yellow/20 rounded-lg px-4 py-3">
           <p className="font-body text-sm text-text-primary whitespace-pre-wrap">
-            {content}
+            {fullText}
           </p>
         </div>
       </div>
@@ -104,6 +117,14 @@ export function ChatMessage({ message, onFeedback }: ChatMessageProps) {
                 Thinking...
               </span>
             </div>
+          )}
+
+          {/* Training plan detected — show Review & Accept card */}
+          {hasPlan && (
+            <TrainingPlanCard
+              messageContent={fullText}
+              conversationId={conversationId ?? undefined}
+            />
           )}
         </div>
 

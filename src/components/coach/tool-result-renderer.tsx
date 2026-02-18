@@ -9,7 +9,6 @@ import {
   Timer,
   Trophy,
   ClipboardList,
-  ClipboardCheck,
 } from 'lucide-react';
 import { ScheduleWorkoutButton } from '@/components/training/schedule-workout-button';
 import Link from 'next/link';
@@ -34,8 +33,6 @@ export function ToolResultRenderer({ toolName, result }: ToolResultRendererProps
       return <TodayWorkoutCard data={data} />;
     case 'get_training_plan':
       return <TrainingPlanCard data={data} />;
-    case 'create_training_plan':
-      return <PlanCreatedCard data={data} />;
     case 'update_training_plan_day':
       return <DayUpdatedCard data={data} />;
     case 'log_benchmark':
@@ -190,47 +187,6 @@ function TrainingPlanCard({ data }: { data: Record<string, unknown> }) {
             className="border-hyrox-yellow/30 text-hyrox-yellow hover:bg-hyrox-yellow/10 font-display text-xs uppercase tracking-wider mt-1"
           >
             View in Training
-          </Button>
-        </Link>
-      </div>
-    </CardWrapper>
-  );
-}
-
-function PlanCreatedCard({ data }: { data: Record<string, unknown> }) {
-  if (!data.success) {
-    return (
-      <CardWrapper icon={ClipboardList} label="Plan Creation">
-        <p className="font-body text-sm text-semantic-error">
-          Failed to create plan: {String(data.error ?? 'Unknown error')}
-        </p>
-      </CardWrapper>
-    );
-  }
-
-  const plan = data.plan as Record<string, unknown> | undefined;
-
-  return (
-    <CardWrapper icon={ClipboardCheck} label="Plan Created">
-      <div className="space-y-2">
-        <p className="font-body text-sm font-medium text-text-primary">
-          {String(plan?.plan_name ?? 'Training Plan')}
-        </p>
-        {!!plan?.goal && (
-          <p className="font-body text-xs text-text-secondary">
-            Goal: {String(plan.goal)}
-          </p>
-        )}
-        <p className="font-mono text-xs text-text-tertiary">
-          {String(data.summary ?? `${plan?.duration_weeks ?? '?'} weeks`)}
-        </p>
-        <Link href="/training">
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-hyrox-yellow/30 text-hyrox-yellow hover:bg-hyrox-yellow/10 font-display text-xs uppercase tracking-wider mt-1"
-          >
-            View Training Plan
           </Button>
         </Link>
       </div>

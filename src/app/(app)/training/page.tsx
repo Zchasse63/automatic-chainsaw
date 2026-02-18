@@ -111,7 +111,7 @@ export default function TrainingPage() {
         <h1 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wider text-text-primary">
           Training
         </h1>
-        <Link href="/coach">
+        <Link href="/coach?context=log&new=true">
           <Button className="bg-hyrox-yellow text-text-inverse hover:bg-hyrox-yellow-hover font-display uppercase tracking-wider text-xs">
             <Plus className="h-4 w-4 mr-2" />
             Log Workout
@@ -241,7 +241,7 @@ export default function TrainingPage() {
             <p className="font-body text-sm text-text-secondary">
               No workouts logged yet
             </p>
-            <Link href="/coach">
+            <Link href="/coach?context=log&new=true">
               <Button className="bg-hyrox-yellow text-text-inverse hover:bg-hyrox-yellow-hover font-display uppercase tracking-wider text-xs">
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Log via Coach K

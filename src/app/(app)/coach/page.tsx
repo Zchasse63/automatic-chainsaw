@@ -20,6 +20,8 @@ export default function CoachPage() {
   const { activeConversationId, lastConversationId, setActiveConversation } =
     useCoachStore();
 
+  const isNewChat = searchParams.get('new') === 'true';
+
   const initialPrompt = useMemo(() => {
     const context = searchParams.get('context');
     if (!context) return undefined;
@@ -28,6 +30,9 @@ export default function CoachPage() {
       return planName
         ? `I have a question about my training plan "${planName}". `
         : 'I have a question about my current training plan. ';
+    }
+    if (context === 'log') {
+      return 'I want to log a workout. ';
     }
     return undefined;
   }, [searchParams]);
@@ -103,11 +108,17 @@ export default function CoachPage() {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  // Auto-select last conversation on mount
+  // Auto-select last conversation on mount (unless ?new=true or ?context= forces new)
   useEffect(() => {
     if (hasInitialized.current) return;
     if (convsLoading) return;
     hasInitialized.current = true;
+
+    // Force new conversation when ?new=true or ?context= is present
+    if (isNewChat || initialPrompt) {
+      setActiveConversation(null);
+      return;
+    }
 
     if (
       lastConversationId &&
@@ -122,6 +133,8 @@ export default function CoachPage() {
     lastConversationId,
     activeConversationId,
     setActiveConversation,
+    isNewChat,
+    initialPrompt,
   ]);
 
   // Sync DB messages when switching conversations
@@ -262,6 +275,7 @@ export default function CoachPage() {
             <ChatMessage
               key={msg.id}
               message={msg}
+              conversationId={activeConversationId}
               onFeedback={handleFeedback}
             />
           ))}
