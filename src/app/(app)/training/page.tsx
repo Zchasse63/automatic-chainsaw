@@ -111,7 +111,7 @@ export default function TrainingPage() {
         <h1 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wider text-text-primary">
           Training
         </h1>
-        <Link href="/training/log">
+        <Link href="/coach">
           <Button className="bg-hyrox-yellow text-text-inverse hover:bg-hyrox-yellow-hover font-display uppercase tracking-wider text-xs">
             <Plus className="h-4 w-4 mr-2" />
             Log Workout
@@ -193,21 +193,25 @@ export default function TrainingPage() {
             {calendarView === 'month' && <MonthCalendar />}
           </>
         ) : (
-          <div className="bg-surface-1 border border-border-default rounded-lg p-8 text-center space-y-3">
-            <CalendarDays className="h-8 w-8 text-text-tertiary mx-auto" />
-            <p className="font-body text-sm text-text-secondary">
-              No active training plan
-            </p>
-            <Link href="/coach">
-              <Button
-                variant="outline"
-                className="border-hyrox-yellow text-hyrox-yellow hover:bg-hyrox-yellow/10 font-display uppercase tracking-wider text-xs"
-              >
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Ask Coach K to create one
-              </Button>
-            </Link>
-          </div>
+          <>
+            {/* Month calendar showing logged workouts even without a plan */}
+            <MonthCalendar />
+            <div className="bg-surface-1 border border-border-default rounded-lg p-6 text-center space-y-3">
+              <CalendarDays className="h-8 w-8 text-text-tertiary mx-auto" />
+              <p className="font-body text-sm text-text-secondary">
+                No active training plan
+              </p>
+              <Link href="/coach">
+                <Button
+                  variant="outline"
+                  className="border-hyrox-yellow text-hyrox-yellow hover:bg-hyrox-yellow/10 font-display uppercase tracking-wider text-xs"
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Ask Coach K to create one
+                </Button>
+              </Link>
+            </div>
+          </>
         )}
       </section>
 
@@ -237,10 +241,10 @@ export default function TrainingPage() {
             <p className="font-body text-sm text-text-secondary">
               No workouts logged yet
             </p>
-            <Link href="/training/log">
+            <Link href="/coach">
               <Button className="bg-hyrox-yellow text-text-inverse hover:bg-hyrox-yellow-hover font-display uppercase tracking-wider text-xs">
-                <Plus className="h-4 w-4 mr-2" />
-                Log Your First Workout
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Log via Coach K
               </Button>
             </Link>
           </div>

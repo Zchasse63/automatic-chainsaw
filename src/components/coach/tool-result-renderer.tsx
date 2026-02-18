@@ -9,7 +9,11 @@ import {
   Timer,
   Trophy,
   ClipboardList,
+  ClipboardCheck,
 } from 'lucide-react';
+import { ScheduleWorkoutButton } from '@/components/training/schedule-workout-button';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 interface ToolResultRendererProps {
   toolName: string;
@@ -17,6 +21,10 @@ interface ToolResultRendererProps {
 }
 
 export function ToolResultRenderer({ toolName, result }: ToolResultRendererProps) {
+  // Guard against empty/null/undefined results
+  if (result === null || result === undefined) return null;
+  if (typeof result === 'object' && Object.keys(result as object).length === 0) return null;
+
   const data = result as Record<string, unknown>;
 
   switch (toolName) {
@@ -26,6 +34,8 @@ export function ToolResultRenderer({ toolName, result }: ToolResultRendererProps
       return <TodayWorkoutCard data={data} />;
     case 'get_training_plan':
       return <TrainingPlanCard data={data} />;
+    case 'create_training_plan':
+      return <PlanCreatedCard data={data} />;
     case 'update_training_plan_day':
       return <DayUpdatedCard data={data} />;
     case 'log_benchmark':
@@ -104,7 +114,7 @@ function TodayWorkoutCard({ data }: { data: Record<string, unknown> }) {
 
   return (
     <CardWrapper icon={Calendar} label="Today's Workout">
-      <div className="space-y-1">
+      <div className="space-y-2">
         <p className="font-body text-sm font-medium text-text-primary">
           {String(workout.workout_title ?? 'Workout')}
         </p>
@@ -117,10 +127,29 @@ function TodayWorkoutCard({ data }: { data: Record<string, unknown> }) {
           )}
         </div>
         {!!workout.workout_description && (
-          <p className="font-body text-xs text-text-tertiary mt-1 line-clamp-3">
+          <p className="font-body text-xs text-text-tertiary line-clamp-3">
             {String(workout.workout_description)}
           </p>
         )}
+        <div className="flex gap-2 pt-1">
+          {!!workout.id && (
+            <Link href={`/training/workout/${workout.id}`}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-hyrox-yellow/30 text-hyrox-yellow hover:bg-hyrox-yellow/10 font-display text-xs uppercase tracking-wider"
+              >
+                Start Workout
+              </Button>
+            </Link>
+          )}
+          <ScheduleWorkoutButton
+            workoutTitle={String(workout.workout_title ?? 'Workout')}
+            workoutDescription={String(workout.workout_description ?? '')}
+            sessionType={String(workout.session_type ?? 'general')}
+            estimatedMinutes={workout.estimated_duration_minutes as number | undefined}
+          />
+        </div>
       </div>
     </CardWrapper>
   );
@@ -154,6 +183,56 @@ function TrainingPlanCard({ data }: { data: Record<string, unknown> }) {
         <p className="font-mono text-xs text-text-tertiary">
           {String(plan.duration_weeks)} weeks — {weeks.length} loaded
         </p>
+        <Link href="/training">
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-hyrox-yellow/30 text-hyrox-yellow hover:bg-hyrox-yellow/10 font-display text-xs uppercase tracking-wider mt-1"
+          >
+            View in Training
+          </Button>
+        </Link>
+      </div>
+    </CardWrapper>
+  );
+}
+
+function PlanCreatedCard({ data }: { data: Record<string, unknown> }) {
+  if (!data.success) {
+    return (
+      <CardWrapper icon={ClipboardList} label="Plan Creation">
+        <p className="font-body text-sm text-semantic-error">
+          Failed to create plan: {String(data.error ?? 'Unknown error')}
+        </p>
+      </CardWrapper>
+    );
+  }
+
+  const plan = data.plan as Record<string, unknown> | undefined;
+
+  return (
+    <CardWrapper icon={ClipboardCheck} label="Plan Created">
+      <div className="space-y-2">
+        <p className="font-body text-sm font-medium text-text-primary">
+          {String(plan?.plan_name ?? 'Training Plan')}
+        </p>
+        {!!plan?.goal && (
+          <p className="font-body text-xs text-text-secondary">
+            Goal: {String(plan.goal)}
+          </p>
+        )}
+        <p className="font-mono text-xs text-text-tertiary">
+          {String(data.summary ?? `${plan?.duration_weeks ?? '?'} weeks`)}
+        </p>
+        <Link href="/training">
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-hyrox-yellow/30 text-hyrox-yellow hover:bg-hyrox-yellow/10 font-display text-xs uppercase tracking-wider mt-1"
+          >
+            View Training Plan
+          </Button>
+        </Link>
       </div>
     </CardWrapper>
   );
@@ -165,12 +244,21 @@ function DayUpdatedCard({ data }: { data: Record<string, unknown> }) {
 
   return (
     <CardWrapper icon={Calendar} label="Day Updated">
-      <p className="font-body text-sm text-text-primary">
-        {String(day?.workout_title ?? 'Updated')} —{' '}
-        <span className="capitalize">
-          {String(day?.session_type ?? '').replace(/_/g, ' ')}
-        </span>
-      </p>
+      <div className="space-y-2">
+        <p className="font-body text-sm text-text-primary">
+          {String(day?.workout_title ?? 'Updated')} —{' '}
+          <span className="capitalize">
+            {String(day?.session_type ?? '').replace(/_/g, ' ')}
+          </span>
+        </p>
+        {!!day?.workout_title && !!day?.session_type && (
+          <ScheduleWorkoutButton
+            workoutTitle={String(day.workout_title)}
+            workoutDescription=""
+            sessionType={String(day.session_type)}
+          />
+        )}
+      </div>
     </CardWrapper>
   );
 }

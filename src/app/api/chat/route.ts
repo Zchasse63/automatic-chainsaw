@@ -104,8 +104,8 @@ export async function POST(request: Request) {
       messages: await convertToModelMessages(recentMessages),
       tools: createCoachingTools(profile.id, supabase),
       temperature: 0.7,
-      maxOutputTokens: 1200,
-      stopWhen: stepCountIs(3),
+      maxOutputTokens: 16384,
+      stopWhen: stepCountIs(10),
       onFinish: async ({ text, usage }) => {
         const latencyMs = Date.now() - startTime;
         try {
