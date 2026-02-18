@@ -15,6 +15,10 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useDashboard } from '@/hooks/use-dashboard';
+import { ExpandableStatCard } from '@/components/dashboard/expandable-stat-card';
+import { StreakHeatmap } from '@/components/dashboard/streak-heatmap';
+import { RaceReadiness } from '@/components/dashboard/race-readiness';
+import { RpeTrendChart, WeeklyVolumeChart } from '@/components/dashboard/performance-charts';
 
 const SESSION_LABELS: Record<string, string> = {
   run: 'Run',
@@ -95,74 +99,46 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Weekly Workouts */}
-        <div className="bg-surface-1 border border-border-default rounded-lg p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Dumbbell className="h-4 w-4 text-hyrox-yellow" />
-            <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary">
-              This Week
-            </span>
-          </div>
-          <p className="font-display text-3xl font-black text-text-primary">
-            {data.weeklyStats.workouts}
-          </p>
-          <p className="font-body text-xs text-text-tertiary mt-0.5">
-            workouts
-          </p>
-        </div>
+        {/* Weekly Workouts — expandable with volume chart */}
+        <ExpandableStatCard
+          label="This Week"
+          value={data.weeklyStats.workouts}
+          subtitle="workouts"
+          icon={<Dumbbell className="h-4 w-4" />}
+        >
+          <WeeklyVolumeChart />
+        </ExpandableStatCard>
 
         {/* Training Hours */}
-        <div className="bg-surface-1 border border-border-default rounded-lg p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Clock className="h-4 w-4 text-hyrox-yellow" />
-            <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary">
-              Hours
-            </span>
-          </div>
-          <p className="font-display text-3xl font-black text-text-primary">
-            {(data.weeklyStats.totalMinutes / 60).toFixed(1)}
-          </p>
-          <p className="font-body text-xs text-text-tertiary mt-0.5">
-            this week
-          </p>
-        </div>
+        <ExpandableStatCard
+          label="Hours"
+          value={(data.weeklyStats.totalMinutes / 60).toFixed(1)}
+          subtitle="this week"
+          icon={<Clock className="h-4 w-4" />}
+        />
 
         {/* Streak */}
-        <div className="bg-surface-1 border border-border-default rounded-lg p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Flame className="h-4 w-4 text-hyrox-yellow" />
-            <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary">
-              Streak
-            </span>
-          </div>
-          <p className="font-display text-3xl font-black text-text-primary">
-            {data.streak}
-          </p>
-          <p className="font-body text-xs text-text-tertiary mt-0.5">
-            {data.streak === 1 ? 'day' : 'days'}
-          </p>
-        </div>
+        <ExpandableStatCard
+          label="Streak"
+          value={data.streak}
+          subtitle={data.streak === 1 ? 'day' : 'days'}
+          icon={<Flame className="h-4 w-4" />}
+        />
 
-        {/* Average RPE */}
-        <div className="bg-surface-1 border border-border-default rounded-lg p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Timer className="h-4 w-4 text-hyrox-yellow" />
-            <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary">
-              Avg RPE
-            </span>
-          </div>
-          <p className="font-display text-3xl font-black text-text-primary">
-            {data.weeklyStats.avgRpe ?? '—'}
-          </p>
-          <p className="font-body text-xs text-text-tertiary mt-0.5">
-            this week
-          </p>
-        </div>
+        {/* Average RPE — expandable with trend chart */}
+        <ExpandableStatCard
+          label="Avg RPE"
+          value={data.weeklyStats.avgRpe ?? '—'}
+          subtitle="this week"
+          icon={<Timer className="h-4 w-4" />}
+        >
+          <RpeTrendChart />
+        </ExpandableStatCard>
 
         {/* Today's Workout */}
         {data.todaysWorkout && !data.todaysWorkout.is_completed && (
           <Link
-            href={`/training/log?planDayId=${data.todaysWorkout.id}`}
+            href={`/training/workout/${data.todaysWorkout.id}`}
             className="col-span-2 bg-hyrox-yellow/5 border border-hyrox-yellow/20 rounded-lg p-5 hover:bg-hyrox-yellow/10 transition-colors group"
           >
             <div className="flex items-center justify-between">
@@ -316,6 +292,12 @@ export default function DashboardPage() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Activity Heatmap & Race Readiness */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <StreakHeatmap />
+        <RaceReadiness />
       </div>
 
       {/* Empty state for new users */}

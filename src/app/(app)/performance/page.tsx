@@ -1,34 +1,15 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import {
   BarChart3,
   ChevronRight,
-  Plus,
   Trophy,
-  TrendingUp,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
-
-interface PR {
-  id: string;
-  record_type: string;
-  exercise_name: string | null;
-  station_id: string | null;
-  value: number;
-  value_unit: string;
-  date_achieved: string;
-  previous_value: number | null;
-}
-
-interface Benchmark {
-  id: string;
-  test_type: string;
-  station_id: string | null;
-  results: Record<string, unknown>;
-  test_date: string;
-  notes: string | null;
-}
+import { useState } from 'react';
+import { useBenchmarks, usePersonalRecords } from '@/hooks/use-performance';
+import { useQuery } from '@tanstack/react-query';
+import { BenchmarkEntry } from '@/components/training/benchmark-entry';
+import { RaceResultsEntry } from '@/components/training/race-results-entry';
 
 interface Station {
   id: string;
@@ -38,28 +19,23 @@ interface Station {
 }
 
 export default function PerformancePage() {
-  const [records, setRecords] = useState<PR[]>([]);
-  const [benchmarks, setBenchmarks] = useState<Benchmark[]>([]);
-  const [stations, setStations] = useState<Station[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: records = [], isLoading: recordsLoading } = usePersonalRecords();
+  const { data: benchmarks = [], isLoading: benchmarksLoading } = useBenchmarks();
+  const { data: stations = [], isLoading: stationsLoading } = useQuery<Station[]>({
+    queryKey: ['stations'],
+    queryFn: async () => {
+      const res = await fetch('/api/stations');
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.stations;
+    },
+  });
+
   const [tab, setTab] = useState<'overview' | 'stations' | 'benchmarks'>(
     'overview'
   );
 
-  useEffect(() => {
-    async function load() {
-      const [prRes, bRes, sRes] = await Promise.all([
-        fetch('/api/personal-records'),
-        fetch('/api/benchmarks'),
-        fetch('/api/stations'),
-      ]);
-      if (prRes.ok) setRecords((await prRes.json()).records);
-      if (bRes.ok) setBenchmarks((await bRes.json()).benchmarks);
-      if (sRes.ok) setStations((await sRes.json()).stations);
-      setLoading(false);
-    }
-    load();
-  }, []);
+  const loading = recordsLoading || benchmarksLoading || stationsLoading;
 
   const tabs = [
     { key: 'overview' as const, label: 'Overview' },
@@ -86,9 +62,15 @@ export default function PerformancePage() {
   return (
     <div className="p-6 md:p-8 space-y-6">
       {/* Header */}
-      <h1 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wider text-text-primary">
-        Performance
-      </h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wider text-text-primary">
+          Performance
+        </h1>
+        <div className="flex gap-2">
+          <BenchmarkEntry />
+          <RaceResultsEntry />
+        </div>
+      </div>
 
       {/* Tab bar */}
       <div className="flex gap-1 bg-surface-1 border border-border-default rounded-lg p-1">
@@ -145,12 +127,6 @@ export default function PerformancePage() {
                       <p className="font-mono text-lg text-hyrox-yellow">
                         {pr.value} {pr.value_unit}
                       </p>
-                      {pr.previous_value && (
-                        <p className="font-mono text-[10px] text-semantic-success">
-                          <TrendingUp className="h-3 w-3 inline mr-0.5" />
-                          from {pr.previous_value}
-                        </p>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -214,15 +190,6 @@ export default function PerformancePage() {
       {/* Benchmarks Tab */}
       {tab === 'benchmarks' && (
         <div className="space-y-3">
-          <div className="flex justify-end">
-            <Button
-              variant="outline"
-              className="border-hyrox-yellow text-hyrox-yellow hover:bg-hyrox-yellow/10 font-display uppercase tracking-wider text-xs"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Log Benchmark
-            </Button>
-          </div>
           {benchmarks.length === 0 ? (
             <div className="bg-surface-1 border border-border-default rounded-lg p-8 text-center">
               <BarChart3 className="h-8 w-8 text-text-tertiary mx-auto mb-2" />

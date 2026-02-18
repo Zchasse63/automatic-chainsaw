@@ -3,9 +3,12 @@
 import { Button } from '@/components/ui/button';
 import {
   CalendarDays,
+  CalendarRange,
   ChevronRight,
   Dumbbell,
+  LayoutGrid,
   MessageSquare,
+  Play,
   Plus,
   Check,
   Loader2,
@@ -18,6 +21,7 @@ import {
   useTrainingPlan,
 } from '@/hooks/use-training-plans';
 import { WeekCalendar } from '@/components/training/week-calendar';
+import { MonthCalendar } from '@/components/training/month-calendar';
 import {
   Drawer,
   DrawerContent,
@@ -60,6 +64,7 @@ export default function TrainingPage() {
   const updatePlanDay = useUpdatePlanDay();
   const [selectedDay, setSelectedDay] = useState<PlanDay | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [calendarView, setCalendarView] = useState<'week' | 'month'>('week');
 
   const loading = workoutsLoading || plansLoading;
 
@@ -146,8 +151,35 @@ export default function TrainingPage() {
               </div>
             </div>
 
-            {/* Week calendar */}
-            {planDetail.training_plan_weeks &&
+            {/* Calendar view toggle */}
+            <div className="flex items-center justify-end gap-1">
+              <button
+                onClick={() => setCalendarView('week')}
+                className={`p-1.5 rounded transition-colors ${
+                  calendarView === 'week'
+                    ? 'bg-hyrox-yellow/20 text-hyrox-yellow'
+                    : 'text-text-tertiary hover:text-text-secondary'
+                }`}
+                title="Week view"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setCalendarView('month')}
+                className={`p-1.5 rounded transition-colors ${
+                  calendarView === 'month'
+                    ? 'bg-hyrox-yellow/20 text-hyrox-yellow'
+                    : 'text-text-tertiary hover:text-text-secondary'
+                }`}
+                title="Month view"
+              >
+                <CalendarRange className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Week or Month calendar */}
+            {calendarView === 'week' &&
+              planDetail.training_plan_weeks &&
               planDetail.training_plan_weeks.length > 0 &&
               activePlan.start_date && (
                 <WeekCalendar
@@ -158,6 +190,7 @@ export default function TrainingPage() {
                   onDayClick={handleDayClick}
                 />
               )}
+            {calendarView === 'month' && <MonthCalendar />}
           </>
         ) : (
           <div className="bg-surface-1 border border-border-default rounded-lg p-8 text-center space-y-3">
@@ -286,13 +319,13 @@ export default function TrainingPage() {
                       onClick={() => {
                         setDrawerOpen(false);
                         router.push(
-                          `/training/log?planDayId=${selectedDay.id}`
+                          `/training/workout/${selectedDay.id}`
                         );
                       }}
                       className="flex-1 bg-hyrox-yellow text-text-inverse hover:bg-hyrox-yellow-hover font-display uppercase tracking-wider text-xs"
                     >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Log Workout
+                      <Play className="h-4 w-4 mr-1" />
+                      Start Workout
                     </Button>
                     {!selectedDay.is_completed && (
                       <Button

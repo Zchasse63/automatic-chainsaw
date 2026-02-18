@@ -50,6 +50,13 @@ export function RaceResultsEntry() {
     const stationSplits = splits.map((s) => totalSeconds(s.stationMinutes, s.stationSeconds));
     const totalTime = runSplits.reduce((a, b) => a + b, 0) + stationSplits.reduce((a, b) => a + b, 0);
 
+    // Build splits in the format the API expects: {split_number, split_type, time_seconds}
+    // Each lap = 1 run split + 1 station split, numbered 1-16
+    const formattedSplits = splits.flatMap((_, i) => [
+      { split_number: i * 2 + 1, split_type: 'run', time_seconds: runSplits[i] },
+      { split_number: i * 2 + 2, split_type: 'station', time_seconds: stationSplits[i] },
+    ]).filter((s) => s.time_seconds > 0);
+
     try {
       const res = await fetch('/api/races', {
         method: 'POST',
@@ -58,9 +65,7 @@ export function RaceResultsEntry() {
           race_name: raceName,
           race_date: raceDate,
           total_time_seconds: totalTime,
-          run_splits: runSplits,
-          station_splits: stationSplits,
-          stations: STATIONS,
+          splits: formattedSplits,
         }),
       });
       if (!res.ok) throw new Error('Failed');
