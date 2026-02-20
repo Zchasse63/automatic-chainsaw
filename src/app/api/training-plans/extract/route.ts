@@ -1,5 +1,5 @@
 import { generateObject } from 'ai';
-import { BASE_LLAMA_MODEL } from '@/lib/ai/nebius';
+import { EXTRACTION_MODEL } from '@/lib/ai/xai';
 import { TrainingPlanSchema } from '@/lib/coach/training-plan-schema';
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const { object: plan } = await generateObject({
-      model: BASE_LLAMA_MODEL,
+      model: EXTRACTION_MODEL,
       schema: TrainingPlanSchema,
       system: EXTRACTION_PROMPT,
       prompt: `Extract the training plan from this coaching response:\n\n${messageContent}`,

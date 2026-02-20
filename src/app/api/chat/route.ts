@@ -1,5 +1,5 @@
 import { streamText, convertToModelMessages, stepCountIs, type UIMessage } from 'ai';
-import { COACH_K_MODEL } from '@/lib/ai/nebius';
+import { COACH_K_MODEL } from '@/lib/ai/xai';
 import { createCoachingTools } from '@/lib/ai/tools';
 import { buildAthleteProfileMessage } from '@/lib/ai/athlete-context';
 import { SYSTEM_PROMPT } from '@/lib/coach/system-prompt';

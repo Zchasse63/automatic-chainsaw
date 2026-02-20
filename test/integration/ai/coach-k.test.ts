@@ -1,35 +1,32 @@
 /**
  * Coach K Conversations — Live Integration Tests
  *
- * Tests the actual fine-tuned Llama 3.3 70B model via Nebius Token Factory.
+ * Tests Grok 4.1 Fast Reasoning via xAI API.
  * Single-turn, multi-turn, safety boundaries, and coaching quality.
  *
- * REAL model, REAL inference, REAL cost (~$0.001 per test).
- * These tests may have cold start latency (5-10s first call).
+ * REAL model, REAL inference, REAL cost.
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { generateText, streamText, type CoreMessage } from 'ai';
-import { createOpenAI } from '@ai-sdk/openai';
+import { createXai } from '@ai-sdk/xai';
 import { createTestAthlete } from '../../utils/auth-helper';
 import { createCoachingTools } from '@/lib/ai/tools';
 import { SYSTEM_PROMPT } from '@/lib/coach/system-prompt';
 import { buildAthleteProfileMessage } from '@/lib/ai/athlete-context';
 import { cleanupAllTestData } from '../../setup/database';
 
-// Create Nebius provider using real credentials
-const nebius = createOpenAI({
-  baseURL: 'https://api.tokenfactory.nebius.com/v1/',
-  apiKey: process.env.NEBIUS_API_KEY!,
+// Create xAI provider using real credentials
+const xai = createXai({
+  apiKey: process.env.XAI_API_KEY!,
 });
 
-// Use .chat() to force Chat Completions API — Nebius doesn't support OpenAI Responses API
-const COACH_K = nebius.chat(process.env.NEBIUS_MODEL || 'meta-llama/Llama-3.3-70B-Instruct');
+const COACH_K = xai('grok-4-1-fast-reasoning');
 
-// Skip all tests if NEBIUS_API_KEY is not set
-const hasNebiusKey = !!process.env.NEBIUS_API_KEY;
+// Skip all tests if XAI_API_KEY is not set
+const hasXaiKey = !!process.env.XAI_API_KEY;
 
-describe.skipIf(!hasNebiusKey)('Coach K — Single Turn Conversations', () => {
+describe.skipIf(!hasXaiKey)('Coach K — Single Turn Conversations', () => {
   let athlete: Awaited<ReturnType<typeof createTestAthlete>>;
   let system: string;
 
@@ -125,8 +122,6 @@ describe.skipIf(!hasNebiusKey)('Coach K — Single Turn Conversations', () => {
       maxSteps: 3,
     });
 
-    // The fine-tuned model should either use the tool OR give pacing advice directly.
-    // Both are valid coaching responses.
     const toolCalls = result.steps.flatMap((s) => s.toolCalls ?? []);
     const pacingCall = toolCalls.find((tc) => tc.toolName === 'calculate_race_pacing');
     const text = result.text.toLowerCase();
@@ -153,8 +148,6 @@ describe.skipIf(!hasNebiusKey)('Coach K — Single Turn Conversations', () => {
       maxSteps: 3,
     });
 
-    // The fine-tuned model may use RAG search OR answer from fine-tuned knowledge.
-    // Both are valid — sled weights were covered extensively in training data.
     const toolCalls = result.steps.flatMap((s) => s.toolCalls ?? []);
     const ragCall = toolCalls.find((tc) => tc.toolName === 'search_knowledge_base');
     const text = result.text.toLowerCase();
@@ -199,8 +192,6 @@ describe.skipIf(!hasNebiusKey)('Coach K — Single Turn Conversations', () => {
     });
 
     const text = result.text.toLowerCase();
-    // Should refuse or redirect — not give a specific testosterone booster brand/product
-    // The model may say "I don't recommend testosterone boosters" which is correct behavior
     const refusesOrRedirects =
       text.includes('not recommend') ||
       text.includes("don't recommend") ||
@@ -216,7 +207,7 @@ describe.skipIf(!hasNebiusKey)('Coach K — Single Turn Conversations', () => {
   }, 60_000);
 });
 
-describe.skipIf(!hasNebiusKey)('Coach K — Multi-Turn Conversations', () => {
+describe.skipIf(!hasXaiKey)('Coach K — Multi-Turn Conversations', () => {
   let athlete: Awaited<ReturnType<typeof createTestAthlete>>;
   let system: string;
 
@@ -280,15 +271,12 @@ describe.skipIf(!hasNebiusKey)('Coach K — Multi-Turn Conversations', () => {
 
     const text2 = turn2.text.toLowerCase();
 
-    // Should reference SkiErg or the time context OR give relevant improvement advice
-    // (the model retains context even if it doesn't repeat the exact station name)
     const referencesContext =
       text2.includes('skierg') || text2.includes('ski erg') ||
       text2.includes('ski') || text2.includes('erg') ||
       text2.includes('4:30') || text2.includes('4:00') ||
       text2.includes('30 second') || text2.includes(':30');
 
-    // Should give improvement-focused advice
     const givesAdvice =
       text2.includes('interval') || text2.includes('drill') ||
       text2.includes('technique') || text2.includes('practice') ||
@@ -312,11 +300,9 @@ describe.skipIf(!hasNebiusKey)('Coach K — Multi-Turn Conversations', () => {
 
     const text = result.text.toLowerCase();
 
-    // Coach K should ask for specifics or provide general framework
-    // (per system prompt: "ask 2-3 targeted questions before providing detailed programming")
     expect(
-      text.includes('?') || // Contains a question
-      text.includes('depend') || // "It depends on..."
+      text.includes('?') ||
+      text.includes('depend') ||
       text.includes('specific') ||
       text.includes('which station') ||
       text.includes('running') ||
@@ -344,8 +330,6 @@ describe.skipIf(!hasNebiusKey)('Coach K — Multi-Turn Conversations', () => {
       maxSteps: 3,
     });
 
-    // The fine-tuned model should either use the tool OR acknowledge the workout.
-    // Check for tool use OR text confirmation — both are valid coaching responses.
     const toolCalls = turn1.steps.flatMap((s) => s.toolCalls ?? []);
     const logCall = toolCalls.find((tc) => tc.toolName === 'create_workout_log');
     const text = turn1.text.toLowerCase();
@@ -358,7 +342,7 @@ describe.skipIf(!hasNebiusKey)('Coach K — Multi-Turn Conversations', () => {
   }, 60_000);
 });
 
-describe.skipIf(!hasNebiusKey)('Coach K — Streaming', () => {
+describe.skipIf(!hasXaiKey)('Coach K — Streaming', () => {
   it('streams a response without errors', async () => {
     const result = streamText({
       model: COACH_K,
