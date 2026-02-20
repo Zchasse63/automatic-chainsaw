@@ -1,99 +1,86 @@
 /**
- * Onboarding Flow — E2E Test
+ * Onboarding Flow — E2E Tests
  *
- * Tests the full signup → profile creation → dashboard flow
- * against a REAL running dev server with REAL Supabase.
+ * Tests login page accessibility, signup page visibility,
+ * and the onboarding redirect guard.
  *
- * No mocking — every action hits the real system.
+ * Note: Full auth/navigation tests are in auth-navigation.spec.ts.
+ * This file focuses specifically on the login/signup pages and onboarding UX.
  */
 
-import { test, expect } from '@playwright/test';
-import fs from 'node:fs';
-import path from 'node:path';
+import { test, expect } from '../fixtures/auth';
 
-const credPath = path.resolve(__dirname, '../.e2e-credentials.json');
-
-test.describe('Onboarding Flow', () => {
-  test.skip(
-    !fs.existsSync(credPath),
-    'E2E credentials not found. Run global setup first.',
-  );
-
-  let credentials: {
-    email: string;
-    password: string;
-    userId: string;
-    athleteId: string;
-  };
-
-  test.beforeAll(() => {
-    credentials = JSON.parse(fs.readFileSync(credPath, 'utf-8'));
-  });
-
-  test('login with real credentials and reach dashboard', async ({ page }) => {
-    // Navigate to login
+test.describe('Login Page', () => {
+  test('login page renders with email and password fields', async ({ page }) => {
     await page.goto('/login');
     await expect(page).toHaveURL(/\/login/);
 
-    // Fill in real credentials
-    await page.fill('input[name="email"], input[type="email"]', credentials.email);
-    await page.fill(
-      'input[name="password"], input[type="password"]',
-      credentials.password,
-    );
+    // Email input
+    await expect(page.locator('input[type="email"]')).toBeVisible({ timeout: 10_000 });
 
-    // Submit login form
-    await page.click('button[type="submit"]');
+    // Password input
+    await expect(page.locator('input[type="password"]')).toBeVisible();
 
-    // Should redirect to dashboard (real auth, real session)
-    await page.waitForURL('**/dashboard', { timeout: 15_000 });
-    await expect(page).toHaveURL(/\/dashboard/);
+    // Submit button
+    await expect(page.locator('button[type="submit"]')).toBeVisible();
   });
 
-  test('dashboard displays real profile data', async ({ page }) => {
-    // Login first
+  test('login page has link to signup', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[name="email"], input[type="email"]', credentials.email);
-    await page.fill(
-      'input[name="password"], input[type="password"]',
-      credentials.password,
-    );
-    await page.click('button[type="submit"]');
-    await page.waitForURL('**/dashboard', { timeout: 15_000 });
-
-    // Verify dashboard has real content (not loading state)
-    await expect(page.locator('text=/[E2E] Test Athlete|Dashboard/i')).toBeVisible({
+    await expect(page.locator('text=/sign up|create.*account|register/i')).toBeVisible({
       timeout: 10_000,
     });
   });
 
-  test('unauthenticated user redirected to login', async ({ page }) => {
-    // Try to access dashboard without auth
-    await page.goto('/dashboard');
-
-    // Should be redirected to login
-    await expect(page).toHaveURL(/\/login/);
+  test('login page has Google OAuth button', async ({ page }) => {
+    await page.goto('/login');
+    // Google OAuth button should be visible
+    await expect(
+      page.locator('button:has-text("Google"), text=/Continue with Google|Sign in with Google/i'),
+    ).toBeVisible({ timeout: 10_000 });
   });
 
-  test('navigation between app sections works', async ({ page }) => {
-    // Login
+  test('root URL redirects to login', async ({ page }) => {
+    await page.goto('/');
+    await expect(page).toHaveURL(/\/login/, { timeout: 10_000 });
+  });
+});
+
+test.describe('Signup Page', () => {
+  test('signup page renders with form fields', async ({ page }) => {
+    await page.goto('/signup');
+    await expect(page).toHaveURL(/\/signup/);
+
+    // Email input
+    await expect(page.locator('input[type="email"]')).toBeVisible({ timeout: 10_000 });
+
+    // Password inputs (password + confirm)
+    const passwordInputs = page.locator('input[type="password"]');
+    const count = await passwordInputs.count();
+    expect(count).toBeGreaterThanOrEqual(1);
+
+    // Submit button
+    await expect(
+      page.locator('button[type="submit"], button:has-text("Create Account")'),
+    ).toBeVisible();
+  });
+
+  test('signup page has link to login', async ({ page }) => {
+    await page.goto('/signup');
+    await expect(page.locator('text=/sign in|already.*account|log in/i')).toBeVisible({
+      timeout: 10_000,
+    });
+  });
+});
+
+test.describe('Login — Real Auth', () => {
+  test('successful login with E2E credentials', async ({ page, credentials }) => {
     await page.goto('/login');
-    await page.fill('input[name="email"], input[type="email"]', credentials.email);
-    await page.fill(
-      'input[name="password"], input[type="password"]',
-      credentials.password,
-    );
+    await page.fill('input[type="email"]', credentials.email);
+    await page.fill('input[type="password"]', credentials.password);
     await page.click('button[type="submit"]');
+
     await page.waitForURL('**/dashboard', { timeout: 15_000 });
-
-    // Navigate to coach
-    await page.click('a[href="/coach"], [data-nav="coach"]');
-    await page.waitForURL('**/coach', { timeout: 10_000 });
-    await expect(page).toHaveURL(/\/coach/);
-
-    // Navigate to training
-    await page.click('a[href="/training"], [data-nav="training"]');
-    await page.waitForURL('**/training', { timeout: 10_000 });
-    await expect(page).toHaveURL(/\/training/);
+    await expect(page).toHaveURL(/\/dashboard/);
   });
 });
