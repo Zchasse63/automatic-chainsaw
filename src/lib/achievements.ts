@@ -113,7 +113,8 @@ export async function checkAndAwardAchievements(
     }
 
     return newlyEarned;
-  } catch {
+  } catch (err) {
+    console.error('Achievement evaluation error:', err);
     return [];
   }
 }
