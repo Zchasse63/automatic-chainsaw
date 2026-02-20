@@ -15,6 +15,7 @@ import { TrophyCase } from '@/components/achievements/trophy-case';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { toast } from 'sonner';
 
 interface Profile {
   display_name: string | null;
@@ -71,6 +72,8 @@ export default function ProfilePage() {
     if (res.ok) {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+    } else {
+      toast.error('Failed to save profile. Please try again.');
     }
   }
 
@@ -255,22 +258,41 @@ export default function ProfilePage() {
             Preferences
           </h2>
 
-          <div className="space-y-2">
-            <Label className="font-body text-sm text-text-secondary">
-              Units
-            </Label>
-            <Select
-              value={profile.units_preference || 'metric'}
-              onValueChange={(v) => updateField('units_preference', v)}
-            >
-              <SelectTrigger className="h-12 bg-surface-1 border-border-default font-body">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="metric">Metric (kg, km)</SelectItem>
-                <SelectItem value="imperial">Imperial (lbs, miles)</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="font-body text-sm text-text-secondary">
+                Units
+              </Label>
+              <Select
+                value={profile.units_preference || 'metric'}
+                onValueChange={(v) => updateField('units_preference', v)}
+              >
+                <SelectTrigger className="h-12 bg-surface-1 border-border-default font-body">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="metric">Metric (kg, km)</SelectItem>
+                  <SelectItem value="imperial">Imperial (lbs, miles)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="font-body text-sm text-text-secondary">
+                Weekly Availability (hrs)
+              </Label>
+              <Input
+                type="number"
+                value={profile.weekly_availability_hours ?? ''}
+                onChange={(e) =>
+                  updateField(
+                    'weekly_availability_hours',
+                    e.target.value ? Number(e.target.value) : null
+                  )
+                }
+                placeholder="e.g. 10"
+                className="h-12 bg-surface-1 border-border-default focus:border-hyrox-yellow font-body"
+              />
+            </div>
           </div>
         </section>
       </div>

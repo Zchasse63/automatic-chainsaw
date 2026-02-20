@@ -6,9 +6,11 @@ import {
   ChevronRight,
   Clock,
   Dumbbell,
+  Flag,
   Flame,
   MessageSquare,
   Play,
+  Plus,
   Target,
   Timer,
   Trophy,
@@ -16,9 +18,11 @@ import {
 import Link from 'next/link';
 import { useDashboard } from '@/hooks/use-dashboard';
 import { ExpandableStatCard } from '@/components/dashboard/expandable-stat-card';
+import { WeekStrip } from '@/components/dashboard/week-strip';
 import { StreakHeatmap } from '@/components/dashboard/streak-heatmap';
 import { RaceReadiness } from '@/components/dashboard/race-readiness';
 import { RpeTrendChart, WeeklyVolumeChart } from '@/components/dashboard/performance-charts';
+import { SetupChecklist } from '@/components/dashboard/setup-checklist';
 
 const SESSION_LABELS: Record<string, string> = {
   run: 'Run',
@@ -71,9 +75,12 @@ export default function DashboardPage() {
 
       {/* Bento Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {/* Race Countdown — spans 2 cols on mobile */}
+        {/* Race Countdown — spans 2 cols on mobile, links to calendar */}
         {data.daysUntilRace !== null && (
-          <div className="col-span-2 bg-surface-1 border border-border-default rounded-lg p-6 relative overflow-hidden">
+          <Link
+            href="/calendar"
+            className="col-span-2 bg-surface-1 border border-border-default rounded-lg p-6 relative overflow-hidden hover:border-hyrox-yellow/30 transition-colors group"
+          >
             <div className="caution-stripe absolute top-0 left-0 right-0" />
             <div className="flex items-center justify-between pt-2">
               <div>
@@ -94,10 +101,13 @@ export default function DashboardPage() {
                   </p>
                 )}
               </div>
-              <Calendar className="h-10 w-10 text-hyrox-yellow/20" />
+              <Calendar className="h-10 w-10 text-hyrox-yellow/20 group-hover:text-hyrox-yellow/40 transition-colors" />
             </div>
-          </div>
+          </Link>
         )}
+
+        {/* This Week strip — quick view of the week's plan */}
+        <WeekStrip />
 
         {/* Weekly Workouts — expandable with volume chart */}
         <ExpandableStatCard
@@ -172,7 +182,7 @@ export default function DashboardPage() {
         {/* Active Plan Progress */}
         {data.activePlan && (
           <Link
-            href="/training"
+            href="/calendar"
             className="col-span-2 bg-surface-1 border border-border-default rounded-lg p-5 hover:border-hyrox-yellow/30 transition-colors group"
           >
             <div className="flex items-center justify-between mb-2">
@@ -203,25 +213,63 @@ export default function DashboardPage() {
           </Link>
         )}
 
-        {/* Ask Coach K — CTA */}
+        {/* Quick Actions — Coach K + Log Workout */}
         <Link
           href="/coach"
-          className="col-span-2 bg-hyrox-yellow/5 border border-hyrox-yellow/20 rounded-lg p-5 hover:bg-hyrox-yellow/10 transition-colors group"
+          className="bg-hyrox-yellow/5 border border-hyrox-yellow/20 rounded-lg p-4 hover:bg-hyrox-yellow/10 transition-colors group"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-hyrox-yellow/10 flex items-center justify-center">
-              <MessageSquare className="h-5 w-5 text-hyrox-yellow" />
+            <div className="w-9 h-9 rounded-full bg-hyrox-yellow/10 flex items-center justify-center shrink-0">
+              <MessageSquare className="h-4 w-4 text-hyrox-yellow" />
             </div>
-            <div>
-              <p className="font-display text-sm font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
+            <div className="min-w-0">
+              <p className="font-display text-xs font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
                 Ask Coach K
               </p>
-              <p className="font-body text-xs text-text-tertiary">
+              <p className="font-body text-[10px] text-text-tertiary truncate">
                 {data.lastConversation
-                  ? `Last chat: ${data.lastConversation.title || 'Untitled'}`
-                  : 'Start your first coaching session'}
+                  ? `Last: ${data.lastConversation.title || 'Untitled'}`
+                  : 'Start coaching'}
               </p>
             </div>
+          </div>
+        </Link>
+        <Link
+          href="/training/log"
+          className="bg-surface-1 border border-border-default rounded-lg p-4 hover:border-hyrox-yellow/30 transition-colors group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-hyrox-yellow/10 flex items-center justify-center shrink-0">
+              <Plus className="h-4 w-4 text-hyrox-yellow" />
+            </div>
+            <div className="min-w-0">
+              <p className="font-display text-xs font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
+                Log Workout
+              </p>
+              <p className="font-body text-[10px] text-text-tertiary">
+                Quick manual log
+              </p>
+            </div>
+          </div>
+        </Link>
+        <Link
+          href="/training/simulation"
+          className="col-span-2 bg-surface-1 border border-border-default rounded-lg p-4 hover:border-hyrox-yellow/30 transition-colors group relative overflow-hidden"
+        >
+          <div className="caution-stripe absolute top-0 left-0 right-0" />
+          <div className="flex items-center gap-3 pt-1">
+            <div className="w-9 h-9 rounded-full bg-hyrox-yellow/10 flex items-center justify-center shrink-0">
+              <Flag className="h-4 w-4 text-hyrox-yellow" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-display text-xs font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
+                Race Simulation
+              </p>
+              <p className="font-body text-[10px] text-text-tertiary">
+                Full Hyrox — 8 runs + 8 stations with split tracking
+              </p>
+            </div>
+            <ChevronRight className="h-4 w-4 text-text-tertiary group-hover:text-hyrox-yellow transition-colors" />
           </div>
         </Link>
 
@@ -300,28 +348,14 @@ export default function DashboardPage() {
         <RaceReadiness />
       </div>
 
-      {/* Empty state for new users */}
-      {data.weeklyStats.workouts === 0 &&
-        data.recentPRs.length === 0 &&
-        data.goals.length === 0 && (
-          <div className="bg-surface-1 border border-border-default rounded-lg p-8 text-center space-y-4">
-            <h2 className="font-display text-xl font-bold uppercase tracking-wider text-text-primary">
-              Welcome to Your Training Hub
-            </h2>
-            <p className="font-body text-text-secondary max-w-md mx-auto">
-              Your dashboard will come alive as you train. Get started with
-              one of these:
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/coach">
-                <Button className="bg-hyrox-yellow text-text-inverse hover:bg-hyrox-yellow-hover font-display uppercase tracking-wider text-xs">
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  Chat with Coach K
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
+      {/* Setup checklist for new/incomplete users */}
+      <SetupChecklist
+        hasProfile={!!data.profile.display_name}
+        hasRaceDate={!!data.profile.race_date}
+        hasPlan={!!data.activePlan}
+        hasWorkout={data.weeklyStats.workouts > 0 || data.recentPRs.length > 0}
+        hasGoal={data.goals.length > 0}
+      />
     </div>
   );
 }

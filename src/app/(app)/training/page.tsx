@@ -111,7 +111,7 @@ export default function TrainingPage() {
         <h1 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wider text-text-primary">
           Training
         </h1>
-        <Link href="/coach?context=log&new=true">
+        <Link href="/training/log">
           <Button className="bg-hyrox-yellow text-text-inverse hover:bg-hyrox-yellow-hover font-display uppercase tracking-wider text-xs">
             <Plus className="h-4 w-4 mr-2" />
             Log Workout
@@ -248,19 +248,20 @@ export default function TrainingPage() {
             <p className="font-body text-sm text-text-secondary">
               No workouts logged yet
             </p>
-            <Link href="/coach?context=log&new=true">
+            <Link href="/training/log">
               <Button className="bg-hyrox-yellow text-text-inverse hover:bg-hyrox-yellow-hover font-display uppercase tracking-wider text-xs">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Log via Coach K
+                <Plus className="h-4 w-4 mr-2" />
+                Log Workout
               </Button>
             </Link>
           </div>
         ) : (
           <div className="space-y-2">
             {workouts.map((w) => (
-              <div
+              <button
                 key={w.id}
-                className="bg-surface-1 border border-border-default rounded-lg px-4 py-3 flex items-center justify-between"
+                onClick={() => router.push(`/training/workout-log/${w.id}`)}
+                className="w-full bg-surface-1 border border-border-default rounded-lg px-4 py-3 flex items-center justify-between hover:border-hyrox-yellow/30 transition-colors text-left"
               >
                 <div>
                   <div className="flex items-center gap-2">
@@ -285,7 +286,7 @@ export default function TrainingPage() {
                   </div>
                 </div>
                 <ChevronRight className="h-4 w-4 text-text-tertiary" />
-              </div>
+              </button>
             ))}
           </div>
         )}

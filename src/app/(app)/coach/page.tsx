@@ -5,9 +5,10 @@ import { DefaultChatTransport } from 'ai';
 import { ChatMessage } from '@/components/coach/chat-message';
 import { ChatInput } from '@/components/coach/chat-input';
 import { ConversationSidebar } from '@/components/coach/conversation-sidebar';
-import { Bot, Menu, X } from 'lucide-react';
+import { AlertTriangle, Bot, Menu, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
 import {
   useConversations,
   useMessages,
@@ -92,9 +93,12 @@ export default function CoachPage() {
       if (convId) invalidateMessages(convId);
       invalidateConversations();
     },
-    onError: () => {
+    onError: (error) => {
       clearTimeout(coldStartTimer.current);
       setColdStart(false);
+      toast.error('Something went wrong. Please try again.', {
+        description: error.message || 'Coach K encountered an error',
+      });
     },
   });
 

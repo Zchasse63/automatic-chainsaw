@@ -11,7 +11,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { Check, Play, MessageSquare, X } from 'lucide-react';
+import { Check, Play, Plus, MessageSquare, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const SESSION_LABELS: Record<string, string> = {
@@ -157,9 +157,10 @@ function UtilityLinks({ date, onClose }: { date: string; onClose: () => void }) 
     <div className="flex flex-col gap-2 pt-2 border-t border-border-default">
       <Button
         variant="outline"
-        onClick={() => { onClose(); router.push('/coach?context=log&new=true'); }}
+        onClick={() => { onClose(); router.push(`/training/log?date=${date}`); }}
         className="w-full border-border-default text-text-secondary font-display uppercase tracking-wider text-xs"
       >
+        <Plus className="h-4 w-4 mr-1" />
         Log Workout
       </Button>
       <Button

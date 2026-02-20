@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import {
   LayoutDashboard,
   MessageSquare,
-  Dumbbell,
+  CalendarDays,
   TrendingUp,
   User,
 } from 'lucide-react';
@@ -17,7 +17,7 @@ import { Toaster } from 'sonner';
 const NAV_ITEMS = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { href: '/coach', icon: MessageSquare, label: 'Coach' },
-  { href: '/training', icon: Dumbbell, label: 'Training' },
+  { href: '/calendar', icon: CalendarDays, label: 'Calendar' },
   { href: '/performance', icon: TrendingUp, label: 'Progress' },
   { href: '/profile', icon: User, label: 'Profile' },
 ];

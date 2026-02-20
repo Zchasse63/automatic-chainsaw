@@ -4,12 +4,16 @@ import {
   BarChart3,
   ChevronRight,
   Trophy,
+  TrendingUp,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useBenchmarks, usePersonalRecords } from '@/hooks/use-performance';
 import { useQuery } from '@tanstack/react-query';
 import { BenchmarkEntry } from '@/components/training/benchmark-entry';
 import { RaceResultsEntry } from '@/components/training/race-results-entry';
+import { PrTrendChart } from '@/components/performance/pr-trend-chart';
+import { StationComparisonChart } from '@/components/performance/station-comparison-chart';
+import { VolumeByTypeChart } from '@/components/performance/volume-by-type-chart';
 
 interface Station {
   id: string;
@@ -92,6 +96,28 @@ export default function PerformancePage() {
       {/* Overview Tab */}
       {tab === 'overview' && (
         <div className="space-y-6">
+          {/* PR Trend Chart */}
+          <section className="bg-surface-1 border border-border-default rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp className="h-4 w-4 text-hyrox-yellow" />
+              <h2 className="font-display text-sm uppercase tracking-widest text-text-tertiary">
+                PR Trends
+              </h2>
+            </div>
+            <PrTrendChart />
+          </section>
+
+          {/* Volume by Type Chart */}
+          <section className="bg-surface-1 border border-border-default rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <BarChart3 className="h-4 w-4 text-hyrox-yellow" />
+              <h2 className="font-display text-sm uppercase tracking-widest text-text-tertiary">
+                Training Volume
+              </h2>
+            </div>
+            <VolumeByTypeChart />
+          </section>
+
           {/* PR Board */}
           <section className="space-y-3">
             <div className="flex items-center gap-2">
@@ -138,7 +164,14 @@ export default function PerformancePage() {
 
       {/* Stations Tab */}
       {tab === 'stations' && (
-        <div className="space-y-3">
+        <div className="space-y-6">
+          {/* Station Comparison Chart */}
+          <section className="bg-surface-1 border border-border-default rounded-lg p-4">
+            <StationComparisonChart />
+          </section>
+
+          {/* Station list */}
+          <div className="space-y-3">
           {stations.map((station) => {
             const stationBenchmarks = benchmarks.filter(
               (b) => b.station_id === station.id
@@ -184,6 +217,7 @@ export default function PerformancePage() {
               </div>
             );
           })}
+          </div>
         </div>
       )}
 
