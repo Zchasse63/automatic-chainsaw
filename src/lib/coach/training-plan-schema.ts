@@ -8,6 +8,7 @@ export const SESSION_TYPES = [
   'recovery',
   'station_practice',
   'general',
+  'rest',
 ] as const;
 
 // ── Structured Exercise Schema ────────────────────────────

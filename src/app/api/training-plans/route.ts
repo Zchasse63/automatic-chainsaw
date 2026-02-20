@@ -108,6 +108,9 @@ export async function POST(request: Request) {
 
     // If nested weeks/days provided, insert them
     if (body.weeks && Array.isArray(body.weeks) && body.weeks.length > 0) {
+      let insertionFailed = false;
+      let failureDetail = '';
+
       for (const week of body.weeks) {
         const { data: savedWeek, error: weekError } = await supabase
           .from('training_plan_weeks')
@@ -123,7 +126,9 @@ export async function POST(request: Request) {
 
         if (weekError || !savedWeek) {
           console.error('Failed to insert week:', weekError);
-          continue;
+          insertionFailed = true;
+          failureDetail = `Week ${week.week_number}: ${weekError?.message ?? 'unknown error'}`;
+          break;
         }
 
         if (week.days && Array.isArray(week.days)) {
@@ -154,9 +159,21 @@ export async function POST(request: Request) {
             .insert(daysToInsert);
 
           if (daysError) {
-            console.error('Failed to insert days:', daysError);
+            console.error('Failed to insert days for week', week.week_number, ':', daysError);
+            insertionFailed = true;
+            failureDetail = `Week ${week.week_number} days: ${daysError.message}`;
+            break;
           }
         }
+      }
+
+      // If any insertion failed, roll back the entire plan (cascade deletes weeks+days)
+      if (insertionFailed) {
+        await supabase.from('training_plans').delete().eq('id', plan.id);
+        return NextResponse.json(
+          { error: `Failed to save training plan: ${failureDetail}` },
+          { status: 500 }
+        );
       }
     }
 

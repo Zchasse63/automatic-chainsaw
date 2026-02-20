@@ -11,7 +11,7 @@ Rules:
 - Include rest days with is_rest_day: true
 - For multi-week plans with repeating templates, expand at least the first 4 weeks explicitly
 - If the plan says "4 sessions per week", fill in rest days for the other 3 days
-- session_type must be one of: run, hiit, strength, simulation, recovery, station_practice, general
+- session_type must be one of: run, hiit, strength, simulation, recovery, station_practice, general, rest
 
 Structured workout_details:
 - For EVERY non-rest day, populate workout_details with structured exercise data
