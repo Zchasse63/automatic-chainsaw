@@ -7,6 +7,16 @@
 
 import { test, expect } from '../fixtures/auth';
 
+/**
+ * Helper: Click a nav link via the desktop sidebar.
+ * The app has duplicate nav links in both the desktop `aside` sidebar
+ * and the mobile bottom `nav`. We scope to `aside` to avoid strict mode
+ * violations / clicking hidden mobile elements.
+ */
+async function clickSidebarLink(page: import('@playwright/test').Page, href: string) {
+  await page.locator(`aside a[href="${href}"]`).click();
+}
+
 test.describe('Authentication', () => {
   test('login with valid credentials reaches dashboard', async ({ page, credentials }) => {
     await page.goto('/login');
@@ -64,37 +74,37 @@ test.describe('Navigation — Desktop', () => {
   test('dashboard loads after login', async ({ authedPage }) => {
     await expect(authedPage).toHaveURL(/\/dashboard/);
 
-    // Dashboard should show greeting with test athlete name
+    // Dashboard should show greeting or dashboard content
     await expect(
-      authedPage.locator('text=/E2E.*Test.*Athlete|Hey|Dashboard/i'),
+      authedPage.locator('text=/E2E.*Test.*Athlete|Hey|Dashboard/i').first(),
     ).toBeVisible({ timeout: 10_000 });
   });
 
   test('navigate to Coach via sidebar', async ({ authedPage }) => {
-    await authedPage.click('a[href="/coach"]');
+    await clickSidebarLink(authedPage, '/coach');
     await authedPage.waitForURL('**/coach', { timeout: 10_000 });
     await expect(authedPage).toHaveURL(/\/coach/);
-    await expect(authedPage.locator('text=Coach K')).toBeVisible();
+    await expect(authedPage.locator('text=Coach K').first()).toBeVisible();
   });
 
   test('navigate to Calendar via sidebar', async ({ authedPage }) => {
-    await authedPage.click('a[href="/calendar"]');
+    await clickSidebarLink(authedPage, '/calendar');
     await authedPage.waitForURL('**/calendar', { timeout: 10_000 });
     await expect(authedPage).toHaveURL(/\/calendar/);
   });
 
   test('navigate to Performance via sidebar', async ({ authedPage }) => {
-    await authedPage.click('a[href="/performance"]');
+    await clickSidebarLink(authedPage, '/performance');
     await authedPage.waitForURL('**/performance', { timeout: 10_000 });
     await expect(authedPage).toHaveURL(/\/performance/);
-    await expect(authedPage.locator('text=Performance')).toBeVisible();
+    await expect(authedPage.locator('text=Performance').first()).toBeVisible();
   });
 
   test('navigate to Profile via sidebar', async ({ authedPage }) => {
-    await authedPage.click('a[href="/profile"]');
+    await clickSidebarLink(authedPage, '/profile');
     await authedPage.waitForURL('**/profile', { timeout: 10_000 });
     await expect(authedPage).toHaveURL(/\/profile/);
-    await expect(authedPage.locator('text=/E2E.*Test.*Athlete/i')).toBeVisible({
+    await expect(authedPage.locator('text=/E2E.*Test.*Athlete/i').first()).toBeVisible({
       timeout: 10_000,
     });
   });
@@ -103,7 +113,7 @@ test.describe('Navigation — Desktop', () => {
     const routes = ['/coach', '/calendar', '/performance', '/profile', '/dashboard'];
 
     for (const route of routes) {
-      await authedPage.click(`a[href="${route}"]`);
+      await clickSidebarLink(authedPage, route);
       await authedPage.waitForURL(`**${route}`, { timeout: 10_000 });
       await expect(authedPage).toHaveURL(new RegExp(route.replace('/', '\\/')));
     }
@@ -113,7 +123,7 @@ test.describe('Navigation — Desktop', () => {
 test.describe('Sign Out', () => {
   test('sign out redirects to login', async ({ authedPage }) => {
     // Navigate to profile where sign out button is
-    await authedPage.click('a[href="/profile"]');
+    await clickSidebarLink(authedPage, '/profile');
     await authedPage.waitForURL('**/profile', { timeout: 10_000 });
 
     // Wait for profile to load, then click sign out

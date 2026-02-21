@@ -14,7 +14,7 @@ test.describe('Training Page', () => {
   test('training page loads', async ({ authedPage }) => {
     await authedPage.goto('/training');
     await authedPage.waitForURL('**/training', { timeout: 10_000 });
-    await expect(authedPage.locator('text=Training')).toBeVisible({ timeout: 10_000 });
+    await expect(authedPage.locator('h1:has-text("Training")')).toBeVisible({ timeout: 10_000 });
   });
 
   test('training page shows Log Workout button', async ({ authedPage }) => {

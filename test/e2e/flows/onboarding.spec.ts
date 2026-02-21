@@ -34,9 +34,9 @@ test.describe('Login Page', () => {
 
   test('login page has Google OAuth button', async ({ page }) => {
     await page.goto('/login');
-    // Google OAuth button should be visible
+    // Google OAuth button says "Continue with Google"
     await expect(
-      page.locator('button:has-text("Google"), text=/Continue with Google|Sign in with Google/i'),
+      page.locator('button:has-text("Continue with Google")'),
     ).toBeVisible({ timeout: 10_000 });
   });
 

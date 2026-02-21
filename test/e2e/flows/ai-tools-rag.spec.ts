@@ -43,20 +43,31 @@ test.describe('Chat API — Basic', () => {
     expect(contentType).toMatch(/text|stream|event/i);
   });
 
-  test('POST /api/chat without auth returns 401', async ({ page }) => {
-    const response = await page.request.post('http://localhost:3000/api/chat', {
-      data: {
-        messages: [
-          {
-            id: 'test-unauth',
-            role: 'user',
-            parts: [{ type: 'text', text: 'Hello' }],
-          },
-        ],
-      },
-    });
+  test('POST /api/chat without auth is blocked by middleware', async ({ playwright }) => {
+    // Use a fresh API request context with no cookies to simulate unauthenticated request.
+    // The middleware intercepts ALL routes and redirects unauthenticated requests to /login.
+    // So the response will be a redirect (302) that lands on the login page (200).
+    const apiContext = await playwright.request.newContext({ maxRedirects: 0 });
+    try {
+      const response = await apiContext.post('http://localhost:3000/api/chat', {
+        data: {
+          messages: [
+            {
+              id: 'test-unauth',
+              role: 'user',
+              parts: [{ type: 'text', text: 'Hello' }],
+            },
+          ],
+        },
+      });
 
-    expect(response.status()).toBe(401);
+      // Middleware returns redirect to /login for unauthenticated requests
+      // Next.js 16 uses 307 (temporary redirect), earlier versions use 302
+      expect([302, 307]).toContain(response.status());
+      expect(response.headers()['location']).toMatch(/\/login/);
+    } finally {
+      await apiContext.dispose();
+    }
   });
 
   test('POST /api/chat with empty messages returns 400', async ({ authedPage }) => {

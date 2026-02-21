@@ -17,9 +17,9 @@ test.describe('Dashboard', () => {
 
   test('shows race countdown card', async ({ authedPage }) => {
     // Test athlete has race_date: 2026-06-06
-    // Should show a race countdown or race day reference
+    // Dashboard shows "Race Day" label text (text-xs, uppercase)
     await expect(
-      authedPage.locator('text=/race|days|Race Day/i'),
+      authedPage.locator('text=Race Day'),
     ).toBeVisible({ timeout: 15_000 });
   });
 
@@ -27,9 +27,10 @@ test.describe('Dashboard', () => {
     // Wait for dashboard data to load
     await authedPage.waitForTimeout(2000);
 
-    // Should show This Week section or stat cards
+    // Dashboard shows "This Week" section header and stat cards
+    // "This Week" text appears multiple times (section title + stat card)
     await expect(
-      authedPage.locator('text=/This Week|Workouts|Training/i'),
+      authedPage.locator('text=This Week').first(),
     ).toBeVisible({ timeout: 15_000 });
   });
 

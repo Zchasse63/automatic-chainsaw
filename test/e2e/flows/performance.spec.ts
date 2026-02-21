@@ -12,13 +12,13 @@ test.describe('Performance Page', () => {
     await authedPage.goto('/performance');
     await authedPage.waitForURL('**/performance', { timeout: 10_000 });
 
-    // Should show Performance header
-    await expect(authedPage.locator('text=Performance')).toBeVisible({ timeout: 10_000 });
+    // Should show Performance header (h1 in main content)
+    await expect(authedPage.locator('main h1:has-text("Performance")')).toBeVisible({ timeout: 10_000 });
 
-    // Should have tab navigation
-    await expect(authedPage.locator('text=Overview')).toBeVisible({ timeout: 10_000 });
-    await expect(authedPage.locator('text=Stations')).toBeVisible();
-    await expect(authedPage.locator('text=Benchmarks')).toBeVisible();
+    // Should have tab navigation buttons
+    await expect(authedPage.locator('button:has-text("Overview")')).toBeVisible({ timeout: 10_000 });
+    await expect(authedPage.locator('button:has-text("Stations")')).toBeVisible();
+    await expect(authedPage.locator('button:has-text("Benchmarks")')).toBeVisible();
   });
 
   test('overview tab shows PR section', async ({ authedPage }) => {
@@ -26,12 +26,12 @@ test.describe('Performance Page', () => {
     await authedPage.waitForURL('**/performance', { timeout: 10_000 });
 
     // Click Overview tab if not already active
-    await authedPage.click('text=Overview');
+    await authedPage.locator('button:has-text("Overview")').click();
     await authedPage.waitForTimeout(1000);
 
-    // Should show Personal Records or PR-related content
+    // Should show Personal Records heading or "No PRs recorded yet" message
     await expect(
-      authedPage.locator('text=/Personal Records|PRs|No personal records/i'),
+      authedPage.locator('h2:has-text("Personal Records")'),
     ).toBeVisible({ timeout: 10_000 });
   });
 
@@ -40,7 +40,7 @@ test.describe('Performance Page', () => {
     await authedPage.waitForURL('**/performance', { timeout: 10_000 });
 
     // Click Stations tab
-    await authedPage.click('text=Stations');
+    await authedPage.locator('button:has-text("Stations")').click();
     await authedPage.waitForTimeout(1000);
 
     // Should show station names or station-related content
@@ -54,7 +54,7 @@ test.describe('Performance Page', () => {
     await authedPage.waitForURL('**/performance', { timeout: 10_000 });
 
     // Click Benchmarks tab
-    await authedPage.click('text=Benchmarks');
+    await authedPage.locator('button:has-text("Benchmarks")').click();
     await authedPage.waitForTimeout(1000);
 
     // Should show benchmarks section (may be empty or have data)

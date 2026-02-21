@@ -130,16 +130,30 @@ test.describe('Profile Page', () => {
 });
 
 test.describe('Profile — Edge Cases', () => {
-  test('unauthenticated profile API request returns 401', async ({ page }) => {
-    // Make a raw request without auth
-    const response = await page.request.get('http://localhost:3000/api/profile');
-    expect(response.status()).toBe(401);
+  test('unauthenticated profile API request is blocked by middleware', async ({ playwright }) => {
+    // Middleware redirects unauthenticated requests to /login
+    // Next.js 16 uses 307 (temporary redirect), earlier versions use 302
+    const apiContext = await playwright.request.newContext({ maxRedirects: 0 });
+    try {
+      const response = await apiContext.get('http://localhost:3000/api/profile');
+      expect([302, 307]).toContain(response.status());
+      expect(response.headers()['location']).toMatch(/\/login/);
+    } finally {
+      await apiContext.dispose();
+    }
   });
 
-  test('unauthenticated PATCH profile returns 401', async ({ page }) => {
-    const response = await page.request.patch('http://localhost:3000/api/profile', {
-      data: { display_name: 'Hacker' },
-    });
-    expect(response.status()).toBe(401);
+  test('unauthenticated PATCH profile is blocked by middleware', async ({ playwright }) => {
+    const apiContext = await playwright.request.newContext({ maxRedirects: 0 });
+    try {
+      const response = await apiContext.patch('http://localhost:3000/api/profile', {
+        data: { display_name: 'Hacker' },
+      });
+      // Next.js 16 uses 307 (temporary redirect), earlier versions use 302
+      expect([302, 307]).toContain(response.status());
+      expect(response.headers()['location']).toMatch(/\/login/);
+    } finally {
+      await apiContext.dispose();
+    }
   });
 });
