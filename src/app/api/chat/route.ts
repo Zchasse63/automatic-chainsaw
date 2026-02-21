@@ -1,7 +1,8 @@
 import { streamText, convertToModelMessages, stepCountIs, type UIMessage } from 'ai';
 import { COACH_K_MODEL } from '@/lib/ai/xai';
 import { createCoachingTools } from '@/lib/ai/tools';
-import { buildAthleteProfileMessage } from '@/lib/ai/athlete-context';
+import { buildAthleteProfileMessage, buildAthleteStatsMessage } from '@/lib/ai/athlete-context';
+import { retrieveKnowledge } from '@/lib/ai/rag';
 import { SYSTEM_PROMPT } from '@/lib/coach/system-prompt';
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
@@ -46,15 +47,17 @@ export async function POST(request: Request) {
     );
   }
 
+  // Extract latest user message text (needed for conversation title, RAG query, persistence)
+  const lastUserMsg = messages.filter((m) => m.role === 'user').pop();
+  const lastUserText = lastUserMsg?.parts
+    ?.filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+    .map((p) => p.text)
+    .join('') ?? '';
+
   // Get or create conversation
   let convId = conversationId;
 
   if (!convId) {
-    const lastUserMsg = messages.filter((m) => m.role === 'user').pop();
-    const lastUserText = lastUserMsg?.parts
-      ?.filter((p): p is { type: 'text'; text: string } => p.type === 'text')
-      .map((p) => p.text)
-      .join('') ?? '';
     const title = lastUserText.slice(0, 100) || 'New conversation';
 
     const { data: conv, error: convError } = await supabase
@@ -69,32 +72,47 @@ export async function POST(request: Request) {
     convId = conv.id;
   }
 
-  // Build system prompt with athlete context
-  const athleteMessage = buildAthleteProfileMessage(
-    profile as unknown as Parameters<typeof buildAthleteProfileMessage>[0]
-  );
+  // Run ALL pre-model setup in parallel:
+  // 1. Athlete profile (sync — just string building)
+  // 2. Athlete stats (3 parallel DB queries)
+  // 3. RAG retrieval (embed user query + hybrid search)
+  // 4. Persist user message
+  const [athleteMessage, statsMessage, ragResult] = await Promise.all([
+    Promise.resolve(
+      buildAthleteProfileMessage(
+        profile as unknown as Parameters<typeof buildAthleteProfileMessage>[0]
+      )
+    ),
+    buildAthleteStatsMessage(profile.id, supabase),
+    lastUserText
+      ? retrieveKnowledge(lastUserText, supabase)
+      : Promise.resolve(null),
+    // Fire-and-forget: persist user message (don't block on it)
+    lastUserText
+      ? supabase.from('messages').insert({
+          conversation_id: convId,
+          role: 'user',
+          content: lastUserText,
+        })
+      : Promise.resolve(null),
+  ]);
+
+  // Track pre-fetched RAG chunk IDs for logging
+  const prefetchedChunkIds = ragResult?.chunkIds ?? [];
+
+  // Assemble system prompt: base + athlete profile + stats + retrieved knowledge
   const systemParts = [SYSTEM_PROMPT];
   if (athleteMessage) systemParts.push(athleteMessage);
+  if (statsMessage) systemParts.push(statsMessage);
+  if (ragResult && ragResult.formatted) {
+    systemParts.push(
+      `## Retrieved Knowledge\n\nThe following knowledge base excerpts are relevant to the athlete's current question. Use this information to ground your response:\n\n${ragResult.formatted}`
+    );
+  }
   const system = systemParts.join('\n\n');
 
   // Only send last 16 messages for context window management
   const recentMessages = messages.slice(-16);
-
-  // Persist the latest user message
-  const lastUserMsg = messages.filter((m) => m.role === 'user').pop();
-  if (lastUserMsg) {
-    const content = lastUserMsg.parts
-      ?.filter((p): p is { type: 'text'; text: string } => p.type === 'text')
-      .map((p) => p.text)
-      .join('') ?? '';
-    if (content) {
-      await supabase.from('messages').insert({
-        conversation_id: convId,
-        role: 'user',
-        content,
-      });
-    }
-  }
 
   const startTime = Date.now();
 
@@ -128,8 +146,8 @@ export async function POST(request: Request) {
             })) as Json;
           }
 
-          // Extract chunk IDs from search_knowledge_base results
-          const ragChunkIds: string[] = [];
+          // Combine pre-fetched chunk IDs with any from tool calls
+          const ragChunkIds: string[] = [...prefetchedChunkIds];
           for (const tr of allToolResults) {
             if (tr.toolName === 'search_knowledge_base' && tr.output && typeof tr.output === 'object') {
               const output = tr.output as { chunkIds?: string[] };

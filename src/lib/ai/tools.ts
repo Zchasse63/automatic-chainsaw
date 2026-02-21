@@ -1,47 +1,25 @@
 import { tool } from 'ai';
 import { z } from 'zod';
-import OpenAI from 'openai';
 import type { SupabaseClient } from '@supabase/supabase-js';
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
-
-async function embedQuery(text: string): Promise<number[]> {
-  const response = await openai.embeddings.create({
-    model: 'text-embedding-3-small',
-    input: text,
-  });
-  return response.data[0].embedding;
-}
+import { retrieveKnowledge } from './rag';
 
 export function createCoachingTools(athleteId: string, supabase: SupabaseClient) {
   return {
     search_knowledge_base: tool({
       description:
-        'Search the Hyrox training knowledge base for relevant information about training science, station techniques, race strategy, benchmarks, and protocols.',
+        'Search the knowledge base for a DIFFERENT query than the user\'s message. Relevant knowledge for the user\'s current question is already provided in context. Only use this tool if you need additional information on a different or more specific topic.',
       inputSchema: z.object({
-        query: z.string().describe('The search query'),
+        query: z.string().describe('The search query — must be different from the user\'s original question'),
       }),
       execute: async ({ query }) => {
-        try {
-          const embedding = await embedQuery(query);
-          const { data, error } = await supabase.rpc('hybrid_search_chunks', {
-            query_text: query,
-            query_embedding: JSON.stringify(embedding),
-            match_count: 5,
-            full_text_weight: 1.0,
-            semantic_weight: 1.0,
-            rrf_k: 50,
-          });
-          if (error || !data || data.length === 0) {
-            return { chunks: [], message: 'No relevant knowledge found.' };
-          }
-          const chunks = (data as Array<{ id: string; content: string; section: string; source_name: string }>).map(
-            (c, i) => `### Source ${i + 1}: ${c.source_name}\n**Section**: ${c.section}\n\n${c.content}`
-          );
-          return { chunks, chunkIds: data.map((c: { id: string }) => c.id) };
-        } catch {
-          return { chunks: [], message: 'Knowledge base search failed.' };
+        const result = await retrieveKnowledge(query, supabase);
+        if (result.chunks.length === 0) {
+          return { chunks: [], message: 'No relevant knowledge found.' };
         }
+        return {
+          chunks: result.formatted.split('\n\n---\n\n'),
+          chunkIds: result.chunkIds,
+        };
       },
     }),
 
