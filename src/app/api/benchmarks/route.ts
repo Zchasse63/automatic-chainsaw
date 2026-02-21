@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAndAwardAchievements } from '@/lib/achievements';
+import { createLogger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ benchmarks: benchmarks ?? [] });
   } catch (err) {
-    console.error('GET /api/benchmarks error:', err);
+    createLogger({}).error('GET /api/benchmarks failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -99,13 +100,13 @@ export async function POST(request: Request) {
     try {
       newAchievements = await checkAndAwardAchievements(profile.id, supabase, 'benchmark');
     } catch (err) {
-      console.error('Achievement check failed:', err);
+      createLogger({}).error('Achievement check failed', { error: String(err) });
       // non-blocking — benchmark already succeeded
     }
 
     return NextResponse.json({ benchmark, newAchievements }, { status: 201 });
   } catch (err) {
-    console.error('POST /api/benchmarks error:', err);
+    createLogger({}).error('POST /api/benchmarks failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

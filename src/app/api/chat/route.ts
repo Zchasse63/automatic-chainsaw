@@ -7,6 +7,8 @@ import { SYSTEM_PROMPT } from '@/lib/coach/system-prompt';
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import type { Json } from '@/types/database';
+import { chatLimiter } from '@/lib/rate-limit';
+import { createLogger } from '@/lib/logger';
 
 export const maxDuration = 60;
 
@@ -19,6 +21,23 @@ export async function POST(request: Request) {
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  // Rate limiting
+  const { allowed, remaining, resetMs } = chatLimiter.check(user.id);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Slow down — too many messages. Try again shortly.', retryable: true },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(Math.ceil(resetMs / 1000)),
+          'X-RateLimit-Remaining': '0',
+        },
+      }
+    );
+  }
+
+  const log = createLogger({ route: 'POST /api/chat', userId: user.id });
 
   let body: { messages: UIMessage[]; conversationId?: string };
   try {
@@ -173,16 +192,19 @@ export async function POST(request: Request) {
             .update({ updated_at: new Date().toISOString() })
             .eq('id', convId);
         } catch (logError) {
-          console.error('Failed to log messages:', logError);
+          log.error('Failed to persist messages', { error: String(logError) });
         }
       },
     });
 
     return result.toUIMessageStreamResponse({
-      headers: { 'X-Conversation-Id': convId },
+      headers: {
+        'X-Conversation-Id': convId,
+        'X-RateLimit-Remaining': String(remaining),
+      },
     });
   } catch (err) {
-    console.error('Pipeline error:', err);
+    log.error('Pipeline error', { error: String(err) });
     const error = err as { status?: number; message?: string };
 
     if (error.status === 503) {

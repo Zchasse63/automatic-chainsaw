@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -34,7 +35,7 @@ export async function GET() {
 
     return NextResponse.json({ records: records ?? [] });
   } catch (err) {
-    console.error('GET /api/personal-records error:', err);
+    createLogger({}).error('GET /api/personal-records failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

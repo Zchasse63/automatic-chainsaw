@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { apiLimiter } from '@/lib/rate-limit';
+import { createLogger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -10,6 +12,11 @@ export async function GET() {
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { allowed } = apiLimiter.check(user.id);
+    if (!allowed) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
 
     const { data: profile } = await supabase
@@ -32,9 +39,17 @@ export async function GET() {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ plans: plans ?? [] });
+    return NextResponse.json(
+      { plans: plans ?? [] },
+      {
+        headers: {
+          'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
+        },
+      }
+    );
   } catch (err) {
-    console.error('GET /api/training-plans error:', err);
+    const log = createLogger({ route: 'GET /api/training-plans' });
+    log.error('Training plans fetch failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -125,7 +140,7 @@ export async function POST(request: Request) {
           .single();
 
         if (weekError || !savedWeek) {
-          console.error('Failed to insert week:', weekError);
+          createLogger({ route: 'POST /api/training-plans' }).error('Failed to insert week', { error: weekError?.message });
           insertionFailed = true;
           failureDetail = `Week ${week.week_number}: ${weekError?.message ?? 'unknown error'}`;
           break;
@@ -159,7 +174,7 @@ export async function POST(request: Request) {
             .insert(daysToInsert);
 
           if (daysError) {
-            console.error('Failed to insert days for week', week.week_number, ':', daysError);
+            createLogger({ route: 'POST /api/training-plans' }).error('Failed to insert days', { week: week.week_number, error: daysError.message });
             insertionFailed = true;
             failureDetail = `Week ${week.week_number} days: ${daysError.message}`;
             break;
@@ -179,7 +194,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ plan }, { status: 201 });
   } catch (err) {
-    console.error('POST /api/training-plans error:', err);
+    createLogger({ route: 'POST /api/training-plans' }).error('Training plan creation failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

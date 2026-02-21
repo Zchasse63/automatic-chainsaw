@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -16,7 +17,7 @@ export async function GET() {
 
     return NextResponse.json({ stations: stations ?? [] });
   } catch (err) {
-    console.error('GET /api/stations error:', err);
+    createLogger({}).error('GET /api/stations failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { apiLimiter } from '@/lib/rate-limit';
+import { createLogger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -10,6 +12,11 @@ export async function GET() {
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { allowed } = apiLimiter.check(user.id);
+    if (!allowed) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
 
     const { data: profile } = await supabase
@@ -187,29 +194,37 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({
-      profile: {
-        display_name: profile.display_name,
-        race_date: profile.race_date,
-        goal_time_minutes: profile.goal_time_minutes,
-        current_phase: profile.current_phase,
-        hyrox_division: profile.hyrox_division,
+    return NextResponse.json(
+      {
+        profile: {
+          display_name: profile.display_name,
+          race_date: profile.race_date,
+          goal_time_minutes: profile.goal_time_minutes,
+          current_phase: profile.current_phase,
+          hyrox_division: profile.hyrox_division,
+        },
+        daysUntilRace,
+        weeklyStats: {
+          workouts: workoutsThisWeek,
+          totalMinutes,
+          avgRpe: avgRpe ? Math.round(avgRpe * 10) / 10 : null,
+        },
+        streak,
+        recentPRs: recentPRs ?? [],
+        goals: goals ?? [],
+        lastConversation: lastConv ?? null,
+        activePlan,
+        todaysWorkout,
       },
-      daysUntilRace,
-      weeklyStats: {
-        workouts: workoutsThisWeek,
-        totalMinutes,
-        avgRpe: avgRpe ? Math.round(avgRpe * 10) / 10 : null,
-      },
-      streak,
-      recentPRs: recentPRs ?? [],
-      goals: goals ?? [],
-      lastConversation: lastConv ?? null,
-      activePlan,
-      todaysWorkout,
-    });
+      {
+        headers: {
+          'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
+        },
+      }
+    );
   } catch (err) {
-    console.error('GET /api/dashboard error:', err);
+    const log = createLogger({ route: 'GET /api/dashboard' });
+    log.error('Dashboard fetch failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

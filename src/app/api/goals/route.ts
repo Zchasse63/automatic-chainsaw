@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -34,7 +35,7 @@ export async function GET() {
 
     return NextResponse.json({ goals: goals ?? [] });
   } catch (err) {
-    console.error('GET /api/goals error:', err);
+    createLogger({}).error('GET /api/goals failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -91,7 +92,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ goal }, { status: 201 });
   } catch (err) {
-    console.error('POST /api/goals error:', err);
+    createLogger({}).error('POST /api/goals failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

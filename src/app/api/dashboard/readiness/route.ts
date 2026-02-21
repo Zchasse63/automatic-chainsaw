@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -74,7 +75,7 @@ export async function GET() {
 
     return NextResponse.json({ score, components, weakest });
   } catch (err) {
-    console.error('GET /api/dashboard/readiness error:', err);
+    createLogger({}).error('GET /api/dashboard/readiness failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 // GET /api/conversations/:id/messages — Load conversation history
 export async function GET(
@@ -58,7 +59,7 @@ export async function GET(
 
     return NextResponse.json({ messages: messages ?? [] });
   } catch (err) {
-    console.error('GET /api/conversations/[id]/messages error:', err);
+    createLogger({}).error('GET /api/conversations/[id]/messages failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

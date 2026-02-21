@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAndAwardAchievements } from '@/lib/achievements';
+import { apiLimiter } from '@/lib/rate-limit';
+import { createLogger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,6 +13,11 @@ export async function GET(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { allowed } = apiLimiter.check(user.id);
+    if (!allowed) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
 
     const { data: profile } = await supabase
@@ -43,12 +50,22 @@ export async function GET(request: NextRequest) {
     const { data: workouts, error } = await query;
 
     if (error) {
+      const log = createLogger({ route: 'GET /api/workouts', userId: user.id });
+      log.error('Failed to fetch workouts', { error: error.message });
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ workouts: workouts ?? [] });
+    return NextResponse.json(
+      { workouts: workouts ?? [] },
+      {
+        headers: {
+          'Cache-Control': 'private, max-age=15, stale-while-revalidate=30',
+        },
+      }
+    );
   } catch (err) {
-    console.error('GET /api/workouts error:', err);
+    const log = createLogger({ route: 'GET /api/workouts' });
+    log.error('Workouts fetch failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -122,12 +139,14 @@ export async function POST(request: Request) {
     try {
       newAchievements = await checkAndAwardAchievements(profile.id, supabase, 'workout');
     } catch (err) {
-      console.error('Achievement check failed:', err);
+      const log = createLogger({ route: 'POST /api/workouts', userId: user.id });
+      log.warn('Achievement check failed', { error: String(err) });
     }
 
     return NextResponse.json({ workout, newAchievements }, { status: 201 });
   } catch (err) {
-    console.error('POST /api/workouts error:', err);
+    const log = createLogger({ route: 'POST /api/workouts' });
+    log.error('Workout creation failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -34,7 +35,7 @@ export async function GET() {
 
     return NextResponse.json({ races: races ?? [] });
   } catch (err) {
-    console.error('GET /api/races error:', err);
+    createLogger({}).error('GET /api/races failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -103,12 +104,12 @@ export async function POST(request: Request) {
       }));
 
       const { error: splitsError } = await supabase.from('race_splits').insert(splits);
-      if (splitsError) console.error('Failed to insert race splits:', splitsError);
+      if (splitsError) createLogger({}).error('Failed to insert race splits', { error: String(splitsError) });
     }
 
     return NextResponse.json({ race }, { status: 201 });
   } catch (err) {
-    console.error('POST /api/races error:', err);
+    createLogger({}).error('POST /api/races failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

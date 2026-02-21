@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { apiLimiter } from '@/lib/rate-limit';
+import { createLogger } from '@/lib/logger';
 
 // GET /api/conversations — List user's conversations
 export async function GET(request: NextRequest) {
@@ -10,6 +12,11 @@ export async function GET(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { allowed } = apiLimiter.check(user.id);
+  if (!allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
   const { data: profile } = await supabase
@@ -34,10 +41,19 @@ export async function GET(request: NextRequest) {
     .range(offset, offset + limit - 1);
 
   if (error) {
+    const log = createLogger({ route: 'GET /api/conversations', userId: user.id });
+    log.error('Failed to fetch conversations', { error: error.message });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ conversations: conversations ?? [] });
+  return NextResponse.json(
+    { conversations: conversations ?? [] },
+    {
+      headers: {
+        'Cache-Control': 'private, max-age=10, stale-while-revalidate=30',
+      },
+    }
+  );
 }
 
 // POST /api/conversations — Create new conversation

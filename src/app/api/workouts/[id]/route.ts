@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 export async function GET(
   _request: Request,
@@ -43,7 +44,7 @@ export async function GET(
 
     return NextResponse.json({ workout });
   } catch (err) {
-    console.error('GET /api/workouts/[id] error:', err);
+    createLogger({}).error('GET /api/workouts/[id] failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -106,7 +107,7 @@ export async function PUT(
 
     return NextResponse.json({ workout });
   } catch (err) {
-    console.error('PUT /api/workouts/[id] error:', err);
+    createLogger({}).error('PUT /api/workouts/[id] failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -149,7 +150,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error('DELETE /api/workouts/[id] error:', err);
+    createLogger({}).error('DELETE /api/workouts/[id] failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

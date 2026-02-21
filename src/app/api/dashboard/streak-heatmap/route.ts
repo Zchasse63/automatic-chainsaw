@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ days });
   } catch (err) {
-    console.error('GET /api/dashboard/streak-heatmap error:', err);
+    createLogger({}).error('GET /api/dashboard/streak-heatmap failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

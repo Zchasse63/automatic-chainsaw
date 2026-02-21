@@ -430,5 +430,272 @@ export function createCoachingTools(athleteId: string, supabase: SupabaseClient)
         };
       },
     }),
+
+    // ── New tools (v2) ──────────────────────────────────────────────
+
+    get_exercise_details: tool({
+      description:
+        'Look up exercise technique details from the exercise library. Returns description, muscle groups, equipment needed, difficulty, and optional Hyrox station link. Use when the athlete asks how to perform an exercise or needs technique cues.',
+      inputSchema: z.object({
+        exercise_name: z
+          .string()
+          .describe('Exercise name or partial name to search for (e.g. "wall ball", "sled push", "burpee")'),
+      }),
+      execute: async ({ exercise_name }) => {
+        try {
+          // Use ilike for fuzzy-ish matching
+          const { data: exercises } = await supabase
+            .from('exercise_library')
+            .select(
+              'name, category, subcategory, description, muscle_groups, equipment_needed, difficulty, hyrox_station_id'
+            )
+            .ilike('name', `%${exercise_name}%`)
+            .eq('is_active', true)
+            .limit(5);
+
+          if (!exercises || exercises.length === 0) {
+            return { exercises: [], message: `No exercises found matching "${exercise_name}".` };
+          }
+
+          // Enrich with station name if linked
+          const stationIds = exercises
+            .map((e) => e.hyrox_station_id)
+            .filter(Boolean) as string[];
+
+          let stationMap: Record<string, string> = {};
+          if (stationIds.length > 0) {
+            const { data: stations } = await supabase
+              .from('hyrox_stations')
+              .select('id, station_name')
+              .in('id', stationIds);
+            stationMap = Object.fromEntries(
+              (stations ?? []).map((s) => [s.id, s.station_name])
+            );
+          }
+
+          return {
+            exercises: exercises.map((e) => ({
+              name: e.name,
+              category: e.category,
+              subcategory: e.subcategory,
+              description: e.description,
+              muscle_groups: e.muscle_groups,
+              equipment_needed: e.equipment_needed,
+              difficulty: e.difficulty,
+              hyrox_station: e.hyrox_station_id ? stationMap[e.hyrox_station_id] ?? null : null,
+            })),
+          };
+        } catch {
+          return { error: true, message: 'Unable to fetch exercise details.' };
+        }
+      },
+    }),
+
+    compare_to_benchmark: tool({
+      description:
+        "Compare the athlete's benchmark or PR to Hyrox skill-level benchmarks. Shows where they fall relative to beginner/intermediate/advanced/elite ranges for a station or run segment. Use when the athlete asks how they compare, what level they're at, or what time to aim for.",
+      inputSchema: z.object({
+        station_name: z
+          .string()
+          .optional()
+          .describe('Hyrox station name (e.g. "SkiErg", "Sled Push"). Omit for run segments.'),
+        segment_type: z
+          .enum(['station', 'run', 'transition'])
+          .describe('Type of segment to compare'),
+        athlete_time_seconds: z
+          .number()
+          .describe("The athlete's time in seconds for this segment"),
+      }),
+      execute: async ({ station_name, segment_type, athlete_time_seconds }) => {
+        try {
+          // Resolve station_id if station_name provided
+          let stationId: string | null = null;
+          if (station_name) {
+            const { data: station } = await supabase
+              .from('hyrox_stations')
+              .select('id, station_name')
+              .ilike('station_name', `%${station_name}%`)
+              .limit(1)
+              .single();
+            if (station) stationId = station.id;
+          }
+
+          // Determine gender from athlete profile
+          const { data: profile } = await supabase
+            .from('athlete_profiles')
+            .select('sex')
+            .eq('id', athleteId)
+            .single();
+          const gender = profile?.sex === 'female' ? 'female' : 'male';
+
+          // Fetch all benchmark levels for this segment + gender
+          let benchQuery = supabase
+            .from('skill_level_benchmarks')
+            .select('skill_level, min_seconds, max_seconds, median_seconds, notes')
+            .eq('segment_type', segment_type)
+            .eq('gender', gender);
+
+          if (stationId) benchQuery = benchQuery.eq('station_id', stationId);
+          else benchQuery = benchQuery.is('station_id', null);
+
+          const { data: benchmarks } = await benchQuery;
+
+          if (!benchmarks || benchmarks.length === 0) {
+            return { benchmarks: [], message: 'No benchmarks found for this segment.' };
+          }
+
+          // Determine athlete's level
+          const levelOrder = ['elite', 'advanced', 'intermediate', 'beginner'];
+          let athleteLevel = 'below beginner';
+          for (const level of levelOrder) {
+            const b = benchmarks.find((bm) => bm.skill_level === level);
+            if (b && athlete_time_seconds <= Number(b.max_seconds)) {
+              athleteLevel = level;
+            }
+          }
+
+          // Format comparison
+          const formatted = benchmarks.map((b) => ({
+            level: b.skill_level,
+            range: `${Number(b.min_seconds)}s – ${Number(b.max_seconds)}s`,
+            median: b.median_seconds ? `${Number(b.median_seconds)}s` : null,
+          }));
+
+          // Find next target
+          let nextTarget: { level: string; target_seconds: number } | null = null;
+          const currentIdx = levelOrder.indexOf(athleteLevel);
+          if (currentIdx > 0) {
+            const nextLevel = levelOrder[currentIdx - 1];
+            const nextBenchmark = benchmarks.find((b) => b.skill_level === nextLevel);
+            if (nextBenchmark) {
+              nextTarget = {
+                level: nextLevel,
+                target_seconds: Number(nextBenchmark.max_seconds),
+              };
+            }
+          }
+
+          return {
+            segment: station_name ?? segment_type,
+            athlete_time_seconds,
+            athlete_level: athleteLevel,
+            benchmarks: formatted,
+            next_target: nextTarget,
+            gap_seconds: nextTarget
+              ? Math.round(athlete_time_seconds - nextTarget.target_seconds)
+              : 0,
+          };
+        } catch {
+          return { error: true, message: 'Unable to compare benchmarks.' };
+        }
+      },
+    }),
+
+    get_race_results: tool({
+      description:
+        "Get the athlete's past Hyrox race results with detailed split times for each run and station segment. Use when the athlete asks about past race performance, wants to identify weak stations, or wants to track race-over-race improvement.",
+      inputSchema: z.object({
+        limit: z.number().optional().describe('Number of recent races to return (default 3)'),
+      }),
+      execute: async ({ limit = 3 }) => {
+        try {
+          const { data: races } = await supabase
+            .from('race_results')
+            .select(
+              'id, race_date, race_name, location, division, format, total_time_seconds, is_simulation, conditions, notes'
+            )
+            .eq('athlete_id', athleteId)
+            .order('race_date', { ascending: false })
+            .limit(limit);
+
+          if (!races || races.length === 0) {
+            return { races: [], message: 'No race results found.' };
+          }
+
+          // Fetch splits for all races in one query
+          const raceIds = races.map((r) => r.id);
+          const { data: splits } = await supabase
+            .from('race_splits')
+            .select(
+              'race_result_id, split_number, split_type, station_id, time_seconds, transition_time_seconds, heart_rate_avg, notes'
+            )
+            .in('race_result_id', raceIds)
+            .order('split_number', { ascending: true });
+
+          // Fetch station names for context
+          const { data: stations } = await supabase
+            .from('hyrox_stations')
+            .select('id, station_name, station_number');
+
+          const stationMap = Object.fromEntries(
+            (stations ?? []).map((s) => [s.id, s.station_name])
+          );
+
+          // Attach splits to each race
+          const raceResults = races.map((race) => {
+            const raceSplits = (splits ?? [])
+              .filter((s) => s.race_result_id === race.id)
+              .map((s) => ({
+                split_number: s.split_number,
+                type: s.split_type,
+                station: s.station_id ? stationMap[s.station_id] ?? null : null,
+                time_seconds: Number(s.time_seconds),
+                time_formatted: formatSeconds(Number(s.time_seconds)),
+                transition_seconds: s.transition_time_seconds
+                  ? Number(s.transition_time_seconds)
+                  : null,
+              }));
+
+            // Identify slowest station and slowest run
+            const stationSplits = raceSplits.filter((s) => s.type === 'station');
+            const runSplits = raceSplits.filter((s) => s.type === 'run');
+            const slowestStation = stationSplits.length
+              ? stationSplits.reduce((a, b) => (a.time_seconds > b.time_seconds ? a : b))
+              : null;
+            const slowestRun = runSplits.length
+              ? runSplits.reduce((a, b) => (a.time_seconds > b.time_seconds ? a : b))
+              : null;
+
+            return {
+              race_date: race.race_date,
+              race_name: race.race_name,
+              location: race.location,
+              division: race.division,
+              format: race.format,
+              total_time: formatSeconds(Number(race.total_time_seconds)),
+              total_seconds: Number(race.total_time_seconds),
+              is_simulation: race.is_simulation,
+              splits: raceSplits,
+              analysis: {
+                slowest_station: slowestStation
+                  ? { name: slowestStation.station, time: slowestStation.time_formatted }
+                  : null,
+                slowest_run: slowestRun
+                  ? { segment: `Run ${slowestRun.split_number}`, time: slowestRun.time_formatted }
+                  : null,
+                total_run_time: formatSeconds(
+                  runSplits.reduce((s, r) => s + r.time_seconds, 0)
+                ),
+                total_station_time: formatSeconds(
+                  stationSplits.reduce((s, r) => s + r.time_seconds, 0)
+                ),
+              },
+            };
+          });
+
+          return { races: raceResults };
+        } catch {
+          return { error: true, message: 'Unable to fetch race results.' };
+        }
+      },
+    }),
   };
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────
+
+function formatSeconds(totalSeconds: number): string {
+  const mins = Math.floor(totalSeconds / 60);
+  const secs = Math.round(totalSeconds % 60);
+  return `${mins}:${String(secs).padStart(2, '0')}`;
 }

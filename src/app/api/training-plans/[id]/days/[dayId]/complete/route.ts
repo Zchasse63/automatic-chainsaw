@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 // POST /api/training-plans/:id/days/:dayId/complete — Mark day complete
 export async function POST(
@@ -58,7 +59,7 @@ export async function POST(
 
     return NextResponse.json({ day: updated });
   } catch (err) {
-    console.error('POST /api/training-plans/[id]/days/[dayId]/complete error:', err);
+    createLogger({}).error('POST /api/training-plans/[id]/days/[dayId]/complete failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

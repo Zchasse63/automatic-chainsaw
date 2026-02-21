@@ -3,6 +3,7 @@ import { EXTRACTION_MODEL } from '@/lib/ai/xai';
 import { TrainingPlanSchema } from '@/lib/coach/training-plan-schema';
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 const EXTRACTION_PROMPT = `You are a JSON extraction engine. Given a training plan written in natural language by a Hyrox coach, extract it into structured JSON.
 
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ plan });
   } catch (err) {
-    console.error('Plan extraction error:', err);
+    createLogger({}).error('Plan extraction failed', { error: String(err) });
     const message =
       err instanceof Error ? err.message : 'Failed to extract training plan';
     return NextResponse.json({ error: message }, { status: 500 });

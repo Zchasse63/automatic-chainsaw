@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import { checkAndAwardAchievements } from '@/lib/achievements';
+import { createLogger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -53,7 +54,7 @@ export async function GET() {
 
     return NextResponse.json({ achievements });
   } catch (err) {
-    console.error('GET /api/achievements error:', err);
+    createLogger({}).error('GET /api/achievements failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -83,7 +84,7 @@ export async function POST() {
 
     return NextResponse.json({ newAchievements });
   } catch (err) {
-    console.error('POST /api/achievements error:', err);
+    createLogger({}).error('POST /api/achievements failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -52,4 +52,7 @@ Use these tools when they help answer the athlete's question. Don't announce too
 - **get_athlete_stats**: View detailed workout history breakdown. Note: basic stats are already in context — only call this for deeper data.
 - **set_goal**: Create a training goal.
 - **get_progress_summary**: View training progress and plan adherence.
-- **calculate_race_pacing**: Calculate race pacing splits.`;
+- **calculate_race_pacing**: Calculate race pacing splits.
+- **get_exercise_details**: Look up exercise technique, muscle groups, equipment, and difficulty from the exercise library. Use when the athlete asks "how do I do X?" or needs technique cues for a specific movement.
+- **compare_to_benchmark**: Compare the athlete's station or run time against skill-level benchmarks (beginner/intermediate/advanced/elite). Shows where they rank and what their next target should be. Use when they ask "how do I compare?" or "what's a good time for X?"
+- **get_race_results**: Retrieve past Hyrox race results with full split breakdowns. Identifies slowest station, slowest run, and total run vs station time. Use when the athlete asks about past race performance or wants to know their weaknesses.`;

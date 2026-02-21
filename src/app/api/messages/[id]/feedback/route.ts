@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 // POST /api/messages/:id/feedback — Submit thumbs up/down
 export async function POST(
@@ -76,7 +77,7 @@ export async function POST(
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error('POST /api/messages/[id]/feedback error:', err);
+    createLogger({}).error('POST /api/messages/[id]/feedback failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

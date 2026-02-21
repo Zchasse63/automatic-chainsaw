@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 // PATCH /api/training-plans/:id/days/:dayId — Update a training plan day
 export async function PATCH(
@@ -84,7 +85,7 @@ export async function PATCH(
 
     return NextResponse.json({ day: updated });
   } catch (err) {
-    console.error('PATCH /api/training-plans/[id]/days/[dayId] error:', err);
+    createLogger({}).error('PATCH /api/training-plans/[id]/days/[dayId] failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
