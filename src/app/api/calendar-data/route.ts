@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { apiLimiter } from '@/lib/rate-limit';
 import { createLogger } from '@/lib/logger';
 import { planDayToDate, toISODateString } from '@/lib/calendar-utils';
+import type { CalendarItem } from '@/hooks/use-calendar-data';
 
 /**
  * Unified calendar data endpoint — merges workout_logs with training_plan_days
@@ -13,23 +14,7 @@ import { planDayToDate, toISODateString } from '@/lib/calendar-utils';
  * Returns: { items: CalendarItem[] }
  */
 
-interface CalendarItem {
-  id: string;
-  date: string;
-  session_type: string;
-  title: string | null;
-  description: string | null;
-  duration_minutes: number | null;
-  rpe_post: number | null;
-  notes: string | null;
-  completion_status: string | null;
-  source: 'planned' | 'logged' | 'both';
-  is_rest_day: boolean;
-  training_plan_day_id: string | null;
-  total_volume_kg: number | null;
-  total_distance_km: number | null;
-  training_load: number | null;
-}
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export async function GET(request: NextRequest) {
   try {
@@ -64,6 +49,13 @@ export async function GET(request: NextRequest) {
     if (!from || !to) {
       return NextResponse.json(
         { error: 'Missing from/to params' },
+        { status: 400 }
+      );
+    }
+
+    if (!ISO_DATE_RE.test(from) || !ISO_DATE_RE.test(to)) {
+      return NextResponse.json(
+        { error: 'Invalid date format — use YYYY-MM-DD' },
         { status: 400 }
       );
     }
@@ -250,7 +242,7 @@ export async function GET(request: NextRequest) {
       { items },
       {
         headers: {
-          'Cache-Control': 'private, max-age=15, stale-while-revalidate=30',
+          'Cache-Control': 'private, no-store',
         },
       }
     );

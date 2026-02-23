@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import { X, Moon, Plus } from 'lucide-react';
-import { toISODateString } from '@/lib/calendar-utils';
+import { toISODateString, formatDateLabel } from '@/lib/calendar-utils';
 import { DraggableWorkout } from './draggable-workout';
 import type { CalendarItem } from '@/hooks/use-calendar-data';
 
@@ -11,14 +11,6 @@ interface DayDetailProps {
   workouts: CalendarItem[];
   onClose: () => void;
   onAddWorkout?: (dateKey: string) => void;
-}
-
-function formatDateLabel(date: Date): string {
-  return date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  });
 }
 
 function isToday(date: Date): boolean {
@@ -68,6 +60,15 @@ export function DayDetail({ date, workouts, onClose, onAddWorkout }: DayDetailPr
           {workouts.map((w, i) => (
             <DraggableWorkout key={w.id} workout={w} index={i} />
           ))}
+          {onAddWorkout && (
+            <motion.button
+              whileTap={{ scale: 0.96 }}
+              onClick={() => onAddWorkout(toISODateString(date))}
+              className="w-full mt-1 py-2 bg-white/3 border border-white/5 rounded-xl text-xs font-bold text-white/40 hover:text-white/60 transition-colors flex items-center justify-center gap-1.5"
+            >
+              <Plus size={12} /> Add another workout
+            </motion.button>
+          )}
         </div>
       ) : (
         /* Rest day / empty state */

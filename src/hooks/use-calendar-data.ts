@@ -33,15 +33,8 @@ async function fetchCalendarData(from: string, to: string): Promise<CalendarItem
   return json.items ?? [];
 }
 
-/**
- * Fetches merged calendar data (planned + logged workouts) for a month.
- * Returns items grouped by YYYY-MM-DD date key.
- */
-export function useCalendarData(year: number, month: number) {
-  const from = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-  const endDate = new Date(year, month + 1, 0);
-  const to = toISODateString(endDate);
-
+/** Shared hook — fetches + groups calendar items for a date range. */
+function useCalendarRange(from: string, to: string) {
   const { data: items, isLoading, error } = useQuery({
     queryKey: ['calendar-data', from, to],
     queryFn: () => fetchCalendarData(from, to),
@@ -50,16 +43,23 @@ export function useCalendarData(year: number, month: number) {
 
   const grouped = useMemo(() => {
     const map: Record<string, CalendarItem[]> = {};
-    if (!items) return map;
-    for (const item of items) {
-      const key = item.date;
-      if (!map[key]) map[key] = [];
-      map[key].push(item);
+    for (const item of items ?? []) {
+      (map[item.date] ??= []).push(item);
     }
     return map;
   }, [items]);
 
   return { grouped, items: items ?? [], isLoading, error };
+}
+
+/**
+ * Fetches merged calendar data (planned + logged workouts) for a month.
+ * Returns items grouped by YYYY-MM-DD date key.
+ */
+export function useCalendarData(year: number, month: number) {
+  const from = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+  const to = toISODateString(new Date(year, month + 1, 0));
+  return useCalendarRange(from, to);
 }
 
 /**
@@ -69,26 +69,5 @@ export function useCalendarData(year: number, month: number) {
 export function useWeekCalendarData(weekStart: Date) {
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
-
-  const from = toISODateString(weekStart);
-  const to = toISODateString(weekEnd);
-
-  const { data: items, isLoading, error } = useQuery({
-    queryKey: ['calendar-data', from, to],
-    queryFn: () => fetchCalendarData(from, to),
-    staleTime: 30_000,
-  });
-
-  const grouped = useMemo(() => {
-    const map: Record<string, CalendarItem[]> = {};
-    if (!items) return map;
-    for (const item of items) {
-      const key = item.date;
-      if (!map[key]) map[key] = [];
-      map[key].push(item);
-    }
-    return map;
-  }, [items]);
-
-  return { grouped, items: items ?? [], isLoading, error };
+  return useCalendarRange(toISODateString(weekStart), toISODateString(weekEnd));
 }

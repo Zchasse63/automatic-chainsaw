@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Dumbbell, Clock, Flame, FileText } from 'lucide-react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCreateWorkout } from '@/hooks/use-workouts';
 import { getSessionInfo, formatSessionType } from '@/lib/session-utils';
+import { formatDateLabel } from '@/lib/calendar-utils';
 
 const SESSION_TYPES = [
   'run',
@@ -34,34 +36,12 @@ export function QuickAddModal({ dateKey, onClose }: QuickAddModalProps) {
     setNotes('');
   }, []);
 
-  const createWorkout = useMutation({
-    mutationFn: async () => {
-      const res = await fetch('/api/workouts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          date: dateKey,
-          session_type: sessionType,
-          duration_minutes: Number(duration) || null,
-          rpe_post: Number(rpe) || null,
-          notes: notes || null,
-          completion_status: 'completed',
-        }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to create workout');
-      }
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-data'] });
-      queryClient.invalidateQueries({ queryKey: ['workouts'] });
-      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
-      resetForm();
-      onClose();
-    },
-  });
+  // Reset form whenever the modal opens for a new date
+  useEffect(() => {
+    if (dateKey) resetForm();
+  }, [dateKey, resetForm]);
+
+  const createWorkoutMutation = useCreateWorkout();
 
   const handleClose = useCallback(() => {
     resetForm();
@@ -69,17 +49,25 @@ export function QuickAddModal({ dateKey, onClose }: QuickAddModalProps) {
   }, [resetForm, onClose]);
 
   const handleSubmit = useCallback(() => {
-    createWorkout.mutate();
-  }, [createWorkout]);
-
-  const formatDateLabel = (dateStr: string) => {
-    const d = new Date(dateStr + 'T00:00');
-    return d.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
+    if (!dateKey) return;
+    createWorkoutMutation.mutate(
+      {
+        date: dateKey,
+        session_type: sessionType,
+        duration_minutes: Number(duration) || undefined,
+        rpe_post: Number(rpe) || undefined,
+        notes: notes || undefined,
+      },
+      {
+        onSuccess: () => {
+          // Also invalidate calendar-data (not in the shared hook)
+          queryClient.invalidateQueries({ queryKey: ['calendar-data'] });
+          resetForm();
+          onClose();
+        },
+      }
+    );
+  }, [dateKey, createWorkoutMutation, sessionType, duration, rpe, notes, queryClient, resetForm, onClose]);
 
   return (
     <AnimatePresence>
@@ -224,16 +212,16 @@ export function QuickAddModal({ dateKey, onClose }: QuickAddModalProps) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.96 }}
                 onClick={handleSubmit}
-                disabled={createWorkout.isPending}
+                disabled={createWorkoutMutation.isPending}
                 className="w-full bg-[#39FF14] text-black text-sm font-black uppercase tracking-widest py-4 rounded-xl shadow-[0_4px_20px_rgba(57,255,20,0.4)] flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Dumbbell size={16} />
-                {createWorkout.isPending ? 'Saving...' : 'Log Workout'}
+                {createWorkoutMutation.isPending ? 'Saving...' : 'Log Workout'}
               </motion.button>
 
-              {createWorkout.isError && (
+              {createWorkoutMutation.isError && (
                 <p className="text-red-400 text-xs text-center mt-3">
-                  {createWorkout.error?.message || 'Failed to save workout'}
+                  {createWorkoutMutation.error?.message || 'Failed to save workout'}
                 </p>
               )}
             </div>

@@ -108,13 +108,28 @@ export function getWeekDays(startDate: Date): Date[] {
   return days;
 }
 
-// Returns the Monday of the current week
-export function getCurrentWeekStart(): Date {
-  const today = new Date();
-  const jsDay = today.getDay(); // 0=Sun
+// Returns the Monday of the week containing the given date (or today)
+export function getWeekStart(date?: Date): Date {
+  const d = date ?? new Date();
+  const jsDay = d.getDay(); // 0=Sun
   const mondayOffset = jsDay === 0 ? -6 : 1 - jsDay;
-  const monday = new Date(today);
-  monday.setDate(today.getDate() + mondayOffset);
+  const monday = new Date(d);
+  monday.setDate(d.getDate() + mondayOffset);
   monday.setHours(0, 0, 0, 0);
   return monday;
+}
+
+/** Returns the Monday of the current week. */
+export function getCurrentWeekStart(): Date {
+  return getWeekStart();
+}
+
+/** Format a date (or YYYY-MM-DD string) as "Wednesday, February 23". */
+export function formatDateLabel(dateOrStr: Date | string): string {
+  const d = typeof dateOrStr === 'string' ? new Date(dateOrStr + 'T00:00') : dateOrStr;
+  return d.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
 }

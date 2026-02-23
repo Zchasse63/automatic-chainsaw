@@ -144,12 +144,12 @@ export default function CalendarPage() {
     setQuickAddDate(dateKey);
   }, []);
 
-  // Get workouts for selected date (month view)
-  const selectedDateKey = selectedDate ? toISODateString(selectedDate) : null;
-  const selectedWorkouts = selectedDateKey ? monthGrouped[selectedDateKey] ?? [] : [];
-
   const isLoading = calendarView === 'week' ? weekLoading : monthLoading;
   const grouped = calendarView === 'week' ? weekGrouped : monthGrouped;
+
+  // Get workouts for selected date — uses the active view's data
+  const selectedDateKey = selectedDate ? toISODateString(selectedDate) : null;
+  const selectedWorkouts = selectedDateKey ? grouped[selectedDateKey] ?? [] : [];
 
   return (
     <motion.div

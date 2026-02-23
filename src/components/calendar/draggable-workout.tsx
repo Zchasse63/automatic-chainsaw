@@ -33,6 +33,15 @@ export function DraggableWorkout({ workout, index, compact }: DraggableWorkoutPr
   const isPlanned = workout.source === 'planned';
   const plannedClass = isPlanned ? 'border-dashed opacity-60' : '';
 
+  // Status dot color — shared between compact and full render
+  const statusColor = isPlanned
+    ? 'rgba(255,255,255,0.15)'
+    : workout.completion_status === 'completed'
+      ? '#39FF14'
+      : workout.completion_status === 'partial'
+        ? '#FFB800'
+        : 'rgba(255,255,255,0.15)';
+
   if (compact) {
     return (
       <motion.div
@@ -72,16 +81,7 @@ export function DraggableWorkout({ workout, index, compact }: DraggableWorkoutPr
         {/* Status dot */}
         <div
           className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-          style={{
-            backgroundColor:
-              isPlanned
-                ? 'rgba(255,255,255,0.15)'
-                : workout.completion_status === 'completed'
-                  ? '#39FF14'
-                  : workout.completion_status === 'partial'
-                    ? '#FFB800'
-                    : 'rgba(255,255,255,0.15)',
-          }}
+          style={{ backgroundColor: statusColor }}
         />
       </motion.div>
     );
@@ -138,16 +138,7 @@ export function DraggableWorkout({ workout, index, compact }: DraggableWorkoutPr
       {/* Status indicator */}
       <div
         className="w-2 h-2 rounded-full flex-shrink-0"
-        style={{
-          backgroundColor:
-            isPlanned
-              ? 'rgba(255,255,255,0.15)'
-              : workout.completion_status === 'completed'
-                ? '#39FF14'
-                : workout.completion_status === 'partial'
-                  ? '#FFB800'
-                  : 'rgba(255,255,255,0.15)',
-        }}
+        style={{ backgroundColor: statusColor }}
       />
     </motion.div>
   );
