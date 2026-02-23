@@ -225,7 +225,7 @@ export default function CoachPage() {
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.28 }}
-      className="flex-1 flex flex-col px-6 pt-14 pb-24 relative z-10 overflow-hidden bg-bg-deep min-h-screen"
+      className="flex-1 flex flex-col px-6 pt-6 pb-24 relative z-10 overflow-hidden bg-bg-deep min-h-screen"
     >
       {/* ── Header ── */}
       <div className="flex justify-between items-center mb-6 flex-shrink-0">

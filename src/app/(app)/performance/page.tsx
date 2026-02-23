@@ -18,6 +18,7 @@ import { StationRadar } from '@/components/shared/station-radar';
 import { Sparkline } from '@/components/shared/sparkline';
 import { InsightBlock } from '@/components/shared/insight-block';
 import { EmptyState } from '@/components/shared/empty-state';
+import { formatSessionType } from '@/lib/session-utils';
 
 // ── Elite station targets (seconds) ──
 const ELITE_TARGETS: Record<string, number> = {
@@ -75,7 +76,7 @@ const heatmapDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 function PerformanceSkeleton() {
   return (
-    <div className="min-h-screen bg-bg-deep px-5 pt-14 pb-32 animate-pulse">
+    <div className="min-h-screen bg-bg-deep px-5 pt-6 pb-32 animate-pulse">
       <div className="flex items-center justify-between mb-6">
         <div className="w-10 h-10 bg-white/5 rounded-full" />
         <div className="text-center">
@@ -161,7 +162,7 @@ export default function PerformancePage() {
     const total = Object.values(typeCounts).reduce((s, v) => s + v, 0) || 1;
     return Object.entries(typeCounts)
       .map(([name, count]) => ({
-        name: name.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+        name: formatSessionType(name),
         pct: Math.round((count / total) * 100),
         color: MODALITY_COLORS[name] ?? '#39FF14',
       }))
@@ -192,7 +193,7 @@ export default function PerformancePage() {
     if (!allWorkouts?.length) return [];
     const typeVolumes: Record<string, { total: number; count: number; sparks: number[] }> = {};
     allWorkouts.forEach((w) => {
-      const key = w.session_type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+      const key = formatSessionType(w.session_type);
       if (!typeVolumes[key]) typeVolumes[key] = { total: 0, count: 0, sparks: [] };
       const vol = (w.total_volume_kg ?? 0) * 2.205;
       typeVolumes[key].total += vol > 0 ? vol : (w.duration_minutes ?? 0) * 10;
@@ -244,7 +245,7 @@ export default function PerformancePage() {
   return (
     <div className="min-h-screen bg-bg-deep text-white font-sans select-none">
       {/* ── Header ── */}
-      <header className="flex-shrink-0 flex items-center justify-between px-6 pt-14 pb-4 border-b border-white/5 relative z-10">
+      <header className="flex-shrink-0 flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/5 relative z-10">
         <motion.button
           whileTap={{ scale: 0.88 }}
           onClick={() => router.back()}

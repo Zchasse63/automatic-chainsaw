@@ -3,41 +3,16 @@
 import { motion } from 'motion/react';
 import {
   Dumbbell,
-  Wind,
-  Flame,
-  Heart,
-  Timer,
-  Zap,
-  Award,
   Clock,
   ChevronRight,
   Moon,
+  Zap,
+  Award,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useDashboard } from '@/hooks/use-dashboard';
 import { WorkoutBadge } from '@/components/shared';
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-const SESSION_ICONS: Record<string, { icon: typeof Dumbbell; color: string }> = {
-  run: { icon: Wind, color: '#39FF14' },
-  hiit: { icon: Flame, color: '#FF6B6B' },
-  strength: { icon: Dumbbell, color: '#B45FFF' },
-  simulation: { icon: Award, color: '#39FF14' },
-  recovery: { icon: Heart, color: '#00F0FF' },
-  station_practice: { icon: Zap, color: '#FF8C42' },
-  general: { icon: Timer, color: '#FFB800' },
-};
-
-function getSessionIcon(type: string | null) {
-  if (!type) return { icon: Dumbbell, color: '#39FF14' };
-  return SESSION_ICONS[type] ?? { icon: Dumbbell, color: '#39FF14' };
-}
-
-function formatSessionType(type: string | null): string {
-  if (!type) return 'Workout';
-  return type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-}
+import { getSessionInfo, formatSessionType } from '@/lib/session-utils';
 
 // ── Skeleton ─────────────────────────────────────────────────────────────────
 
@@ -71,7 +46,7 @@ export default function TodayWorkoutPage() {
 
   const hasWorkout = todaysWorkout && !todaysWorkout.is_completed;
   const isCompleted = todaysWorkout?.is_completed;
-  const sessionInfo = getSessionIcon(todaysWorkout?.session_type ?? null);
+  const sessionInfo = getSessionInfo(todaysWorkout?.session_type ?? null);
   const Icon = sessionInfo.icon;
 
   const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -82,7 +57,7 @@ export default function TodayWorkoutPage() {
       initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.28 }}
-      className="flex-1 overflow-y-auto px-6 pt-14 pb-32 bg-bg-deep min-h-screen"
+      className="flex-1 overflow-y-auto px-6 pt-6 pb-32 bg-bg-deep min-h-screen"
     >
       {/* Header */}
       <header className="mb-6">

@@ -29,19 +29,28 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('benchmark_tests')
-      .select('*')
+      .select('*, hyrox_stations(station_name)')
       .eq('athlete_id', profile.id)
       .order('test_date', { ascending: false });
 
     if (type) query = query.eq('test_type', type);
 
-    const { data: benchmarks, error } = await query;
+    const { data: rawBenchmarks, error } = await query;
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ benchmarks: benchmarks ?? [] });
+    // Flatten the joined station_name into each benchmark row
+    const benchmarks = (rawBenchmarks ?? []).map((b) => {
+      const { hyrox_stations, ...rest } = b as Record<string, unknown>;
+      return {
+        ...rest,
+        station_name: (hyrox_stations as { station_name: string } | null)?.station_name ?? null,
+      };
+    });
+
+    return NextResponse.json({ benchmarks });
   } catch (err) {
     createLogger({}).error('GET /api/benchmarks failed', { error: String(err) });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

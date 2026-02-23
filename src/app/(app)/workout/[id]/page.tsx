@@ -573,7 +573,7 @@ export default function ActiveWorkoutPage({
       {/* ── Top Bar ─────────────────────────────────────────────────────── */}
       <div
         className={`relative z-10 flex items-center justify-between px-6 mb-4 ${
-          isFullscreen ? 'pt-6' : 'pt-14'
+          isFullscreen ? 'pt-6' : 'pt-6'
         }`}
       >
         <Link href="/log">

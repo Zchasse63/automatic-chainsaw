@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion, type Variants } from 'motion/react';
-import { Flag, TrendingUp, Target, ChevronRight } from 'lucide-react';
+import { Flag, TrendingUp, Target, ChevronRight, Settings } from 'lucide-react';
+import Link from 'next/link';
 import { LineChart, Line, ResponsiveContainer, Tooltip } from 'recharts';
 import { useDashboard } from '@/hooks/use-dashboard';
 import { useReadiness } from '@/hooks/use-readiness';
@@ -10,6 +11,7 @@ import { useDailyMetrics } from '@/hooks/use-daily-metrics';
 import { useBenchmarks } from '@/hooks/use-performance';
 import { useWorkouts } from '@/hooks/use-workouts';
 import { ReadinessScore, StationRadar, ChartTooltip } from '@/components/shared';
+import { toISODateString } from '@/lib/calendar-utils';
 
 // ── Elite station targets (seconds) for score normalization ──
 const ELITE_TARGETS: Record<string, number> = {
@@ -70,7 +72,7 @@ function useClientDate() {
 // ── Loading skeleton ──
 function DashboardSkeleton() {
   return (
-    <div className="bg-bg-deep min-h-screen px-6 pt-14 pb-32 animate-pulse">
+    <div className="bg-bg-deep min-h-screen px-6 pt-6 pb-32 animate-pulse">
       {/* Header skeleton */}
       <div className="mb-8 flex items-center justify-between">
         <div>
@@ -109,8 +111,22 @@ export default function DashboardPage() {
   const { data: readiness } = useReadiness();
   const { data: metrics } = useDailyMetrics({ limit: 7 });
   const { data: benchmarks } = useBenchmarks('station_time');
-  const { data: recentWorkouts } = useWorkouts({ limit: 7 });
   const clientDate = useClientDate();
+
+  // Compute current week Mon-Sun date range for training load bars (local timezone)
+  const tempNow = clientDate ?? new Date();
+  const tempDow = tempNow.getDay(); // 0=Sun
+  const tempMondayOffset = tempDow === 0 ? -6 : 1 - tempDow;
+  const tempWeekStart = new Date(tempNow);
+  tempWeekStart.setDate(tempNow.getDate() + tempMondayOffset);
+  tempWeekStart.setHours(0, 0, 0, 0);
+  const tempWeekEnd = new Date(tempWeekStart);
+  tempWeekEnd.setDate(tempWeekStart.getDate() + 6);
+
+  const weekFromStr = toISODateString(tempWeekStart);
+  const weekToStr = toISODateString(tempWeekEnd);
+
+  const { data: weekWorkouts } = useWorkouts({ from: weekFromStr, to: weekToStr, limit: 50 });
 
   if (isLoading || !data) return <DashboardSkeleton />;
 
@@ -142,19 +158,13 @@ export default function DashboardPage() {
       return { station: b.station_name!, score };
     });
 
-  // ── Weekly training bars from recent workouts (Mon-Sun) ──
-  const now = clientDate ?? new Date();
-  const dayOfWeek = now.getDay(); // 0=Sun
-  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-  const weekStart = new Date(now);
-  weekStart.setDate(now.getDate() + mondayOffset);
-  weekStart.setHours(0, 0, 0, 0);
+  // ── Weekly training bars from current week workouts (Mon-Sun) ──
   const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const weeklyBars = dayNames.map((day, i) => {
-    const dayDate = new Date(weekStart);
-    dayDate.setDate(weekStart.getDate() + i);
-    const dateStr = dayDate.toISOString().split('T')[0];
-    const workout = recentWorkouts?.find((w) => w.date === dateStr);
+    const dayDate = new Date(tempWeekStart);
+    dayDate.setDate(tempWeekStart.getDate() + i);
+    const dateStr = toISODateString(dayDate);
+    const workout = weekWorkouts?.find((w) => w.date.split('T')[0] === dateStr);
     return {
       day,
       pct: workout
@@ -165,7 +175,7 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="bg-bg-deep min-h-screen px-6 pt-14 pb-32">
+    <div className="bg-bg-deep min-h-screen px-6 pt-6 pb-32">
       <motion.div
         variants={stagger}
         initial="hidden"
@@ -182,7 +192,17 @@ export default function DashboardPage() {
               {clientDate ? formatDate(clientDate) : '\u00A0'} {profile.current_phase ? `\u00B7 ${profile.current_phase}` : ''}
             </p>
           </div>
-          <ReadinessScore score={readiness?.score ?? 0} />
+          <div className="flex items-center gap-3">
+            <ReadinessScore score={readiness?.score ?? 0} />
+            <Link href="/settings">
+              <motion.div
+                whileTap={{ scale: 0.9 }}
+                className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors"
+              >
+                <Settings size={16} />
+              </motion.div>
+            </Link>
+          </div>
         </motion.header>
 
         <div className="grid grid-cols-2 gap-4">
@@ -259,7 +279,7 @@ export default function DashboardPage() {
                     )}
                   </div>
                   <a
-                    href="/coach"
+                    href="/calendar"
                     className="bg-white text-black text-xs font-bold px-4 py-2 rounded-full flex items-center gap-2 active:scale-95 transition-transform flex-shrink-0"
                   >
                     PLAN <ChevronRight size={14} />
@@ -363,32 +383,26 @@ export default function DashboardPage() {
                     fillOpacity={0.12}
                   />
                 </div>
-                <div className="flex justify-between mt-1">
-                  <div>
-                    <p className="text-[8px] text-white/40 uppercase">
-                      Strongest
-                    </p>
-                    <p className="text-xs font-bold text-[#39FF14]">
-                      {stationData.reduce((best, s) =>
-                        s.score > best.score ? s : best
-                      ).station}{' '}
-                      {stationData.reduce((best, s) =>
-                        s.score > best.score ? s : best
-                      ).score}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[8px] text-white/40 uppercase">Focus</p>
-                    <p className="text-xs font-bold text-white/60">
-                      {stationData.reduce((worst, s) =>
-                        s.score < worst.score ? s : worst
-                      ).station}{' '}
-                      {stationData.reduce((worst, s) =>
-                        s.score < worst.score ? s : worst
-                      ).score}
-                    </p>
-                  </div>
-                </div>
+                {(() => {
+                  const bestStation = stationData.reduce((a, b) => b.score > a.score ? b : a);
+                  const worstStation = stationData.reduce((a, b) => b.score < a.score ? b : a);
+                  return (
+                    <div className="flex justify-between mt-1">
+                      <div>
+                        <p className="text-[8px] text-white/40 uppercase">Strongest</p>
+                        <p className="text-xs font-bold text-[#39FF14]">
+                          {bestStation.station} {bestStation.score}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[8px] text-white/40 uppercase">Focus</p>
+                        <p className="text-xs font-bold text-white/60">
+                          {worstStation.station} {worstStation.score}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })()}
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center min-h-[100px]">

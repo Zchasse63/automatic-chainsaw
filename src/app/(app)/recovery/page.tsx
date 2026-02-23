@@ -126,7 +126,7 @@ interface StationPerformance {
 
 function RecoverySkeleton() {
   return (
-    <div className="min-h-screen bg-bg-base px-6 pt-14 pb-32 animate-pulse">
+    <div className="min-h-screen bg-bg-base px-6 pt-6 pb-32 animate-pulse">
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="h-3 w-32 bg-white/5 rounded mb-2" />
@@ -438,7 +438,7 @@ export default function RecoveryPage() {
   return (
     <div className="min-h-screen bg-bg-base text-white font-sans select-none">
       {/* Header */}
-      <header className="relative z-10 px-6 pt-14 pb-4 flex items-center justify-between flex-shrink-0">
+      <header className="relative z-10 px-6 pt-6 pb-4 flex items-center justify-between flex-shrink-0">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-2 h-2 rounded-full bg-[#39FF14] animate-pulse" />
