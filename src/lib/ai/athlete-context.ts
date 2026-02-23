@@ -85,13 +85,14 @@ export function buildAthleteProfileMessage(
 }
 
 /**
- * Pre-fetch athlete training stats (weekly workouts, PRs, active plan status)
- * so the model doesn't need to call get_athlete_stats as a tool.
- * All 3 queries run in parallel — adds ~50ms to route setup, saves a full
+ * Pre-fetch athlete training stats (weekly workouts, PRs, active plan, latest recovery metrics)
+ * so the model doesn't need to call get_athlete_stats or get_daily_metrics as tools.
+ * All 4 queries run in parallel — adds ~50ms to route setup, saves a full
  * model round-trip (~5-15s) every time the model would have called the tool.
  */
 export async function buildAthleteStatsMessage(
   athleteId: string,
+  userId: string,
   supabase: SupabaseClient,
 ): Promise<string | null> {
   try {
@@ -99,8 +100,8 @@ export async function buildAthleteStatsMessage(
       .toISOString()
       .split('T')[0];
 
-    // Run all 3 queries in parallel
-    const [workoutsResult, prsResult, planResult] = await Promise.all([
+    // Run all 4 queries in parallel
+    const [workoutsResult, prsResult, planResult, metricsResult] = await Promise.all([
       supabase
         .from('workout_logs')
         .select('id, duration_minutes, rpe_post, session_type, date')
@@ -120,11 +121,19 @@ export async function buildAthleteStatsMessage(
         .eq('status', 'active')
         .limit(1)
         .maybeSingle(),
+      supabase
+        .from('daily_metrics')
+        .select('date, hrv_ms, rhr_bpm, sleep_hours, recovery_score, readiness_score')
+        .eq('user_id', userId)
+        .order('date', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
     ]);
 
     const recentWorkouts = workoutsResult.data ?? [];
     const prs = prsResult.data ?? [];
     const activePlan = planResult.data;
+    const latestMetrics = metricsResult.data;
 
     const parts: string[] = [];
 
@@ -181,6 +190,20 @@ export async function buildAthleteStatsMessage(
       );
     } else {
       parts.push('No active training plan');
+    }
+
+    // Latest recovery data
+    if (latestMetrics) {
+      const recoveryParts: string[] = [];
+      recoveryParts.push(`date: ${latestMetrics.date}`);
+      if (latestMetrics.hrv_ms != null) recoveryParts.push(`HRV ${latestMetrics.hrv_ms}ms`);
+      if (latestMetrics.rhr_bpm != null) recoveryParts.push(`RHR ${latestMetrics.rhr_bpm}bpm`);
+      if (latestMetrics.sleep_hours != null) recoveryParts.push(`sleep ${latestMetrics.sleep_hours}h`);
+      if (latestMetrics.recovery_score != null) recoveryParts.push(`recovery ${latestMetrics.recovery_score}/100`);
+      if (latestMetrics.readiness_score != null) recoveryParts.push(`readiness ${latestMetrics.readiness_score}/100`);
+      if (recoveryParts.length > 1) {
+        parts.push(`Latest recovery: ${recoveryParts.join(', ')}`);
+      }
     }
 
     return `Current training stats: ${parts.join('. ')}.`;

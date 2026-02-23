@@ -1,281 +1,217 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
-
-/* ===== B0 DESIGN SYSTEM TOKENS ===== */
-/* Visual Identity: Raw Industrial Meets Precision Coaching */
-/* Default Theme: Dark mode */
+/* ===== HYROX AI COACH — DESIGN SYSTEM ===== */
+/* Dark-first, mobile-first, performance-focused */
+/* Source of truth: Hyrox UI export (4 projects) */
 
 @theme inline {
-  /* shadcn semantic mappings */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  /* ── Backgrounds ── */
+  --color-background: #0f0f0f;
+  --color-foreground: #ffffff;
+  --color-bg-base: #0f0f0f;
+  --color-bg-deep: #0a0a0a;
+  --color-bg-card: #1a1a1a;
+  --color-bg-card-alt: #111111;
+  --color-bg-elevated: #222222;
+  --color-surface-0: #0a0a0a;
+  --color-surface-1: #0f0f0f;
+  --color-surface-2: #1a1a1a;
+  --color-surface-3: #222222;
 
-  /* Sidebar */
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
+  /* ── Accent Colors ── */
+  --color-accent-green: #39FF14;
+  --color-accent-cyan: #00F0FF;
+  --color-accent-orange: #FF6B00;
+  --color-accent-orange-alt: #FF8C42;
+  --color-accent-purple: #BF5FFF;
+  --color-accent-amber: #FFB800;
+  --color-accent-red: #FF4444;
+  --color-accent-pink: #ec4899;
 
-  /* Charts */
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  /* ── Text Hierarchy ── */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.85);
+  --color-text-tertiary: rgba(255, 255, 255, 0.60);
+  --color-text-muted: rgba(255, 255, 255, 0.50);
+  --color-text-subtle: rgba(255, 255, 255, 0.40);
+  --color-text-faint: rgba(255, 255, 255, 0.30);
+  --color-text-ghost: rgba(255, 255, 255, 0.25);
+  --color-text-whisper: rgba(255, 255, 255, 0.20);
 
-  /* Border radii — sharp industrial (2px default) */
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 6px;
-  --radius-xl: 8px;
-  --radius-2xl: 12px;
-  --radius-3xl: 16px;
-  --radius-4xl: 20px;
-  --radius-full: 9999px;
+  /* ── Borders ── */
+  --color-border-default: rgba(255, 255, 255, 0.05);
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-hover: rgba(255, 255, 255, 0.10);
+  --color-border-active: rgba(255, 255, 255, 0.15);
+  --color-border-accent: rgba(57, 255, 20, 0.30);
+  --color-border-accent-strong: rgba(57, 255, 20, 0.40);
 
-  /* ===== FONTS ===== */
-  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
-  --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --font-sans: var(--font-body);
+  /* ── Surface overlays (used inline as bg-white/N) ── */
+  --color-surface-subtle: rgba(255, 255, 255, 0.03);
+  --color-surface-light: rgba(255, 255, 255, 0.05);
+  --color-surface-hover: rgba(255, 255, 255, 0.10);
 
-  /* ===== TYPOGRAPHIC SCALE (Major Third 1.250) ===== */
-  --text-xs: 0.64rem;
-  --text-sm: 0.8rem;
-  --text-base: 1rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.563rem;
-  --text-2xl: 1.953rem;
-  --text-3xl: 2.441rem;
-  --text-4xl: 3.052rem;
-  --text-5xl: 3.815rem;
-  --text-timer: 4.5rem;
-  --text-stat: 2.5rem;
+  /* ── Fonts ── */
+  --font-sans: system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  /* ===== SURFACE ELEVATION (Dark Mode) ===== */
-  --color-surface-0: #0A0A0B;
-  --color-surface-1: #111113;
-  --color-surface-2: #18181B;
-  --color-surface-3: #1F1F23;
-  --color-surface-4: #27272B;
-  --color-surface-5: #2E2E33;
+  /* ── Shadows (custom) ── */
+  --shadow-green-glow: 0 0 20px rgba(57, 255, 20, 0.3);
+  --shadow-green-glow-strong: 0 0 30px rgba(57, 255, 20, 0.4);
+  --shadow-green-subtle: 0 0 14px rgba(57, 255, 20, 0.15);
+  --shadow-green-bg: 0 0 30px rgba(57, 255, 20, 0.1);
+  --shadow-chart-glow: 0 0 8px rgba(57, 255, 20, 0.6);
 
-  /* ===== HYROX ACCENT COLORS ===== */
-  --color-hyrox-yellow: #FFD700;
-  --color-hyrox-yellow-hover: #FFE033;
-  --color-hyrox-yellow-muted: #FFD70033;
-  --color-hyrox-yellow-subtle: #FFD70015;
-  --color-coach-blue: #3B82F6;
-  --color-coach-green: #10B981;
+  /* ── shadcn/ui compatibility (dark values) ── */
+  --color-card: #1a1a1a;
+  --color-card-foreground: #ffffff;
+  --color-popover: #1a1a1a;
+  --color-popover-foreground: #ffffff;
+  --color-primary: #39FF14;
+  --color-primary-foreground: #000000;
+  --color-secondary: #222222;
+  --color-secondary-foreground: #ffffff;
+  --color-muted: #222222;
+  --color-muted-foreground: rgba(255, 255, 255, 0.50);
+  --color-accent: #222222;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #FF4444;
+  --color-border: rgba(255, 255, 255, 0.05);
+  --color-input: rgba(255, 255, 255, 0.05);
+  --color-ring: rgba(57, 255, 20, 0.40);
 
-  /* ===== TEXT HIERARCHY ===== */
-  --color-text-primary: #F4F4F5;
-  --color-text-secondary: #A1A1AA;
-  --color-text-tertiary: #71717A;
-  --color-text-inverse: #0A0A0B;
+  /* ── Chart colors (Recharts) ── */
+  --color-chart-1: #39FF14;
+  --color-chart-2: #00F0FF;
+  --color-chart-3: #FF6B00;
+  --color-chart-4: #BF5FFF;
+  --color-chart-5: #FFB800;
 
-  /* ===== SEMANTIC COLORS ===== */
-  --color-success: #22C55E;
-  --color-warning: #EAB308;
-  --color-danger: #EF4444;
-  --color-info: #3B82F6;
-
-  /* ===== PERFORMANCE INDICATOR COLORS ===== */
-  --color-perf-excellent: #22C55E;
-  --color-perf-good: #84CC16;
-  --color-perf-average: #EAB308;
-  --color-perf-below: #F97316;
-  --color-perf-poor: #EF4444;
-
-  /* ===== STATION COLORS (for charts and station identification) ===== */
-  --color-station-ski: #3B82F6;
-  --color-station-push: #EF4444;
-  --color-station-pull: #F97316;
-  --color-station-burpee: #8B5CF6;
-  --color-station-row: #06B6D4;
-  --color-station-carry: #22C55E;
-  --color-station-lunge: #EC4899;
-  --color-station-wall: #EAB308;
-
-  /* ===== BORDER COLORS ===== */
-  --color-border-default: #27272A;
-  --color-border-hover: #3F3F46;
-  --color-border-accent: #FFD70040;
-
-  /* ===== SHADOWS (Dark Mode Optimized) ===== */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
-  --shadow-xl: 0 16px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
-
-  /* Accent glows */
-  --shadow-glow-sm: 0 0 10px rgba(255, 215, 0, 0.15);
-  --shadow-glow-md: 0 0 20px rgba(255, 215, 0, 0.2);
-  --shadow-glow-lg: 0 0 40px rgba(255, 215, 0, 0.25), 0 0 10px rgba(255, 215, 0, 0.4);
-
-  /* Inset shadows (pressed states) */
-  --inset-shadow-sm: inset 0 1px 3px rgba(0, 0, 0, 0.4);
-  --inset-shadow-md: inset 0 2px 6px rgba(0, 0, 0, 0.5);
-}
-
-/* ===== LIGHT THEME ===== */
-:root {
-  --radius: 4px;
-  --background: #FAFAFA;
-  --foreground: #0A0A0B;
-  --card: #FFFFFF;
-  --card-foreground: #0A0A0B;
-  --popover: #FFFFFF;
-  --popover-foreground: #0A0A0B;
-  --primary: #B8960A;
-  --primary-foreground: #FFFFFF;
-  --secondary: #F4F4F5;
-  --secondary-foreground: #18181B;
-  --muted: #F4F4F5;
-  --muted-foreground: #71717A;
-  --accent: #F4F4F5;
-  --accent-foreground: #18181B;
-  --destructive: #EF4444;
-  --border: #E4E4E7;
-  --input: #E4E4E7;
-  --ring: #B8960A;
-  --chart-1: #3B82F6;
-  --chart-2: #22C55E;
-  --chart-3: #EAB308;
-  --chart-4: #8B5CF6;
-  --chart-5: #EF4444;
-  --sidebar: #FAFAFA;
-  --sidebar-foreground: #0A0A0B;
-  --sidebar-primary: #B8960A;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F4F4F5;
-  --sidebar-accent-foreground: #18181B;
-  --sidebar-border: #E4E4E7;
-  --sidebar-ring: #B8960A;
-}
-
-/* ===== DARK THEME (DEFAULT) ===== */
-.dark {
-  --background: #0A0A0B;
-  --foreground: #F4F4F5;
-  --card: #18181B;
-  --card-foreground: #F4F4F5;
-  --popover: #27272B;
-  --popover-foreground: #F4F4F5;
-  --primary: #FFD700;
-  --primary-foreground: #0A0A0B;
-  --secondary: #1F1F23;
-  --secondary-foreground: #F4F4F5;
-  --muted: #18181B;
-  --muted-foreground: #A1A1AA;
-  --accent: #1F1F23;
-  --accent-foreground: #F4F4F5;
-  --destructive: #EF4444;
-  --border: #27272A;
-  --input: #27272A;
-  --ring: #FFD700;
-  --chart-1: #3B82F6;
-  --chart-2: #22C55E;
-  --chart-3: #EAB308;
-  --chart-4: #8B5CF6;
-  --chart-5: #EF4444;
-  --sidebar: #111113;
-  --sidebar-foreground: #F4F4F5;
-  --sidebar-primary: #FFD700;
-  --sidebar-primary-foreground: #0A0A0B;
-  --sidebar-accent: #1F1F23;
-  --sidebar-accent-foreground: #F4F4F5;
-  --sidebar-border: #27272A;
-  --sidebar-ring: #FFD700;
+  /* ── Radius ── */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border-default;
   }
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  /* Prevent overscroll bounce on mobile */
+  html, body {
+    overscroll-behavior-x: none;
   }
 }
 
-/* ===== GRAIN TEXTURE OVERLAY (CSS-Only) ===== */
-@utility grain {
-  position: relative;
+/* ===== UTILITY CLASSES ===== */
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
+@layer utilities {
+  /* ── Scanline overlay (signature retro-tech aesthetic) ── */
+  .scanlines {
+    background:
+      linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
+      linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+    background-size: 100% 2px, 3px 100%;
     pointer-events: none;
-    opacity: 0.03;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 256px 256px;
   }
-}
 
-/* ===== BACKGROUND GRADIENTS ===== */
-@utility bg-hero-gradient {
-  background:
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 215, 0, 0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 80% 100%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
-    var(--color-surface-0);
-}
+  /* ── Ambient glow effects ── */
+  .glow-green {
+    background: radial-gradient(circle at center, #39FF14 0%, transparent 55%);
+  }
+  .glow-cyan {
+    background: radial-gradient(circle at center, #00F0FF 0%, transparent 55%);
+  }
 
-@utility bg-card-gradient {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 40%),
-    var(--color-surface-2);
-}
+  /* ── Gradient card backgrounds ── */
+  .bg-card-gradient {
+    background: linear-gradient(to bottom right, #1a1a1a, #222222);
+  }
+  .bg-card-gradient-alt {
+    background: linear-gradient(to bottom right, #1a1a1a, #161616);
+  }
 
-/* ===== INDUSTRIAL DECORATIVE ELEMENTS ===== */
-@utility caution-stripe {
-  background: repeating-linear-gradient(-45deg, #FFD700, #FFD700 10px, #0A0A0B 10px, #0A0A0B 20px);
-  height: 4px;
-  opacity: 0.6;
-}
+  /* ── Bottom fade overlay (workout/controls) ── */
+  .fade-to-deep {
+    background: linear-gradient(to top, #0a0a0a, rgba(10,10,10,0.9), transparent);
+  }
 
-/* ===== STRUCTURAL GRID ===== */
-@utility bg-grid {
-  background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
+  /* ── Safe area spacing ── */
+  .pt-safe { padding-top: 56px; }     /* Mobile safe area top */
+  .pb-safe { padding-bottom: 128px; } /* Bottom nav clearance */
 
-/* ===== GLASSMORPHISM ===== */
-@utility glass {
-  background: rgba(10, 10, 11, 0.8);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(39, 39, 42, 0.5);
-}
+  /* ── Typography shortcuts ── */
+  .text-hero {
+    @apply text-5xl font-black italic tracking-tighter uppercase;
+  }
+  .text-page-heading {
+    @apply text-3xl font-black italic tracking-tighter uppercase;
+  }
+  .text-section-heading {
+    @apply text-xl font-black uppercase tracking-tighter;
+  }
+  .text-card-heading {
+    @apply text-lg font-black italic tracking-tighter;
+  }
+  .text-label-upper {
+    font-size: 10px;
+    @apply font-bold uppercase;
+    letter-spacing: 0.25em;
+  }
+  .text-micro {
+    font-size: 9px;
+    @apply font-bold uppercase;
+    letter-spacing: 0.25em;
+  }
+  .text-nano {
+    font-size: 8px;
+    @apply font-bold uppercase;
+  }
 
-/* ===== TABULAR NUMBERS (for timers and data) ===== */
-@utility tabular-nums {
-  font-variant-numeric: tabular-nums;
+  /* ── Component patterns ── */
+  .card-base {
+    @apply bg-bg-card rounded-3xl p-5 border border-border-default;
+  }
+  .card-compact {
+    @apply bg-bg-card rounded-2xl p-4 border border-border-default;
+  }
+  .card-accent {
+    border-color: rgba(57, 255, 20, 0.20);
+    box-shadow: 0 0 20px rgba(57, 255, 20, 0.06);
+  }
+  .btn-primary {
+    @apply bg-accent-green text-black font-black uppercase text-xs py-3 rounded-xl;
+    box-shadow: var(--shadow-green-glow);
+  }
+  .btn-secondary {
+    @apply bg-white/10 text-white font-black uppercase text-xs py-3 rounded-xl border border-white/10;
+  }
+  .pill-active {
+    @apply bg-accent-green text-black font-bold uppercase rounded-full px-3 py-1.5;
+    font-size: 10px;
+  }
+  .pill-inactive {
+    @apply bg-white/5 text-white/40 border border-white/10 rounded-full px-3 py-1.5;
+    font-size: 10px;
+  }
+  .input-base {
+    @apply bg-white/5 rounded-2xl px-4 py-3 border border-white/10;
+  }
+  .input-base:focus-within {
+    border-color: rgba(57, 255, 20, 0.40);
+  }
+  .progress-bar {
+    @apply h-1.5 bg-white/5 rounded-full overflow-hidden;
+  }
+  .progress-fill {
+    @apply bg-accent-green rounded-full h-full;
+  }
+  .divider {
+    @apply h-px bg-white/5;
+  }
 }

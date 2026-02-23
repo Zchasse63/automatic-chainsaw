@@ -2,8 +2,9 @@ import { tool } from 'ai';
 import { z } from 'zod';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { retrieveKnowledge } from './rag';
+import { computeReadinessScore } from './readiness';
 
-export function createCoachingTools(athleteId: string, supabase: SupabaseClient) {
+export function createCoachingTools(athleteId: string, userId: string, supabase: SupabaseClient) {
   return {
     search_knowledge_base: tool({
       description:
@@ -31,8 +32,11 @@ export function createCoachingTools(athleteId: string, supabase: SupabaseClient)
         duration_minutes: z.number().optional().describe('Duration in minutes'),
         rpe_post: z.number().min(1).max(10).optional().describe('RPE 1-10'),
         notes: z.string().optional(),
+        total_volume_kg: z.number().optional().describe('Total weight volume in kg (sum of all sets: weight x reps)'),
+        total_distance_km: z.number().optional().describe('Total distance in km'),
+        training_load: z.number().min(0).max(1000).optional().describe('Training load score 0-1000 (duration x RPE)'),
       }),
-      execute: async ({ date, session_type, duration_minutes, rpe_post, notes }) => {
+      execute: async ({ date, session_type, duration_minutes, rpe_post, notes, total_volume_kg, total_distance_km, training_load }) => {
         const { data, error } = await supabase
           .from('workout_logs')
           .insert({
@@ -42,9 +46,12 @@ export function createCoachingTools(athleteId: string, supabase: SupabaseClient)
             duration_minutes: duration_minutes ?? null,
             rpe_post: rpe_post ?? null,
             notes: notes ?? null,
+            total_volume_kg: total_volume_kg ?? null,
+            total_distance_km: total_distance_km ?? null,
+            training_load: training_load ?? null,
             completion_status: 'completed',
           })
-          .select('id, date, session_type, duration_minutes, rpe_post')
+          .select('id, date, session_type, duration_minutes, rpe_post, total_volume_kg, total_distance_km, training_load')
           .single();
         if (error) return { success: false, error: error.message };
         return { success: true, workout: data };
@@ -551,6 +558,7 @@ export function createCoachingTools(athleteId: string, supabase: SupabaseClient)
             const b = benchmarks.find((bm) => bm.skill_level === level);
             if (b && athlete_time_seconds <= Number(b.max_seconds)) {
               athleteLevel = level;
+              break; // First match is the best (most elite) tier
             }
           }
 
@@ -686,6 +694,250 @@ export function createCoachingTools(athleteId: string, supabase: SupabaseClient)
           return { races: raceResults };
         } catch {
           return { error: true, message: 'Unable to fetch race results.' };
+        }
+      },
+    }),
+
+    // ── New tools (v3 — UI redesign integration) ─────────────────────
+
+    get_daily_metrics: tool({
+      description:
+        "Get the athlete's daily biometric data — HRV, resting heart rate, sleep, stress, recovery, and readiness scores. Use this to assess recovery status before recommending training intensity.",
+      inputSchema: z.object({
+        days: z.number().optional().describe('Number of days to look back (default 7, max 30)'),
+      }),
+      execute: async ({ days = 7 }) => {
+        try {
+          const lookback = Math.min(days, 30);
+          const since = new Date(Date.now() - lookback * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split('T')[0];
+
+          const { data: metrics } = await supabase
+            .from('daily_metrics')
+            .select('date, hrv_ms, rhr_bpm, sleep_hours, stress_score, recovery_score, readiness_score, source')
+            .eq('user_id', userId)
+            .gte('date', since)
+            .order('date', { ascending: false });
+
+          if (!metrics || metrics.length === 0) {
+            return { metrics: [], message: 'No biometric data recorded yet.' };
+          }
+
+          // Compute averages for the period
+          const withHrv = metrics.filter((m) => m.hrv_ms != null);
+          const withRhr = metrics.filter((m) => m.rhr_bpm != null);
+          const withSleep = metrics.filter((m) => m.sleep_hours != null);
+
+          return {
+            metrics,
+            averages: {
+              hrv_ms: withHrv.length > 0
+                ? Math.round(withHrv.reduce((s, m) => s + m.hrv_ms!, 0) / withHrv.length)
+                : null,
+              rhr_bpm: withRhr.length > 0
+                ? Math.round(withRhr.reduce((s, m) => s + m.rhr_bpm!, 0) / withRhr.length)
+                : null,
+              sleep_hours: withSleep.length > 0
+                ? Math.round((withSleep.reduce((s, m) => s + Number(m.sleep_hours!), 0) / withSleep.length) * 10) / 10
+                : null,
+            },
+          };
+        } catch {
+          return { error: true, message: 'Unable to fetch daily metrics.' };
+        }
+      },
+    }),
+
+    log_daily_metrics: tool({
+      description:
+        "Log the athlete's daily biometric data (HRV, resting heart rate, sleep, stress, etc). Upserts — calling with the same date updates the existing entry.",
+      inputSchema: z.object({
+        date: z.string().describe('Date YYYY-MM-DD'),
+        hrv_ms: z.number().optional().describe('Heart rate variability in milliseconds'),
+        rhr_bpm: z.number().optional().describe('Resting heart rate in bpm'),
+        sleep_hours: z.number().optional().describe('Sleep duration in hours (e.g. 7.5)'),
+        stress_score: z.number().min(0).max(100).optional().describe('Stress score 0-100'),
+        recovery_score: z.number().min(0).max(100).optional().describe('Recovery score 0-100'),
+        readiness_score: z.number().min(0).max(100).optional().describe('Readiness score 0-100'),
+        notes: z.string().optional(),
+        source: z.enum(['manual', 'whoop', 'garmin', 'oura', 'apple_watch']).optional(),
+      }),
+      execute: async ({ date, hrv_ms, rhr_bpm, sleep_hours, stress_score, recovery_score, readiness_score, notes, source }) => {
+        const { data, error } = await supabase
+          .from('daily_metrics')
+          .upsert(
+            {
+              user_id: userId,
+              date,
+              hrv_ms: hrv_ms ?? null,
+              rhr_bpm: rhr_bpm ?? null,
+              sleep_hours: sleep_hours ?? null,
+              stress_score: stress_score ?? null,
+              recovery_score: recovery_score ?? null,
+              readiness_score: readiness_score ?? null,
+              notes: notes ?? null,
+              source: source ?? 'manual',
+            },
+            { onConflict: 'user_id,date' },
+          )
+          .select('date, hrv_ms, rhr_bpm, sleep_hours, recovery_score, readiness_score')
+          .single();
+        if (error) return { success: false, error: error.message };
+        return { success: true, metric: data };
+      },
+    }),
+
+    get_workout_sets: tool({
+      description:
+        "Get the individual sets logged for a specific workout — reps, weight, distance, pace, RPE per set. Use when the athlete asks about their performance on specific exercises within a workout or wants set-level analysis.",
+      inputSchema: z.object({
+        workout_log_id: z.string().describe('The workout log ID to fetch sets for'),
+      }),
+      execute: async ({ workout_log_id }) => {
+        try {
+          // Verify ownership via athlete_id
+          const { data: workout } = await supabase
+            .from('workout_logs')
+            .select('id')
+            .eq('id', workout_log_id)
+            .eq('athlete_id', athleteId)
+            .is('deleted_at', null)
+            .single();
+
+          if (!workout) {
+            return { sets: [], message: 'Workout not found.' };
+          }
+
+          const { data: sets } = await supabase
+            .from('workout_sets')
+            .select('exercise_name, exercise_category, set_number, reps, weight_kg, distance_meters, duration_seconds, pace, status, rpe, notes')
+            .eq('workout_log_id', workout_log_id)
+            .order('exercise_name')
+            .order('set_number', { ascending: true });
+
+          return { sets: sets ?? [] };
+        } catch {
+          return { error: true, message: 'Unable to fetch workout sets.' };
+        }
+      },
+    }),
+
+    get_readiness_score: tool({
+      description:
+        "Get the athlete's race readiness score (0-100) with 7 weighted components: consistency, volume, run fitness, station prep, plan adherence, recovery, and race-specific training. Identifies the weakest area. Use when the athlete asks 'am I ready?' or 'how is my preparation going?'",
+      inputSchema: z.object({}),
+      execute: async () => {
+        try {
+          return await computeReadinessScore(athleteId, supabase);
+        } catch {
+          return { error: true, message: 'Unable to compute readiness score.' };
+        }
+      },
+    }),
+
+    get_benchmark_history: tool({
+      description:
+        "Get the athlete's historical benchmark test results. Optionally filter by test type or station. Use when the athlete asks about their progress on a specific benchmark or wants to see improvement over time.",
+      inputSchema: z.object({
+        test_type: z.string().optional().describe('Filter by test type (e.g. "station_time", "1k_run", "5k_run")'),
+        station_id: z.string().optional().describe('Filter by Hyrox station ID'),
+        limit: z.number().optional().describe('Number of results to return (default 10)'),
+      }),
+      execute: async ({ test_type, station_id, limit = 10 }) => {
+        try {
+          let query = supabase
+            .from('benchmark_tests')
+            .select('id, test_type, station_id, results, notes, test_date')
+            .eq('athlete_id', athleteId)
+            .order('test_date', { ascending: false })
+            .limit(Math.min(limit, 50));
+
+          if (test_type) query = query.eq('test_type', test_type);
+          if (station_id) query = query.eq('station_id', station_id);
+
+          const { data: benchmarks } = await query;
+
+          if (!benchmarks || benchmarks.length === 0) {
+            return { benchmarks: [], message: 'No benchmark tests recorded yet.' };
+          }
+
+          return { benchmarks };
+        } catch {
+          return { error: true, message: 'Unable to fetch benchmark history.' };
+        }
+      },
+    }),
+
+    get_achievements: tool({
+      description:
+        "Get the athlete's earned achievements and available achievement definitions. Shows unlocked status, category, tier, and when each was earned. Use to celebrate milestones or motivate the athlete.",
+      inputSchema: z.object({}),
+      execute: async () => {
+        try {
+          const [defsResult, earnedResult] = await Promise.all([
+            supabase
+              .from('achievement_definitions')
+              .select('id, name, description, icon_name, category, tier')
+              .order('category')
+              .order('tier'),
+            supabase
+              .from('athlete_achievements')
+              .select('achievement_id, earned_at')
+              .eq('athlete_id', athleteId),
+          ]);
+
+          const definitions = defsResult.data ?? [];
+          const earned = earnedResult.data ?? [];
+          const earnedMap = new Map(earned.map((e) => [e.achievement_id, e.earned_at]));
+
+          const achievements = definitions.map((def) => ({
+            name: def.name,
+            description: def.description,
+            category: def.category,
+            tier: def.tier,
+            is_unlocked: earnedMap.has(def.id),
+            unlocked_at: earnedMap.get(def.id) ?? null,
+          }));
+
+          const unlockedCount = achievements.filter((a) => a.is_unlocked).length;
+
+          return {
+            achievements,
+            summary: { total: achievements.length, unlocked: unlockedCount },
+          };
+        } catch {
+          return { error: true, message: 'Unable to fetch achievements.' };
+        }
+      },
+    }),
+
+    get_station_details: tool({
+      description:
+        "Get detailed Hyrox station information including coaching tips, common mistakes, and weights by division. Use when coaching technique for a specific station or when the athlete asks about station-specific details like 'how heavy is the sled?'",
+      inputSchema: z.object({
+        station_name: z.string().optional().describe('Station name to search for (e.g. "Sled Push", "Wall Balls"). Omit to get all 8 stations.'),
+      }),
+      execute: async ({ station_name }) => {
+        try {
+          let query = supabase
+            .from('hyrox_stations')
+            .select('station_number, station_name, description, distance_or_reps, exercise_type, muscles_worked, tips, common_mistakes, weights_by_division')
+            .order('station_number', { ascending: true });
+
+          if (station_name) {
+            query = query.ilike('station_name', `%${station_name}%`);
+          }
+
+          const { data: stations } = await query;
+
+          if (!stations || stations.length === 0) {
+            return { stations: [], message: station_name ? `No station found matching "${station_name}".` : 'No station data available.' };
+          }
+
+          return { stations };
+        } catch {
+          return { error: true, message: 'Unable to fetch station details.' };
         }
       },
     }),

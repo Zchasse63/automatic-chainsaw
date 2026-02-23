@@ -4,6 +4,7 @@ interface BenchmarkResult {
   id: string;
   test_type: string;
   station_id: string | null;
+  station_name: string | null;
   results: Record<string, unknown>;
   notes: string | null;
   test_date: string;

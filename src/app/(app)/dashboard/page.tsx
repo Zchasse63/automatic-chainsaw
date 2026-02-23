@@ -1,361 +1,525 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import {
-  Calendar,
-  ChevronRight,
-  Clock,
-  Dumbbell,
-  Flag,
-  Flame,
-  MessageSquare,
-  Play,
-  Plus,
-  Target,
-  Timer,
-  Trophy,
-} from 'lucide-react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { motion, type Variants } from 'motion/react';
+import { Flag, TrendingUp, Target, ChevronRight } from 'lucide-react';
+import { LineChart, Line, ResponsiveContainer, Tooltip } from 'recharts';
 import { useDashboard } from '@/hooks/use-dashboard';
-import { ExpandableStatCard } from '@/components/dashboard/expandable-stat-card';
-import { WeekStrip } from '@/components/dashboard/week-strip';
-import { StreakHeatmap } from '@/components/dashboard/streak-heatmap';
-import { RaceReadiness } from '@/components/dashboard/race-readiness';
-import { RpeTrendChart, WeeklyVolumeChart } from '@/components/dashboard/performance-charts';
-import { SetupChecklist } from '@/components/dashboard/setup-checklist';
+import { useReadiness } from '@/hooks/use-readiness';
+import { useDailyMetrics } from '@/hooks/use-daily-metrics';
+import { useBenchmarks } from '@/hooks/use-performance';
+import { useWorkouts } from '@/hooks/use-workouts';
+import { ReadinessScore, StationRadar, ChartTooltip } from '@/components/shared';
 
-const SESSION_LABELS: Record<string, string> = {
-  run: 'Run',
-  hiit: 'HIIT',
-  strength: 'Strength',
-  simulation: 'Simulation',
-  recovery: 'Recovery',
-  station_practice: 'Station Practice',
-  general: 'General',
+// ── Elite station targets (seconds) for score normalization ──
+const ELITE_TARGETS: Record<string, number> = {
+  'Ski Erg': 210,
+  'Sled Push': 70,
+  'Sled Pull': 80,
+  'Burpee Broad Jump': 150,
+  'Row Erg': 200,
+  'Farmers Carry': 55,
+  'Sandbag Lunges': 110,
+  'Wall Balls': 150,
 };
 
-export default function DashboardPage() {
-  const { data, isLoading: loading } = useDashboard();
+// ── Modality color map (matches export exactly) ──
+const MODALITY_COLORS: Record<string, string> = {
+  run: '#00F0FF',
+  running: '#00F0FF',
+  strength: '#39FF14',
+  hiit: '#FF6B00',
+  hyrox: '#39FF14',
+  rest: 'rgba(255,255,255,0.1)',
+};
 
-  if (loading) {
-    return (
-      <div className="p-6 md:p-8 space-y-6">
-        <div className="h-8 w-48 bg-surface-2 rounded animate-pulse" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div
-              key={i}
-              className="h-40 bg-surface-1 border border-border-default rounded-lg animate-pulse"
-            />
-          ))}
+// ── Helpers ──
+function formatGoalTime(minutes: number | null | undefined): string {
+  if (!minutes) return '--:--';
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (h > 0) return `${h}:${String(m).padStart(2, '0')}:00`;
+  return `${m}:00`;
+}
+
+function getWeeksAndDays(totalDays: number): { weeks: number; days: number } {
+  return { weeks: Math.floor(totalDays / 7), days: totalDays % 7 };
+}
+
+function getGreeting(hour: number): string {
+  if (hour < 12) return 'Morning';
+  if (hour < 17) return 'Afternoon';
+  return 'Evening';
+}
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+/** Defers Date to client to prevent server/client hydration mismatch */
+function useClientDate() {
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => { setNow(new Date()); }, []);
+  return now;
+}
+
+// ── Loading skeleton ──
+function DashboardSkeleton() {
+  return (
+    <div className="bg-bg-deep min-h-screen px-6 pt-14 pb-32 animate-pulse">
+      {/* Header skeleton */}
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <div className="h-9 w-56 bg-white/5 rounded-lg" />
+          <div className="h-4 w-40 bg-white/5 rounded-lg mt-2" />
         </div>
+        <div className="h-24 w-24 bg-white/5 rounded-full" />
       </div>
-    );
-  }
+      {/* Cards skeleton */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="col-span-2 h-44 bg-white/5 rounded-3xl" />
+        <div className="h-48 bg-white/5 rounded-3xl" />
+        <div className="h-48 bg-white/5 rounded-3xl" />
+        <div className="col-span-2 h-56 bg-white/5 rounded-3xl" />
+      </div>
+    </div>
+  );
+}
 
-  if (!data) return null;
+// ── Stagger animation container ──
+const stagger: Variants = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.1 },
+  },
+};
 
-  const firstName = data.profile.display_name?.split(' ')[0] || 'Athlete';
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } },
+};
+
+// ── Dashboard Page ──
+export default function DashboardPage() {
+  const { data, isLoading } = useDashboard();
+  const { data: readiness } = useReadiness();
+  const { data: metrics } = useDailyMetrics({ limit: 7 });
+  const { data: benchmarks } = useBenchmarks('station_time');
+  const { data: recentWorkouts } = useWorkouts({ limit: 7 });
+  const clientDate = useClientDate();
+
+  if (isLoading || !data) return <DashboardSkeleton />;
+
+  const { profile, daysUntilRace, weeklyStats } = data;
+  const race =
+    daysUntilRace !== null ? getWeeksAndDays(daysUntilRace) : null;
+  const firstName = profile.display_name?.split(' ')[0] ?? 'Athlete';
+
+  // ── Biomarker data from daily_metrics (last 7 days, oldest first) ──
+  const biomarkerData = (metrics ?? [])
+    .slice()
+    .reverse()
+    .map((m) => ({
+      time: new Date(m.date + 'T00:00').toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+      }),
+      hrv: m.hrv_ms ?? 0,
+      rhr: m.rhr_bpm ?? 0,
+    }));
+
+  // ── Station radar from benchmark_tests ──
+  const stationData = (benchmarks ?? [])
+    .filter((b) => b.station_name && (b.results as Record<string, number>)?.time_seconds)
+    .map((b) => {
+      const time = (b.results as Record<string, number>).time_seconds;
+      const target = ELITE_TARGETS[b.station_name!] ?? 180;
+      const score = Math.round(Math.min(100, (target / time) * 100));
+      return { station: b.station_name!, score };
+    });
+
+  // ── Weekly training bars from recent workouts (Mon-Sun) ──
+  const now = clientDate ?? new Date();
+  const dayOfWeek = now.getDay(); // 0=Sun
+  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() + mondayOffset);
+  weekStart.setHours(0, 0, 0, 0);
+  const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const weeklyBars = dayNames.map((day, i) => {
+    const dayDate = new Date(weekStart);
+    dayDate.setDate(weekStart.getDate() + i);
+    const dateStr = dayDate.toISOString().split('T')[0];
+    const workout = recentWorkouts?.find((w) => w.date === dateStr);
+    return {
+      day,
+      pct: workout
+        ? Math.round(Math.min(100, ((workout.duration_minutes ?? 0) / 80) * 100))
+        : 0,
+      type: workout?.session_type ?? 'rest',
+    };
+  });
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="font-display text-2xl md:text-3xl font-bold uppercase tracking-wider text-text-primary">
-          Hey {firstName}
-        </h1>
-        <p className="font-body text-text-secondary mt-1">
-          {data.profile.current_phase
-            ? `${data.profile.current_phase.replace(/_/g, ' ')} phase`
-            : "Let's get after it"}
-          {data.profile.hyrox_division &&
-            ` — ${data.profile.hyrox_division} division`}
-        </p>
-      </div>
+    <div className="bg-bg-deep min-h-screen px-6 pt-14 pb-32">
+      <motion.div
+        variants={stagger}
+        initial="hidden"
+        animate="show"
+      >
+        {/* ── Header / Greeting ── */}
+        <motion.header variants={fadeUp} className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-black italic tracking-tighter uppercase text-white leading-none">
+              {clientDate ? getGreeting(clientDate.getHours()) : ''},{' '}
+              <span className="text-[#39FF14]">{firstName}</span>
+            </h1>
+            <p className="text-white/40 text-sm mt-1">
+              {clientDate ? formatDate(clientDate) : '\u00A0'} {profile.current_phase ? `\u00B7 ${profile.current_phase}` : ''}
+            </p>
+          </div>
+          <ReadinessScore score={readiness?.score ?? 0} />
+        </motion.header>
 
-      {/* Bento Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {/* Race Countdown — spans 2 cols on mobile, links to calendar */}
-        {data.daysUntilRace !== null && (
-          <Link
-            href="/calendar"
-            className="col-span-2 bg-surface-1 border border-border-default rounded-lg p-6 relative overflow-hidden hover:border-hyrox-yellow/30 transition-colors group"
+        <div className="grid grid-cols-2 gap-4">
+          {/* ── Race Countdown Card ── */}
+          <motion.div
+            variants={fadeUp}
+            className="col-span-2 bg-bg-card rounded-3xl p-6 border border-white/5 relative overflow-hidden"
           >
-            <div className="caution-stripe absolute top-0 left-0 right-0" />
-            <div className="flex items-center justify-between pt-2">
-              <div>
-                <p className="font-display text-xs uppercase tracking-widest text-text-tertiary">
-                  Race Day
-                </p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="font-display text-5xl font-black text-hyrox-yellow">
-                    {data.daysUntilRace}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#39FF14]/10 rounded-bl-full flex items-center justify-center">
+              <Flag className="text-[#39FF14] w-12 h-12" />
+            </div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-2 py-1 bg-[#39FF14]/20 text-[#39FF14] text-[10px] font-bold rounded uppercase tracking-tighter">
+                  Race Countdown
+                </span>
+                {profile.current_phase && (
+                  <span className="px-2 py-1 bg-white/5 text-white/40 text-[10px] font-bold rounded uppercase tracking-tighter">
+                    {profile.current_phase}
                   </span>
-                  <span className="font-display text-lg uppercase tracking-wider text-text-secondary">
-                    days
-                  </span>
-                </div>
-                {data.profile.goal_time_minutes && (
-                  <p className="font-body text-xs text-text-tertiary mt-1">
-                    Goal: {data.profile.goal_time_minutes} min
-                  </p>
                 )}
               </div>
-              <Calendar className="h-10 w-10 text-hyrox-yellow/20 group-hover:text-hyrox-yellow/40 transition-colors" />
-            </div>
-          </Link>
-        )}
-
-        {/* This Week strip — quick view of the week's plan */}
-        <WeekStrip />
-
-        {/* Weekly Workouts — expandable with volume chart */}
-        <ExpandableStatCard
-          label="This Week"
-          value={data.weeklyStats.workouts}
-          subtitle="workouts"
-          icon={<Dumbbell className="h-4 w-4" />}
-        >
-          <WeeklyVolumeChart />
-        </ExpandableStatCard>
-
-        {/* Training Hours */}
-        <ExpandableStatCard
-          label="Hours"
-          value={(data.weeklyStats.totalMinutes / 60).toFixed(1)}
-          subtitle="this week"
-          icon={<Clock className="h-4 w-4" />}
-        />
-
-        {/* Streak */}
-        <ExpandableStatCard
-          label="Streak"
-          value={data.streak}
-          subtitle={data.streak === 1 ? 'day' : 'days'}
-          icon={<Flame className="h-4 w-4" />}
-        />
-
-        {/* Average RPE — expandable with trend chart */}
-        <ExpandableStatCard
-          label="Avg RPE"
-          value={data.weeklyStats.avgRpe ?? '—'}
-          subtitle="this week"
-          icon={<Timer className="h-4 w-4" />}
-        >
-          <RpeTrendChart />
-        </ExpandableStatCard>
-
-        {/* Today's Workout */}
-        {data.todaysWorkout && !data.todaysWorkout.is_completed && (
-          <Link
-            href={`/training/workout/${data.todaysWorkout.id}`}
-            className="col-span-2 bg-hyrox-yellow/5 border border-hyrox-yellow/20 rounded-lg p-5 hover:bg-hyrox-yellow/10 transition-colors group"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-display text-[10px] uppercase tracking-widest text-hyrox-yellow mb-1">
-                  Today&apos;s Workout
-                </p>
-                <p className="font-display text-base font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
-                  {data.todaysWorkout.workout_title || 'Workout'}
-                </p>
-                <div className="flex items-center gap-3 mt-1">
-                  {data.todaysWorkout.session_type && (
-                    <span className="font-display text-[10px] uppercase tracking-wider text-text-tertiary">
-                      {SESSION_LABELS[data.todaysWorkout.session_type] || data.todaysWorkout.session_type}
-                    </span>
-                  )}
-                  {data.todaysWorkout.estimated_duration_minutes && (
-                    <span className="font-mono text-xs text-text-tertiary">
-                      {data.todaysWorkout.estimated_duration_minutes} min
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-hyrox-yellow/10 flex items-center justify-center">
-                <Play className="h-5 w-5 text-hyrox-yellow" />
-              </div>
-            </div>
-          </Link>
-        )}
-
-        {/* Active Plan Progress */}
-        {data.activePlan && (
-          <Link
-            href="/calendar"
-            className="col-span-2 bg-surface-1 border border-border-default rounded-lg p-5 hover:border-hyrox-yellow/30 transition-colors group"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <p className="font-display text-[10px] uppercase tracking-widest text-text-tertiary">
-                  Training Plan
-                </p>
-                <p className="font-display text-sm font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
-                  {data.activePlan.plan_name}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xs text-text-tertiary">
-                  Week {data.activePlan.currentWeek}/{data.activePlan.totalWeeks}
-                </span>
-                <ChevronRight className="h-4 w-4 text-text-tertiary" />
-              </div>
-            </div>
-            <div className="h-1.5 bg-surface-3 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-hyrox-yellow rounded-full transition-all"
-                style={{ width: `${data.activePlan.progressPct}%` }}
-              />
-            </div>
-            <p className="font-mono text-[10px] text-text-tertiary mt-1">
-              {data.activePlan.progressPct}% complete
-            </p>
-          </Link>
-        )}
-
-        {/* Quick Actions — Coach K + Log Workout */}
-        <Link
-          href="/coach"
-          className="bg-hyrox-yellow/5 border border-hyrox-yellow/20 rounded-lg p-4 hover:bg-hyrox-yellow/10 transition-colors group"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-hyrox-yellow/10 flex items-center justify-center shrink-0">
-              <MessageSquare className="h-4 w-4 text-hyrox-yellow" />
-            </div>
-            <div className="min-w-0">
-              <p className="font-display text-xs font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
-                Ask Coach K
+              <h3 className="text-xl font-bold mb-1">
+                {profile.hyrox_division
+                  ? `Hyrox ${profile.hyrox_division}`
+                  : 'Hyrox Race Day'}
+              </h3>
+              <p className="text-white/40 text-xs mb-4">
+                Target: {formatGoalTime(profile.goal_time_minutes)}
               </p>
-              <p className="font-body text-[10px] text-text-tertiary truncate">
-                {data.lastConversation
-                  ? `Last: ${data.lastConversation.title || 'Untitled'}`
-                  : 'Start coaching'}
-              </p>
-            </div>
-          </div>
-        </Link>
-        <Link
-          href="/training/log"
-          className="bg-surface-1 border border-border-default rounded-lg p-4 hover:border-hyrox-yellow/30 transition-colors group"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-hyrox-yellow/10 flex items-center justify-center shrink-0">
-              <Plus className="h-4 w-4 text-hyrox-yellow" />
-            </div>
-            <div className="min-w-0">
-              <p className="font-display text-xs font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
-                Log Workout
-              </p>
-              <p className="font-body text-[10px] text-text-tertiary">
-                Quick manual log
-              </p>
-            </div>
-          </div>
-        </Link>
-        <Link
-          href="/training/simulation"
-          className="col-span-2 bg-surface-1 border border-border-default rounded-lg p-4 hover:border-hyrox-yellow/30 transition-colors group relative overflow-hidden"
-        >
-          <div className="caution-stripe absolute top-0 left-0 right-0" />
-          <div className="flex items-center gap-3 pt-1">
-            <div className="w-9 h-9 rounded-full bg-hyrox-yellow/10 flex items-center justify-center shrink-0">
-              <Flag className="h-4 w-4 text-hyrox-yellow" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-display text-xs font-bold uppercase tracking-wider text-text-primary group-hover:text-hyrox-yellow transition-colors">
-                Race Simulation
-              </p>
-              <p className="font-body text-[10px] text-text-tertiary">
-                Full Hyrox — 8 runs + 8 stations with split tracking
-              </p>
-            </div>
-            <ChevronRight className="h-4 w-4 text-text-tertiary group-hover:text-hyrox-yellow transition-colors" />
-          </div>
-        </Link>
 
-        {/* Recent PRs */}
-        {data.recentPRs.length > 0 && (
-          <div className="col-span-2 bg-surface-1 border border-border-default rounded-lg p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <Trophy className="h-4 w-4 text-hyrox-yellow" />
-              <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary">
-                Recent PRs
-              </span>
-            </div>
-            <div className="space-y-2">
-              {data.recentPRs.map((pr) => (
-                <div
-                  key={pr.id}
-                  className="flex items-center justify-between"
-                >
-                  <span className="font-body text-sm text-text-primary">
-                    {pr.exercise_name || pr.record_type}
-                  </span>
-                  <span className="font-mono text-sm text-hyrox-yellow">
-                    {pr.value} {pr.value_unit}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Active Goals */}
-        {data.goals.length > 0 && (
-          <div className="col-span-2 bg-surface-1 border border-border-default rounded-lg p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <Target className="h-4 w-4 text-hyrox-yellow" />
-              <span className="font-display text-[10px] uppercase tracking-widest text-text-tertiary">
-                Goals
-              </span>
-            </div>
-            <div className="space-y-3">
-              {data.goals.map((goal) => {
-                const progress =
-                  goal.target_value && goal.current_value
-                    ? Math.min(
-                        (goal.current_value / goal.target_value) * 100,
-                        100
-                      )
-                    : 0;
-                return (
-                  <div key={goal.id}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-body text-sm text-text-primary">
-                        {goal.title}
-                      </span>
-                      <span className="font-mono text-xs text-text-tertiary">
-                        {Math.round(progress)}%
-                      </span>
+              {race !== null ? (
+                <div className="flex items-center gap-6">
+                  <div className="flex gap-4">
+                    <div>
+                      <p className="text-3xl font-black italic text-[#39FF14] leading-none">
+                        {race.weeks}
+                      </p>
+                      <p className="text-[9px] text-white/40 uppercase tracking-widest mt-0.5">
+                        Weeks
+                      </p>
                     </div>
-                    <div className="h-1.5 bg-surface-3 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-hyrox-yellow rounded-full transition-all"
-                        style={{ width: `${progress}%` }}
-                      />
+                    <div className="w-px bg-white/10" />
+                    <div>
+                      <p className="text-3xl font-black italic text-white leading-none">
+                        {race.days}
+                      </p>
+                      <p className="text-[9px] text-white/40 uppercase tracking-widest mt-0.5">
+                        Days
+                      </p>
                     </div>
                   </div>
-                );
-              })}
+                  <div className="flex-1">
+                    {data.activePlan && (
+                      <>
+                        <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                          <motion.div
+                            className="h-full bg-[#39FF14] rounded-full"
+                            initial={{ width: 0 }}
+                            animate={{
+                              width: `${data.activePlan.progressPct}%`,
+                            }}
+                            transition={{
+                              duration: 1.2,
+                              ease: 'easeOut',
+                              delay: 0.3,
+                            }}
+                          />
+                        </div>
+                        <p className="text-[10px] text-white/40 mt-1 uppercase">
+                          Training Block: {data.activePlan.progressPct}% Complete
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  <a
+                    href="/coach"
+                    className="bg-white text-black text-xs font-bold px-4 py-2 rounded-full flex items-center gap-2 active:scale-95 transition-transform flex-shrink-0"
+                  >
+                    PLAN <ChevronRight size={14} />
+                  </a>
+                </div>
+              ) : (
+                <p className="text-white/30 text-sm">
+                  No race date set. Visit your profile to add one.
+                </p>
+              )}
             </div>
-          </div>
-        )}
-      </div>
+          </motion.div>
 
-      {/* Activity Heatmap & Race Readiness */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <StreakHeatmap />
-        <RaceReadiness />
-      </div>
+          {/* ── Biomarker Chart Card ── */}
+          <motion.div
+            variants={fadeUp}
+            className="bg-bg-card rounded-3xl p-5 border border-white/5 flex flex-col"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <TrendingUp className="text-[#00F0FF] w-5 h-5" />
+              <span className="text-[10px] text-white/40 font-bold uppercase">
+                HRV / RHR
+              </span>
+            </div>
 
-      {/* Setup checklist for new/incomplete users */}
-      <SetupChecklist
-        hasProfile={!!data.profile.display_name}
-        hasRaceDate={!!data.profile.race_date}
-        hasPlan={!!data.activePlan}
-        hasWorkout={data.weeklyStats.workouts > 0 || data.recentPRs.length > 0}
-        hasGoal={data.goals.length > 0}
-      />
+            {biomarkerData.length > 0 ? (
+              <>
+                <div className="h-20 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={biomarkerData}>
+                      <Tooltip
+                        content={
+                          <ChartTooltip unitMap={{ hrv: 'ms', rhr: 'bpm' }} />
+                        }
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="hrv"
+                        stroke="#39FF14"
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="rhr"
+                        stroke="#00F0FF"
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-2 flex justify-between">
+                  <div>
+                    <p className="text-[8px] text-white/40 uppercase">
+                      Current HRV
+                    </p>
+                    <p className="text-lg font-bold">
+                      {biomarkerData[biomarkerData.length - 1]?.hrv ?? '--'}ms
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[8px] text-white/40 uppercase">
+                      Resting HR
+                    </p>
+                    <p className="text-lg font-bold text-[#00F0FF]">
+                      {biomarkerData[biomarkerData.length - 1]?.rhr ?? '--'} bpm
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center min-h-[100px]">
+                <p className="text-white/20 text-xs text-center uppercase tracking-wider">
+                  No biomarker data
+                </p>
+              </div>
+            )}
+          </motion.div>
+
+          {/* ── Station Profile Radar Card ── */}
+          <motion.div
+            variants={fadeUp}
+            className="bg-bg-card rounded-3xl p-5 border border-white/5 flex flex-col"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <Target className="text-[#39FF14] w-5 h-5" />
+              <span className="text-[10px] text-white/40 font-bold uppercase">
+                Station Profile
+              </span>
+            </div>
+
+            {stationData.length > 0 ? (
+              <>
+                <div className="flex-1 flex items-center justify-center">
+                  <StationRadar
+                    data={stationData}
+                    height={100}
+                    outerRadius="55%"
+                    showDots={false}
+                    fillOpacity={0.12}
+                  />
+                </div>
+                <div className="flex justify-between mt-1">
+                  <div>
+                    <p className="text-[8px] text-white/40 uppercase">
+                      Strongest
+                    </p>
+                    <p className="text-xs font-bold text-[#39FF14]">
+                      {stationData.reduce((best, s) =>
+                        s.score > best.score ? s : best
+                      ).station}{' '}
+                      {stationData.reduce((best, s) =>
+                        s.score > best.score ? s : best
+                      ).score}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[8px] text-white/40 uppercase">Focus</p>
+                    <p className="text-xs font-bold text-white/60">
+                      {stationData.reduce((worst, s) =>
+                        s.score < worst.score ? s : worst
+                      ).station}{' '}
+                      {stationData.reduce((worst, s) =>
+                        s.score < worst.score ? s : worst
+                      ).score}
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center min-h-[100px]">
+                <p className="text-white/20 text-xs text-center uppercase tracking-wider">
+                  No station data
+                </p>
+              </div>
+            )}
+          </motion.div>
+
+          {/* ── Weekly Training Load Card ── */}
+          <motion.div
+            variants={fadeUp}
+            className="col-span-2 bg-gradient-to-br from-[#1a1a1a] to-[#222] rounded-3xl p-6 border border-white/5"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold">Weekly Training Load</h3>
+              <div className="flex items-center gap-3">
+                {[
+                  { label: 'Run', color: '#00F0FF' },
+                  { label: 'HIIT', color: '#FF6B00' },
+                  { label: 'Strength', color: '#39FF14' },
+                ].map((m) => (
+                  <div key={m.label} className="flex items-center gap-1">
+                    <div
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ backgroundColor: m.color }}
+                    />
+                    <span className="text-[8px] text-white/40 uppercase">
+                      {m.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {weeklyBars.length > 0 ? (
+              <>
+                <div className="flex gap-1.5 items-end">
+                  {weeklyBars.map(({ day, pct, type }, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 flex flex-col items-center gap-1"
+                    >
+                      <div className="w-full h-14 bg-white/5 rounded-full overflow-hidden flex items-end">
+                        <motion.div
+                          initial={{ height: 0 }}
+                          animate={{ height: `${pct}%` }}
+                          transition={{
+                            duration: 0.8,
+                            delay: i * 0.1,
+                            ease: 'easeOut',
+                          }}
+                          className="w-full rounded-full"
+                          style={{
+                            backgroundColor:
+                              MODALITY_COLORS[type] ?? 'rgba(255,255,255,0.1)',
+                          }}
+                        />
+                      </div>
+                      <span className="text-[8px] text-white/40">{day}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between items-end mt-4">
+                  <div>
+                    <p className="text-[10px] text-white/40 uppercase tracking-widest">
+                      This Week
+                    </p>
+                    <div className="flex gap-4 mt-1">
+                      <div>
+                        <p className="text-[9px] text-white/30 uppercase">
+                          Sessions
+                        </p>
+                        <p className="text-lg font-black italic">
+                          {weeklyStats.workouts}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[9px] text-white/30 uppercase">
+                          Minutes
+                        </p>
+                        <p className="text-lg font-black italic text-[#00F0FF]">
+                          {weeklyStats.totalMinutes}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  {weeklyStats.avgRpe !== null && (
+                    <div className="text-right">
+                      <p className="text-[9px] text-white/30 uppercase">
+                        Avg RPE
+                      </p>
+                      <p className="text-3xl font-black italic text-white leading-none">
+                        {weeklyStats.avgRpe.toFixed(1)}
+                      </p>
+                      <p className="text-[10px] text-white/40 uppercase tracking-widest mt-0.5">
+                        Intensity
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center min-h-[120px] gap-2">
+                <p className="text-white/20 text-xs text-center uppercase tracking-wider">
+                  No training data this week
+                </p>
+                <div className="flex gap-4 mt-2">
+                  <div>
+                    <p className="text-[9px] text-white/30 uppercase">
+                      Sessions
+                    </p>
+                    <p className="text-lg font-black italic">
+                      {weeklyStats.workouts}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[9px] text-white/30 uppercase">
+                      Minutes
+                    </p>
+                    <p className="text-lg font-black italic text-[#00F0FF]">
+                      {weeklyStats.totalMinutes}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      </motion.div>
     </div>
   );
 }

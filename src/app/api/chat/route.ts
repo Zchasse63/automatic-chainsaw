@@ -102,7 +102,7 @@ export async function POST(request: Request) {
         profile as unknown as Parameters<typeof buildAthleteProfileMessage>[0]
       )
     ),
-    buildAthleteStatsMessage(profile.id, supabase),
+    buildAthleteStatsMessage(profile.id, user.id, supabase),
     lastUserText
       ? retrieveKnowledge(lastUserText, supabase)
       : Promise.resolve(null),
@@ -140,7 +140,7 @@ export async function POST(request: Request) {
       model: COACH_K_MODEL,
       system,
       messages: await convertToModelMessages(recentMessages),
-      tools: createCoachingTools(profile.id, supabase),
+      tools: createCoachingTools(profile.id, user.id, supabase),
       temperature: 0.7,
       maxOutputTokens: 16384,
       stopWhen: stepCountIs(10),

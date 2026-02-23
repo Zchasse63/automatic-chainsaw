@@ -897,6 +897,113 @@ export type Database = {
           },
         ]
       }
+      daily_metrics: {
+        Row: {
+          id: string
+          user_id: string
+          date: string
+          hrv_ms: number | null
+          rhr_bpm: number | null
+          sleep_hours: number | null
+          stress_score: number | null
+          recovery_score: number | null
+          readiness_score: number | null
+          notes: string | null
+          source: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          date: string
+          hrv_ms?: number | null
+          rhr_bpm?: number | null
+          sleep_hours?: number | null
+          stress_score?: number | null
+          recovery_score?: number | null
+          readiness_score?: number | null
+          notes?: string | null
+          source?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          date?: string
+          hrv_ms?: number | null
+          rhr_bpm?: number | null
+          sleep_hours?: number | null
+          stress_score?: number | null
+          recovery_score?: number | null
+          readiness_score?: number | null
+          notes?: string | null
+          source?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      workout_sets: {
+        Row: {
+          id: string
+          workout_log_id: string
+          exercise_name: string
+          exercise_category: string | null
+          set_number: number
+          reps: number | null
+          weight_kg: number | null
+          distance_meters: number | null
+          duration_seconds: number | null
+          pace: string | null
+          status: string | null
+          rpe: number | null
+          notes: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          workout_log_id: string
+          exercise_name: string
+          exercise_category?: string | null
+          set_number: number
+          reps?: number | null
+          weight_kg?: number | null
+          distance_meters?: number | null
+          duration_seconds?: number | null
+          pace?: string | null
+          status?: string | null
+          rpe?: number | null
+          notes?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          workout_log_id?: string
+          exercise_name?: string
+          exercise_category?: string | null
+          set_number?: number
+          reps?: number | null
+          weight_kg?: number | null
+          distance_meters?: number | null
+          duration_seconds?: number | null
+          pace?: string | null
+          status?: string | null
+          rpe?: number | null
+          notes?: string | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_sets_workout_log_id_fkey"
+            columns: ["workout_log_id"]
+            isOneToOne: false
+            referencedRelation: "workout_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workout_logs: {
         Row: {
           athlete_id: string
@@ -915,6 +1022,9 @@ export type Database = {
           rpe_post: number | null
           rpe_pre: number | null
           session_type: string | null
+          total_distance_km: number | null
+          total_volume_kg: number | null
+          training_load: number | null
           training_plan_day_id: string | null
           updated_at: string | null
         }
@@ -935,6 +1045,9 @@ export type Database = {
           rpe_post?: number | null
           rpe_pre?: number | null
           session_type?: string | null
+          total_distance_km?: number | null
+          total_volume_kg?: number | null
+          training_load?: number | null
           training_plan_day_id?: string | null
           updated_at?: string | null
         }
@@ -955,6 +1068,9 @@ export type Database = {
           rpe_post?: number | null
           rpe_pre?: number | null
           session_type?: string | null
+          total_distance_km?: number | null
+          total_volume_kg?: number | null
+          training_load?: number | null
           training_plan_day_id?: string | null
           updated_at?: string | null
         }
