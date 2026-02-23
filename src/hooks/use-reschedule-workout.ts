@@ -7,7 +7,8 @@ interface RescheduleInput {
 
 /**
  * Mutation to reschedule a workout by updating its date.
- * Uses optimistic update for instant visual feedback during drag-drop.
+ * Uses optimistic update for instant visual feedback during drag-drop,
+ * with rollback on error.
  */
 export function useRescheduleWorkout() {
   const queryClient = useQueryClient();
@@ -25,8 +26,37 @@ export function useRescheduleWorkout() {
       }
       return res.json();
     },
-    onSuccess: () => {
-      // Invalidate all workout queries so calendar and log refresh
+    onMutate: async ({ workoutId, newDate }) => {
+      // Cancel in-flight fetches so they don't overwrite optimistic update
+      await queryClient.cancelQueries({ queryKey: ['workouts'] });
+
+      // Snapshot all workout queries for rollback
+      const snapshot = queryClient.getQueriesData<unknown[]>({ queryKey: ['workouts'] });
+
+      // Optimistically update every cached workout list
+      queryClient.setQueriesData<unknown[]>(
+        { queryKey: ['workouts'] },
+        (old) => {
+          if (!Array.isArray(old)) return old;
+          return old.map((w) => {
+            const workout = w as Record<string, unknown>;
+            return workout.id === workoutId ? { ...workout, date: newDate } : w;
+          });
+        }
+      );
+
+      return { snapshot };
+    },
+    onError: (_err, _vars, context) => {
+      // Rollback to snapshot on failure
+      if (context?.snapshot) {
+        for (const [key, value] of context.snapshot) {
+          queryClient.setQueryData(key, value);
+        }
+      }
+    },
+    onSettled: () => {
+      // Always refetch to ensure server state is authoritative
       queryClient.invalidateQueries({ queryKey: ['workouts'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
