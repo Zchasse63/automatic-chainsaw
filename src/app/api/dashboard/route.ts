@@ -196,6 +196,7 @@ export async function GET() {
 
     return NextResponse.json(
       {
+        email: user.email ?? null,
         profile: {
           display_name: profile.display_name,
           race_date: profile.race_date,

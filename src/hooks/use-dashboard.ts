@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 interface DashboardData {
+  email: string | null;
   profile: {
     display_name: string | null;
     race_date: string | null;

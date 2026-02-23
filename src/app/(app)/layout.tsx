@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { BottomNav } from '@/components/layout/bottom-nav';
+import { AppHeader } from '@/components/layout/app-header';
 import { SwipeContainer } from '@/components/layout/swipe-container';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -22,6 +23,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           className="fixed bottom-0 left-0 w-80 h-80 glow-cyan opacity-[0.08] pointer-events-none z-0"
           aria-hidden="true"
         />
+
+        {/* Profile avatar header */}
+        <AppHeader />
 
         {/* Page content with swipe navigation */}
         <SwipeContainer>

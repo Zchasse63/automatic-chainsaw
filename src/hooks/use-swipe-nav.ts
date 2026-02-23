@@ -12,7 +12,7 @@ import { useRouter, usePathname } from 'next/navigation';
  * swipes (|dy| > |dx|) are ignored to avoid conflicting with scrolling.
  */
 
-const ROUTES = ['/dashboard', '/coach', '/log'] as const;
+const ROUTES = ['/dashboard', '/calendar', '/coach', '/workout/today', '/log'] as const;
 const SWIPE_THRESHOLD = 50; // px
 
 export function useSwipeNav() {

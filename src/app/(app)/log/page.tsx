@@ -12,9 +12,7 @@ import {
   Flame,
   Award,
   ChevronDown,
-  Plus,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useWorkouts } from '@/hooks/use-workouts';
 import { WorkoutBadge } from '@/components/shared';
 
@@ -222,22 +220,11 @@ export default function WorkoutLogPage() {
       className="flex-1 overflow-y-auto px-6 pt-14 pb-32 bg-bg-deep min-h-screen"
     >
       {/* Header */}
-      <header className="mb-6 flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-black italic tracking-tighter uppercase text-white leading-none">
-            Workout <span className="text-[#39FF14]">Log</span>
-          </h2>
-          <p className="text-white/40 text-sm mt-1">Training history &middot; Hyrox prep block</p>
-        </div>
-        <Link href="/workout/new">
-          <motion.div
-            whileTap={{ scale: 0.9 }}
-            className="w-10 h-10 rounded-full bg-[#39FF14] flex items-center justify-center shadow-[0_0_20px_rgba(57,255,20,0.3)]"
-            aria-label="Start new session"
-          >
-            <Plus size={20} className="text-black" />
-          </motion.div>
-        </Link>
+      <header className="mb-6">
+        <h2 className="text-3xl font-black italic tracking-tighter uppercase text-white leading-none">
+          Workout <span className="text-[#39FF14]">Log</span>
+        </h2>
+        <p className="text-white/40 text-sm mt-1">Training history &middot; Hyrox prep block</p>
       </header>
 
       {/* Summary Stats */}
