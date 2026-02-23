@@ -36,7 +36,9 @@ export function planDayToDate(
   weekNumber: number,
   dayOfWeek: number
 ): Date {
-  const start = new Date(startDate);
+  // Append T00:00 to force local-time parsing — "YYYY-MM-DD" alone
+  // is parsed as UTC midnight, which shifts the date in US timezones.
+  const start = new Date(startDate + 'T00:00');
   const dayOffset = (weekNumber - 1) * 7 + dayOfWeek;
   const date = new Date(start);
   date.setDate(start.getDate() + dayOffset);

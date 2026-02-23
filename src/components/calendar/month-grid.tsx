@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DayCell } from './day-cell';
-import type { CalendarWorkout } from '@/hooks/use-calendar-workouts';
+import type { CalendarItem } from '@/hooks/use-calendar-data';
 
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -16,7 +16,7 @@ const MONTH_NAMES = [
 interface MonthGridProps {
   year: number;
   month: number; // 0-indexed
-  grouped: Record<string, CalendarWorkout[]>;
+  grouped: Record<string, CalendarItem[]>;
   selectedDate: Date | null;
   onSelectDate: (date: Date) => void;
   onPrevMonth: () => void;

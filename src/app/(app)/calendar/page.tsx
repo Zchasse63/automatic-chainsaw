@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { DndContext, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors, closestCenter } from '@dnd-kit/core';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { Calendar } from 'lucide-react';
 import { MonthGrid } from '@/components/calendar/month-grid';
@@ -11,11 +11,11 @@ import { DayDetail } from '@/components/calendar/day-detail';
 import { CalendarLegend } from '@/components/calendar/calendar-legend';
 import { ViewToggle, type CalendarView } from '@/components/calendar/view-toggle';
 import { DraggableWorkout } from '@/components/calendar/draggable-workout';
-import { useCalendarWorkouts } from '@/hooks/use-calendar-workouts';
-import { useWeekWorkouts } from '@/hooks/use-week-workouts';
+import { useCalendarData, useWeekCalendarData } from '@/hooks/use-calendar-data';
+import type { CalendarItem } from '@/hooks/use-calendar-data';
 import { useRescheduleWorkout } from '@/hooks/use-reschedule-workout';
-import { getCurrentWeekStart } from '@/lib/calendar-utils';
-import type { CalendarWorkout } from '@/hooks/use-calendar-workouts';
+import { getCurrentWeekStart, toISODateString } from '@/lib/calendar-utils';
+import { QuickAddModal } from '@/components/calendar/quick-add-modal';
 
 function getInitialView(): CalendarView {
   if (typeof window === 'undefined') return 'week';
@@ -29,7 +29,10 @@ export default function CalendarPage() {
   const [month, setMonth] = useState(now.getMonth());
   const [weekStart, setWeekStart] = useState<Date>(getCurrentWeekStart);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [activeWorkout, setActiveWorkout] = useState<CalendarWorkout | null>(null);
+  const [activeWorkout, setActiveWorkout] = useState<CalendarItem | null>(null);
+
+  // Quick-add modal state
+  const [quickAddDate, setQuickAddDate] = useState<string | null>(null);
 
   const handleViewChange = useCallback((view: CalendarView) => {
     setCalendarView(view);
@@ -38,8 +41,8 @@ export default function CalendarPage() {
   }, []);
 
   // Data hooks — both run so cache is warm when toggling
-  const { grouped: monthGrouped, isLoading: monthLoading } = useCalendarWorkouts(year, month);
-  const { grouped: weekGrouped, isLoading: weekLoading } = useWeekWorkouts(weekStart);
+  const { grouped: monthGrouped, isLoading: monthLoading } = useCalendarData(year, month);
+  const { grouped: weekGrouped, isLoading: weekLoading } = useWeekCalendarData(weekStart);
 
   const reschedule = useRescheduleWorkout();
 
@@ -107,7 +110,7 @@ export default function CalendarPage() {
   const handleDragStart = useCallback((event: DragStartEvent) => {
     const data = event.active.data.current;
     if (data?.workout) {
-      setActiveWorkout(data.workout as CalendarWorkout);
+      setActiveWorkout(data.workout as CalendarItem);
     }
   }, []);
 
@@ -117,10 +120,13 @@ export default function CalendarPage() {
       const { active, over } = event;
       if (!over || !active) return;
 
-      const workoutData = active.data.current?.workout as CalendarWorkout | undefined;
+      const workoutData = active.data.current?.workout as CalendarItem | undefined;
       const targetDate = over.data.current?.date as string | undefined;
 
       if (!workoutData || !targetDate) return;
+
+      // Only allow rescheduling logged workouts (not planned-only items)
+      if (workoutData.source === 'planned') return;
 
       const currentDate = workoutData.date.split('T')[0];
       if (currentDate === targetDate) return;
@@ -133,10 +139,13 @@ export default function CalendarPage() {
     [reschedule]
   );
 
+  // Handle quick-add from "+" buttons
+  const handleAddWorkout = useCallback((dateKey: string) => {
+    setQuickAddDate(dateKey);
+  }, []);
+
   // Get workouts for selected date (month view)
-  const selectedDateKey = selectedDate
-    ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`
-    : null;
+  const selectedDateKey = selectedDate ? toISODateString(selectedDate) : null;
   const selectedWorkouts = selectedDateKey ? monthGrouped[selectedDateKey] ?? [] : [];
 
   const isLoading = calendarView === 'week' ? weekLoading : monthLoading;
@@ -170,6 +179,7 @@ export default function CalendarPage() {
       {/* Calendar content */}
       <DndContext
         sensors={sensors}
+        collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
@@ -197,6 +207,7 @@ export default function CalendarPage() {
                   grouped={weekGrouped}
                   onPrevWeek={handlePrevWeek}
                   onNextWeek={handleNextWeek}
+                  onAddWorkout={handleAddWorkout}
                 />
               )}
             </motion.div>
@@ -241,6 +252,7 @@ export default function CalendarPage() {
               date={selectedDate}
               workouts={selectedWorkouts}
               onClose={() => setSelectedDate(null)}
+              onAddWorkout={handleAddWorkout}
             />
           )}
         </AnimatePresence>
@@ -273,9 +285,15 @@ export default function CalendarPage() {
           <p className="text-sm text-white/40 font-bold">
             No workouts this {calendarView === 'week' ? 'week' : 'month'}
           </p>
-          <p className="text-xs text-white/20 mt-1">Logged workouts will appear here</p>
+          <p className="text-xs text-white/20 mt-1">Logged and planned workouts will appear here</p>
         </motion.div>
       )}
+
+      {/* Quick-add workout modal */}
+      <QuickAddModal
+        dateKey={quickAddDate}
+        onClose={() => setQuickAddDate(null)}
+      />
     </motion.div>
   );
 }

@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, type Variants } from 'motion/react';
-import { Flag, TrendingUp, Target, ChevronRight, Settings } from 'lucide-react';
-import Link from 'next/link';
+import { Flag, TrendingUp, Target, ChevronRight } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, Tooltip } from 'recharts';
 import { useDashboard } from '@/hooks/use-dashboard';
 import { useReadiness } from '@/hooks/use-readiness';
@@ -25,13 +24,16 @@ const ELITE_TARGETS: Record<string, number> = {
   'Wall Balls': 150,
 };
 
-// ── Modality color map (matches export exactly) ──
+// ── Modality color map ──
 const MODALITY_COLORS: Record<string, string> = {
   run: '#00F0FF',
   running: '#00F0FF',
   strength: '#39FF14',
   hiit: '#FF6B00',
   hyrox: '#39FF14',
+  simulation: '#39FF14',
+  station_practice: '#FF8C42',
+  recovery: '#00F0FF',
   rest: 'rgba(255,255,255,0.1)',
 };
 
@@ -182,27 +184,14 @@ export default function DashboardPage() {
         animate="show"
       >
         {/* ── Header / Greeting ── */}
-        <motion.header variants={fadeUp} className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-black italic tracking-tighter uppercase text-white leading-none">
-              {clientDate ? getGreeting(clientDate.getHours()) : ''},{' '}
-              <span className="text-[#39FF14]">{firstName}</span>
-            </h1>
-            <p className="text-white/40 text-sm mt-1">
-              {clientDate ? formatDate(clientDate) : '\u00A0'} {profile.current_phase ? `\u00B7 ${profile.current_phase}` : ''}
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <ReadinessScore score={readiness?.score ?? 0} />
-            <Link href="/settings">
-              <motion.div
-                whileTap={{ scale: 0.9 }}
-                className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white/50 hover:text-white transition-colors"
-              >
-                <Settings size={16} />
-              </motion.div>
-            </Link>
-          </div>
+        <motion.header variants={fadeUp} className="mb-8">
+          <h1 className="text-3xl font-black italic tracking-tighter uppercase text-white leading-none">
+            {clientDate ? getGreeting(clientDate.getHours()) : ''},{' '}
+            <span className="text-[#39FF14]">{firstName}</span>
+          </h1>
+          <p className="text-white/40 text-sm mt-1">
+            {clientDate ? formatDate(clientDate) : '\u00A0'} {profile.current_phase ? `\u00B7 ${profile.current_phase}` : ''}
+          </p>
         </motion.header>
 
         <div className="grid grid-cols-2 gap-4">
@@ -211,11 +200,13 @@ export default function DashboardPage() {
             variants={fadeUp}
             className="col-span-2 bg-bg-card rounded-3xl p-6 border border-white/5 relative overflow-hidden"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#39FF14]/10 rounded-bl-full flex items-center justify-center">
-              <Flag className="text-[#39FF14] w-12 h-12" />
+            {/* Readiness ring positioned in top-right corner */}
+            <div className="absolute top-4 right-4 z-20">
+              <ReadinessScore score={readiness?.score ?? 0} />
             </div>
-            <div className="relative z-10">
+            <div className="relative z-10 pr-20">
               <div className="flex items-center gap-2 mb-2">
+                <Flag className="text-[#39FF14] w-4 h-4" />
                 <span className="px-2 py-1 bg-[#39FF14]/20 text-[#39FF14] text-[10px] font-bold rounded uppercase tracking-tighter">
                   Race Countdown
                 </span>
@@ -235,7 +226,7 @@ export default function DashboardPage() {
               </p>
 
               {race !== null ? (
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4">
                   <div className="flex gap-4">
                     <div>
                       <p className="text-3xl font-black italic text-[#39FF14] leading-none">
@@ -255,7 +246,7 @@ export default function DashboardPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     {data.activePlan && (
                       <>
                         <div className="h-1 bg-white/10 rounded-full overflow-hidden">
@@ -374,10 +365,10 @@ export default function DashboardPage() {
 
             {stationData.length > 0 ? (
               <>
-                <div className="flex-1 flex items-center justify-center">
+                <div className="w-full min-h-[110px]">
                   <StationRadar
                     data={stationData}
-                    height={100}
+                    height={110}
                     outerRadius="55%"
                     showDots={false}
                     fillOpacity={0.12}
@@ -420,11 +411,13 @@ export default function DashboardPage() {
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold">Weekly Training Load</h3>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 {[
                   { label: 'Run', color: '#00F0FF' },
                   { label: 'HIIT', color: '#FF6B00' },
                   { label: 'Strength', color: '#39FF14' },
+                  { label: 'Sim', color: '#39FF14' },
+                  { label: 'Station', color: '#FF8C42' },
                 ].map((m) => (
                   <div key={m.label} className="flex items-center gap-1">
                     <div

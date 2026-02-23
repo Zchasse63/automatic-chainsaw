@@ -495,14 +495,17 @@ async function main() {
     }
 
     // Determine which days should be marked as completed (past non-rest days)
+    // Use start-of-today to avoid marking today's workout as completed
     const weekStartDate = new Date(planStartMonday);
     weekStartDate.setDate(planStartMonday.getDate() + w * 7);
-    const now = new Date();
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
 
     const days = template.days.map((day) => {
       const dayDate = new Date(weekStartDate);
       dayDate.setDate(weekStartDate.getDate() + day.day_of_week);
-      const isInPast = dayDate < now;
+      dayDate.setHours(0, 0, 0, 0);
+      const isInPast = dayDate < todayStart; // strictly before today, not today itself
       const isCompleted = isInPast && !day.is_rest_day;
       if (isCompleted) completedDays++;
 

@@ -5,7 +5,7 @@ import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { WeekDayRow } from './week-day-row';
 import { getWeekDays, toISODateString } from '@/lib/calendar-utils';
-import type { CalendarWorkout } from '@/hooks/use-calendar-workouts';
+import type { CalendarItem } from '@/hooks/use-calendar-data';
 
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -14,9 +14,10 @@ const MONTH_NAMES = [
 
 interface WeekGridProps {
   weekStart: Date;
-  grouped: Record<string, CalendarWorkout[]>;
+  grouped: Record<string, CalendarItem[]>;
   onPrevWeek: () => void;
   onNextWeek: () => void;
+  onAddWorkout?: (dateKey: string) => void;
 }
 
 export function WeekGrid({
@@ -24,6 +25,7 @@ export function WeekGrid({
   grouped,
   onPrevWeek,
   onNextWeek,
+  onAddWorkout,
 }: WeekGridProps) {
   const today = useMemo(() => {
     const d = new Date();
@@ -85,6 +87,7 @@ export function WeekGrid({
               workouts={workouts}
               isToday={isToday}
               index={i}
+              onAddWorkout={onAddWorkout}
             />
           );
         })}

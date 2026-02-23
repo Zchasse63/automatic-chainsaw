@@ -1,15 +1,16 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { X, Moon, MessageCircle } from 'lucide-react';
-import Link from 'next/link';
+import { X, Moon, Plus } from 'lucide-react';
+import { toISODateString } from '@/lib/calendar-utils';
 import { DraggableWorkout } from './draggable-workout';
-import type { CalendarWorkout } from '@/hooks/use-calendar-workouts';
+import type { CalendarItem } from '@/hooks/use-calendar-data';
 
 interface DayDetailProps {
   date: Date;
-  workouts: CalendarWorkout[];
+  workouts: CalendarItem[];
   onClose: () => void;
+  onAddWorkout?: (dateKey: string) => void;
 }
 
 function formatDateLabel(date: Date): string {
@@ -29,7 +30,7 @@ function isToday(date: Date): boolean {
   );
 }
 
-export function DayDetail({ date, workouts, onClose }: DayDetailProps) {
+export function DayDetail({ date, workouts, onClose, onAddWorkout }: DayDetailProps) {
   const today = isToday(date);
 
   return (
@@ -76,14 +77,13 @@ export function DayDetail({ date, workouts, onClose }: DayDetailProps) {
           </div>
           <p className="text-sm font-bold text-white/50">Rest Day</p>
           <p className="text-xs text-white/25 mt-1">No workouts scheduled</p>
-          <Link href="/coach">
-            <motion.button
-              whileTap={{ scale: 0.96 }}
-              className="mt-4 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-bold text-white/50 hover:text-white transition-colors flex items-center gap-1.5 mx-auto"
-            >
-              <MessageCircle size={12} /> Plan a workout
-            </motion.button>
-          </Link>
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            onClick={() => onAddWorkout?.(toISODateString(date))}
+            className="mt-4 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-bold text-white/50 hover:text-white transition-colors flex items-center gap-1.5 mx-auto"
+          >
+            <Plus size={12} /> Add workout
+          </motion.button>
         </div>
       )}
     </motion.div>

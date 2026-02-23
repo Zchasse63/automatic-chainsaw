@@ -29,9 +29,11 @@ export function useRescheduleWorkout() {
     onMutate: async ({ workoutId, newDate }) => {
       // Cancel in-flight fetches so they don't overwrite optimistic update
       await queryClient.cancelQueries({ queryKey: ['workouts'] });
+      await queryClient.cancelQueries({ queryKey: ['calendar-data'] });
 
-      // Snapshot all workout queries for rollback
-      const snapshot = queryClient.getQueriesData<unknown[]>({ queryKey: ['workouts'] });
+      // Snapshot all workout + calendar queries for rollback
+      const workoutSnapshot = queryClient.getQueriesData<unknown[]>({ queryKey: ['workouts'] });
+      const calendarSnapshot = queryClient.getQueriesData<unknown[]>({ queryKey: ['calendar-data'] });
 
       // Optimistically update every cached workout list
       queryClient.setQueriesData<unknown[]>(
@@ -45,12 +47,29 @@ export function useRescheduleWorkout() {
         }
       );
 
-      return { snapshot };
+      // Optimistically update calendar-data caches
+      queryClient.setQueriesData<unknown[]>(
+        { queryKey: ['calendar-data'] },
+        (old) => {
+          if (!Array.isArray(old)) return old;
+          return old.map((w) => {
+            const item = w as Record<string, unknown>;
+            return item.id === workoutId ? { ...item, date: newDate } : w;
+          });
+        }
+      );
+
+      return { workoutSnapshot, calendarSnapshot };
     },
     onError: (_err, _vars, context) => {
-      // Rollback to snapshot on failure
-      if (context?.snapshot) {
-        for (const [key, value] of context.snapshot) {
+      // Rollback to snapshots on failure
+      if (context?.workoutSnapshot) {
+        for (const [key, value] of context.workoutSnapshot) {
+          queryClient.setQueryData(key, value);
+        }
+      }
+      if (context?.calendarSnapshot) {
+        for (const [key, value] of context.calendarSnapshot) {
           queryClient.setQueryData(key, value);
         }
       }
@@ -58,6 +77,7 @@ export function useRescheduleWorkout() {
     onSettled: () => {
       // Always refetch to ensure server state is authoritative
       queryClient.invalidateQueries({ queryKey: ['workouts'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar-data'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });

@@ -2,7 +2,7 @@
 
 import { useDroppable } from '@dnd-kit/core';
 import { workoutColors } from '@/components/shared/workout-badge';
-import type { CalendarWorkout } from '@/hooks/use-calendar-workouts';
+import type { CalendarItem } from '@/hooks/use-calendar-data';
 
 // Map session_type to workout color keys
 const SESSION_COLOR_MAP: Record<string, string> = {
@@ -22,7 +22,7 @@ function getWorkoutColor(sessionType: string): string {
 
 interface DayCellProps {
   date: Date;
-  workouts: CalendarWorkout[];
+  workouts: CalendarItem[];
   isCurrentMonth: boolean;
   isToday: boolean;
   isSelected: boolean;
