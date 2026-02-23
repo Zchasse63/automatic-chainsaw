@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import { createLogger } from '@/lib/logger';
+import { createGoalSchema } from '@/lib/validations/goals';
+import { apiLimiter } from '@/lib/rate-limit';
 
 export async function GET() {
   try {
@@ -51,6 +53,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { allowed } = apiLimiter.check(user.id);
+    if (!allowed) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
+
     const { data: profile } = await supabase
       .from('athlete_profiles')
       .select('id')
@@ -64,23 +71,32 @@ export async function POST(request: Request) {
       );
     }
 
-    let body;
+    let rawBody;
     try {
-      body = await request.json();
+      rawBody = await request.json();
     } catch {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
+
+    const parsed = createGoalSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+    const body = parsed.data;
 
     const { data: goal, error } = await supabase
       .from('goals')
       .insert({
         athlete_id: profile.id,
         title: body.title,
-        description: body.description || null,
-        goal_type: body.goal_type || 'custom',
-        target_value: body.target_value || null,
-        current_value: body.current_value || 0,
-        target_date: body.target_date || null,
+        description: body.description ?? null,
+        goal_type: body.goal_type,
+        target_value: body.target_value ?? null,
+        current_value: body.current_value,
+        target_date: body.target_date ?? null,
         status: 'active',
       })
       .select()

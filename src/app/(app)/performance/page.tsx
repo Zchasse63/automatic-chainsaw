@@ -20,17 +20,7 @@ import { InsightBlock } from '@/components/shared/insight-block';
 import { EmptyState } from '@/components/shared/empty-state';
 import { formatSessionType } from '@/lib/session-utils';
 
-// ── Elite station targets (seconds) ──
-const ELITE_TARGETS: Record<string, number> = {
-  'Ski Erg': 210, 'Sled Push': 70, 'Sled Pull': 80,
-  'Burpee Broad Jump': 150, 'Row Erg': 200,
-  'Farmers Carry': 55, 'Sandbag Lunges': 110, 'Wall Balls': 150,
-};
-
-const MODALITY_COLORS: Record<string, string> = {
-  running: '#00F0FF', hiit: '#FF6B00', strength: '#B45FFF',
-  hyrox_sim: '#39FF14', crossfit: '#FF8C42',
-};
+import { ELITE_TARGETS, MODALITY_COLORS } from '@/lib/constants/hyrox';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -76,7 +66,7 @@ const heatmapDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 function PerformanceSkeleton() {
   return (
-    <div className="min-h-screen bg-bg-deep px-5 pt-6 pb-32 animate-pulse">
+    <div className="min-h-screen bg-bg-deep px-5 pt-6 pb-6 animate-pulse">
       <div className="flex items-center justify-between mb-6">
         <div className="w-10 h-10 bg-white/5 rounded-full" />
         <div className="text-center">
@@ -269,7 +259,7 @@ export default function PerformancePage() {
       </header>
 
       {/* ── Scrollable Body ── */}
-      <div className="overflow-y-auto pb-32 px-5 pt-5 space-y-5">
+      <div className="overflow-y-auto pb-6 px-5 pt-5 space-y-5">
         {/* ── Hero: Total Volume + Race Countdown ── */}
         <motion.section
           initial={{ opacity: 0, y: 22 }}

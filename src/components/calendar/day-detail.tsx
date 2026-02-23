@@ -31,7 +31,7 @@ export function DayDetail({ date, workouts, onClose, onAddWorkout }: DayDetailPr
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: '100%', opacity: 0 }}
       transition={{ type: 'spring', damping: 26, stiffness: 300 }}
-      className="bg-[#1a1a1a] border-t border-white/10 rounded-t-3xl p-5 max-h-[50vh] overflow-y-auto"
+      className="bg-[#1a1a1a] border-t border-white/10 rounded-t-3xl p-5 max-h-[50vh] overflow-y-auto overscroll-contain"
     >
       {/* Handle bar */}
       <div className="w-10 h-1 bg-white/15 rounded-full mx-auto mb-4" />

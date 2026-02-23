@@ -52,7 +52,19 @@ export async function retrieveKnowledge(
       return { chunks: [], formatted: '', chunkIds: [] };
     }
 
-    const chunks = data as RAGChunk[];
+    // Filter out low-relevance chunks (RRF scores below threshold)
+    const SIMILARITY_THRESHOLD = 0.3;
+    const scored = data as (RAGChunk & { score?: number })[];
+    const hasScores = scored.some((c) => c.score !== undefined);
+    const filtered = hasScores
+      ? scored.filter((c) => c.score !== undefined && c.score >= SIMILARITY_THRESHOLD)
+      : scored;
+
+    if (filtered.length === 0) {
+      return { chunks: [], formatted: '', chunkIds: [] };
+    }
+
+    const chunks = filtered as RAGChunk[];
     const formatted = chunks
       .map(
         (c, i) =>

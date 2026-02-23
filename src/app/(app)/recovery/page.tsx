@@ -41,24 +41,15 @@ import { useDailyMetrics } from '@/hooks/use-daily-metrics';
 import { useWorkouts } from '@/hooks/use-workouts';
 import { useBenchmarks, usePersonalRecords } from '@/hooks/use-performance';
 
-// ── Elite station targets (seconds) for score normalization ──
-const ELITE_TARGETS: Record<string, number> = {
-  'Ski Erg': 210, 'Sled Push': 70, 'Sled Pull': 80,
-  'Burpee Broad Jump': 150, 'Row Erg': 200,
-  'Farmers Carry': 55, 'Sandbag Lunges': 110, 'Wall Balls': 150,
-};
-
-const STATION_COLORS: Record<string, string> = {
-  'Ski Erg': '#00F0FF', 'Sled Push': '#FF6B00', 'Sled Pull': '#FF6B35',
-  'Burpee Broad Jump': '#FF4444', 'Row Erg': '#00F0FF',
-  'Farmers Carry': '#ec4899', 'Sandbag Lunges': '#B45FFF', 'Wall Balls': '#B45FFF',
-};
+import { ELITE_TARGETS, STATION_COLORS } from '@/lib/constants/hyrox';
 
 function mapSessionType(sessionType: string): WorkoutType {
   switch (sessionType) {
+    case 'run':
     case 'running': return 'Run';
     case 'hiit': return 'HIIT';
     case 'strength': return 'Strength';
+    case 'simulation':
     case 'hyrox_sim': return 'Hyrox Sim';
     case 'crossfit': return 'CrossFit';
     default: return 'HIIT';
@@ -122,11 +113,51 @@ interface StationPerformance {
   color: string;
 }
 
+// ── Pearson Correlation ──────────────────────────────────────────────────────
+
+function pearson(xs: number[], ys: number[]): number {
+  const n = xs.length;
+  if (n < 7) return 0;
+  const meanX = xs.reduce((a, b) => a + b, 0) / n;
+  const meanY = ys.reduce((a, b) => a + b, 0) / n;
+  let num = 0, denX = 0, denY = 0;
+  for (let i = 0; i < n; i++) {
+    const dx = xs[i] - meanX;
+    const dy = ys[i] - meanY;
+    num += dx * dy;
+    denX += dx * dx;
+    denY += dy * dy;
+  }
+  const den = Math.sqrt(denX * denY);
+  return den === 0 ? 0 : num / den;
+}
+
+function computeCorrelations(data: DayData[]) {
+  const sleep = data.map(d => d.sleep);
+  const hrv = data.map(d => d.hrv);
+  const load = data.map(d => d.trainingLoad);
+  const recovery = data.map(d => d.recovery);
+  const readiness = data.map(d => d.readiness);
+  const stress = data.map(d => d.stress);
+
+  return [
+    { pair: 'Sleep → HRV', r: pearson(sleep, hrv) },
+    { pair: 'Training Load → Recovery', r: pearson(load, recovery) },
+    { pair: 'HRV → Readiness', r: pearson(hrv, readiness) },
+    { pair: 'Stress → Sleep', r: pearson(stress, sleep) },
+  ]
+    .map(c => ({
+      pair: c.pair,
+      strength: Math.abs(c.r),
+      direction: (c.r >= 0 ? 'positive' : 'negative') as 'positive' | 'negative',
+    }));
+}
+
 // ── Loading Skeleton ─────────────────────────────────────────────────────────
 
 function RecoverySkeleton() {
   return (
-    <div className="min-h-screen bg-bg-base px-6 pt-6 pb-32 animate-pulse">
+    <div className="min-h-screen bg-bg-base px-6 pt-6 pb-6 animate-pulse">
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="h-3 w-32 bg-white/5 rounded mb-2" />
@@ -531,7 +562,7 @@ export default function RecoveryPage() {
       </div>
 
       {/* Scrollable Content */}
-      <div className="relative z-10 overflow-y-auto px-6 pb-32">
+      <div className="relative z-10 overflow-y-auto px-6 pb-6">
         <AnimatePresence mode="wait">
           {/* ── TRENDS TAB ── */}
           {activeTab === 'trends' && (
@@ -1422,12 +1453,7 @@ export default function RecoveryPage() {
                 </div>
                 {dailyData.length >= 14 ? (
                   <div className="space-y-3">
-                    {[
-                      { pair: 'Sleep → HRV', strength: 0.72, direction: 'positive' as const },
-                      { pair: 'Training Load → Recovery', strength: 0.58, direction: 'negative' as const },
-                      { pair: 'HRV → Readiness', strength: 0.81, direction: 'positive' as const },
-                      { pair: 'Stress → Sleep', strength: 0.43, direction: 'negative' as const },
-                    ].map((c) => (
+                    {computeCorrelations(dailyData).map((c) => (
                       <div key={c.pair} className="flex items-center gap-3">
                         <span className="text-[10px] text-white/50 font-bold flex-1">{c.pair}</span>
                         <div className="w-20 h-1.5 bg-white/5 rounded-full overflow-hidden">

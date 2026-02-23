@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkAndAwardAchievements } from '@/lib/achievements';
 import { apiLimiter } from '@/lib/rate-limit';
 import { createLogger } from '@/lib/logger';
+import { createWorkoutSchema } from '@/lib/validations/workout';
+import type { Json } from '@/types/database';
 
 export async function GET(request: NextRequest) {
   try {
@@ -94,28 +96,37 @@ export async function POST(request: Request) {
       );
     }
 
-    let body;
+    let rawBody;
     try {
-      body = await request.json();
+      rawBody = await request.json();
     } catch {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
+
+    const parsed = createWorkoutSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+    const body = parsed.data;
 
     const { data: workout, error } = await supabase
       .from('workout_logs')
       .insert({
         athlete_id: profile.id,
         date: body.date || new Date().toISOString().split('T')[0],
-        session_type: body.session_type || 'general',
-        duration_minutes: body.duration_minutes || null,
-        rpe_pre: body.rpe_pre || null,
-        rpe_post: body.rpe_post || null,
-        notes: body.notes || null,
-        completed_workout: body.completed_workout || null,
-        prescribed_workout: body.prescribed_workout || null,
-        training_plan_day_id: body.training_plan_day_id || null,
-        heart_rate_avg: body.heart_rate_avg || null,
-        completion_status: body.completion_status || 'completed',
+        session_type: body.session_type,
+        duration_minutes: body.duration_minutes ?? null,
+        rpe_pre: body.rpe_pre ?? null,
+        rpe_post: body.rpe_post ?? null,
+        notes: body.notes ?? null,
+        completed_workout: (body.completed_workout ?? null) as Json,
+        prescribed_workout: (body.prescribed_workout ?? null) as Json,
+        training_plan_day_id: body.training_plan_day_id ?? null,
+        heart_rate_avg: body.heart_rate_avg ?? null,
+        completion_status: body.completion_status,
       })
       .select()
       .single();
@@ -124,15 +135,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Auto-complete the training plan day and link the workout log
+    // Auto-complete the training plan day and link the workout log (with ownership check)
     if (body.training_plan_day_id && workout) {
-      await supabase
+      const { data: ownedDay } = await supabase
         .from('training_plan_days')
-        .update({
-          is_completed: true,
-          linked_workout_log_id: workout.id,
-        })
-        .eq('id', body.training_plan_day_id);
+        .select('id, training_plan_weeks!inner(training_plans!inner(athlete_id))')
+        .eq('id', body.training_plan_day_id)
+        .single();
+
+      const planData = ownedDay?.training_plan_weeks as unknown as { training_plans: { athlete_id: string } } | null;
+      if (planData?.training_plans?.athlete_id === profile.id) {
+        await supabase
+          .from('training_plan_days')
+          .update({
+            is_completed: true,
+            linked_workout_log_id: workout.id,
+          })
+          .eq('id', body.training_plan_day_id);
+      }
     }
 
     let newAchievements: string[] = [];

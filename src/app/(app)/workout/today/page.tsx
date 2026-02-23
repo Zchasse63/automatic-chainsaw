@@ -8,11 +8,14 @@ import {
   Moon,
   Zap,
   Award,
+  Plus,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 import { useDashboard } from '@/hooks/use-dashboard';
 import { WorkoutBadge } from '@/components/shared';
 import { getSessionInfo, formatSessionType } from '@/lib/session-utils';
+import { WorkoutBuilder } from '@/components/workout/workout-builder';
 
 // ── Skeleton ─────────────────────────────────────────────────────────────────
 
@@ -41,6 +44,7 @@ function TodaySkeleton() {
 
 export default function TodayWorkoutPage() {
   const { data, isLoading } = useDashboard();
+  const [builderOpen, setBuilderOpen] = useState(false);
   const todaysWorkout = data?.todaysWorkout;
   const activePlan = data?.activePlan;
 
@@ -57,7 +61,7 @@ export default function TodayWorkoutPage() {
       initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.28 }}
-      className="flex-1 overflow-y-auto px-6 pt-6 pb-32 bg-bg-deep min-h-screen"
+      className="flex-1 overflow-y-auto px-6 pt-6 pb-6 bg-bg-deep min-h-screen"
     >
       {/* Header */}
       <header className="mb-6">
@@ -220,15 +224,24 @@ export default function TodayWorkoutPage() {
           <p className="text-white/40 text-sm max-w-[260px] mx-auto">
             Ask Coach K to generate a personalized training plan to get started.
           </p>
-          <Link href="/coach">
+          <div className="flex flex-col gap-3 mt-6">
+            <Link href="/coach">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.96 }}
+                className="w-full bg-[#39FF14] text-black text-xs font-black uppercase tracking-widest px-6 py-3 rounded-xl shadow-[0_4px_20px_rgba(57,255,20,0.4)]"
+              >
+                Talk to Coach K
+              </motion.button>
+            </Link>
             <motion.button
-              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.96 }}
-              className="mt-6 bg-[#39FF14] text-black text-xs font-black uppercase tracking-widest px-6 py-3 rounded-xl shadow-[0_4px_20px_rgba(57,255,20,0.4)]"
+              onClick={() => setBuilderOpen(true)}
+              className="px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-widest text-white/60 hover:text-white transition-colors"
             >
-              Talk to Coach K
+              Create Custom Workout
             </motion.button>
-          </Link>
+          </div>
         </motion.div>
       ) : (
         /* ── Rest Day State ──────────────────────────────────────────── */
@@ -253,6 +266,21 @@ export default function TodayWorkoutPage() {
           )}
         </motion.div>
       )}
+      {/* FAB — Create Workout */}
+      <motion.button
+        whileTap={{ scale: 0.9 }}
+        onClick={() => setBuilderOpen(true)}
+        className="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-[#39FF14] shadow-[0_4px_20px_rgba(57,255,20,0.4)] flex items-center justify-center z-40"
+        aria-label="Create workout"
+      >
+        <Plus size={24} className="text-black" />
+      </motion.button>
+
+      {/* Workout Builder */}
+      <WorkoutBuilder
+        open={builderOpen}
+        onClose={() => setBuilderOpen(false)}
+      />
     </motion.div>
   );
 }

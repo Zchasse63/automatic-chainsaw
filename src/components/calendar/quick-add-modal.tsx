@@ -41,6 +41,13 @@ export function QuickAddModal({ dateKey, onClose }: QuickAddModalProps) {
     if (dateKey) resetForm();
   }, [dateKey, resetForm]);
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (!dateKey) return;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, [dateKey]);
+
   const createWorkoutMutation = useCreateWorkout();
 
   const handleClose = useCallback(() => {
@@ -79,7 +86,7 @@ export function QuickAddModal({ dateKey, onClose }: QuickAddModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
           />
 
           {/* Modal */}
@@ -88,7 +95,7 @@ export function QuickAddModal({ dateKey, onClose }: QuickAddModalProps) {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-[#1a1a1a] border-t border-white/10 rounded-t-3xl max-h-[85vh] overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 z-[60] bg-[#1a1a1a] border-t border-white/10 rounded-t-3xl max-h-[92vh] overflow-y-auto overscroll-contain"
           >
             {/* Handle bar */}
             <div className="w-10 h-1 bg-white/15 rounded-full mx-auto mt-3 mb-2" />

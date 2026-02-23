@@ -3,7 +3,7 @@
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, Zap, Mic, MicOff } from 'lucide-react';
+import { Send, Zap, Mic, MicOff, Menu } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import {
@@ -11,10 +11,10 @@ import {
   useMessages,
   useInvalidateConversations,
 } from '@/hooks/use-conversations';
-import { TypingIndicator, AudioWaveform } from '@/components/shared';
-
-// ── Types ──
-type InputMode = 'text' | 'voice';
+import { useSpeechRecognition } from '@/hooks/use-speech-recognition';
+import { TypingIndicator } from '@/components/shared';
+import { ChatSidebar } from '@/components/coach/chat-sidebar';
+import { PlanCard, isPlanMessage } from '@/components/coach/plan-card';
 
 // ── Quick prompt chips ──
 const QUICK_PROMPTS = [
@@ -47,15 +47,14 @@ const fadeUp = {
 };
 
 export default function CoachPage() {
-  // ── Local input state (useChat v3 doesn't expose input/handleInputChange) ──
+  // ── Local input state ──
   const [textInput, setTextInput] = useState('');
 
-  // ── Conversation state (replaces deleted Zustand store) ──
+  // ── Conversation state ──
   const [activeConversationId, setActiveConversationId] = useState<
     string | null
   >(null);
-  const [inputMode, setInputMode] = useState<InputMode>('text');
-  const [isListening, setIsListening] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -68,6 +67,28 @@ export default function CoachPage() {
   const { data: dbMessages } = useMessages(activeConversationId);
   const { invalidateConversations, invalidateMessages } =
     useInvalidateConversations();
+
+  // ── Web Speech API ──
+  const autoSendTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const {
+    isListening,
+    isSupported: voiceSupported,
+    interimTranscript,
+    startListening,
+    stopListening,
+  } = useSpeechRecognition({
+    onResult: (finalTranscript) => {
+      setTextInput((prev) => {
+        const combined = prev ? `${prev} ${finalTranscript}` : finalTranscript;
+        return combined;
+      });
+    },
+    onInterim: () => {
+      // Clear any pending auto-send timer while user is still speaking
+      clearTimeout(autoSendTimerRef.current);
+    },
+  });
 
   // ── Ref to hold callbacks that need latest state ──
   const callbacksRef = useRef({
@@ -204,9 +225,23 @@ export default function CoachPage() {
     sendMessage({ text: msg });
   }
 
-  function handleVoiceToggle() {
-    // Voice is a UI placeholder for now
-    setIsListening((prev) => !prev);
+  function handleMicToggle() {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  }
+
+  function handleNewChat() {
+    setActiveConversationId(null);
+    setMessages([]);
+    setSidebarOpen(false);
+  }
+
+  function handleSelectConversation(id: string) {
+    setActiveConversationId(id);
+    setSidebarOpen(false);
   }
 
   // ── Extract text content from a message ──
@@ -219,248 +254,295 @@ export default function CoachPage() {
   }
 
   const hasMessages = messages.length > 0;
+  // Show interim transcript in the input display
+  const displayValue = isListening && interimTranscript
+    ? `${textInput}${textInput ? ' ' : ''}${interimTranscript}`
+    : textInput;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.28 }}
-      className="flex-1 flex flex-col px-6 pt-6 pb-24 relative z-10 overflow-hidden bg-bg-deep min-h-screen"
-    >
-      {/* ── Header ── */}
-      <div className="flex justify-between items-center mb-6 flex-shrink-0">
-        <div>
-          <h2 className="text-xl font-black uppercase tracking-tighter">
-            Hyrox AI Coach
-          </h2>
-          <p className="text-[10px] text-white/30 uppercase tracking-widest mt-0.5">
-            {coldStart
-              ? 'Warming up...'
-              : isStreaming
-                ? 'Coach is thinking...'
-                : 'Ask anything about your training'}
-          </p>
-        </div>
-        <div
-          className="bg-white/10 rounded-full p-1 flex"
-          role="tablist"
-          aria-label="Input mode"
-        >
-          {(['text', 'voice'] as InputMode[]).map((mode) => (
-            <button
-              key={mode}
-              role="tab"
-              aria-selected={inputMode === mode}
-              onClick={() => {
-                setInputMode(mode);
-                setIsListening(false);
-              }}
-              className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase transition-all duration-200 ${
-                inputMode === mode
-                  ? 'bg-[#39FF14] text-black'
-                  : 'text-white/40'
-              }`}
+    <>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.28 }}
+        className="flex-1 flex flex-col px-6 pt-6 pb-24 relative z-10 overflow-hidden bg-bg-deep min-h-screen"
+      >
+        {/* ── Header ── */}
+        <div className="flex justify-between items-center mb-6 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setSidebarOpen(true)}
+              className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/50 hover:text-white transition-colors"
+              aria-label="Chat history"
             >
-              {mode}
+              <Menu size={16} />
+            </motion.button>
+            <div>
+              <h2 className="text-xl font-black uppercase tracking-tighter">
+                Hyrox AI Coach
+              </h2>
+              <p className="text-[10px] text-white/30 uppercase tracking-widest mt-0.5">
+                {coldStart
+                  ? 'Warming up...'
+                  : isStreaming
+                    ? 'Coach is thinking...'
+                    : 'Ask anything about your training'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Quick prompt chips ── */}
+        <div
+          className="flex gap-2 mb-4 flex-shrink-0 overflow-x-auto pb-1"
+          style={{ scrollbarWidth: 'none' }}
+        >
+          {QUICK_PROMPTS.map((chip) => (
+            <button
+              key={chip.label}
+              onClick={() => handleQuickPrompt(chip.msg)}
+              disabled={isStreaming}
+              className="flex-shrink-0 px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-white/60 hover:text-white hover:border-[#39FF14]/40 transition-colors uppercase disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {chip.label}
             </button>
           ))}
         </div>
-      </div>
 
-      {/* ── Quick prompt chips ── */}
-      <div
-        className="flex gap-2 mb-4 flex-shrink-0 overflow-x-auto pb-1"
-        style={{ scrollbarWidth: 'none' }}
-      >
-        {QUICK_PROMPTS.map((chip) => (
-          <button
-            key={chip.label}
-            onClick={() => handleQuickPrompt(chip.msg)}
-            disabled={isStreaming}
-            className="flex-shrink-0 px-3 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-white/60 hover:text-white hover:border-[#39FF14]/40 transition-colors uppercase disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {chip.label}
-          </button>
-        ))}
-      </div>
-
-      {/* ── Error banner ── */}
-      <AnimatePresence>
-        {errorMsg && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className="mb-3 px-4 py-2.5 bg-red-500/10 border border-red-500/20 rounded-xl"
-          >
-            <p className="text-xs text-red-400">{errorMsg}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Messages ── */}
-      <div
-        className="flex-1 overflow-y-auto space-y-5 pb-4 pr-1"
-        style={{ scrollbarWidth: 'none' }}
-      >
-        {/* Empty state */}
-        {!hasMessages && !isStreaming && (
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            className="flex flex-col items-center justify-center h-full text-center gap-4 py-20"
-          >
-            <div className="w-16 h-16 rounded-full bg-[#39FF14]/10 flex items-center justify-center border border-[#39FF14]/20">
-              <Zap size={28} className="text-[#39FF14]" />
-            </div>
-            <div>
-              <h3 className="text-xl font-black uppercase tracking-tighter mb-1">
-                Coach K
-              </h3>
-              <p className="text-sm text-white/40 max-w-xs leading-relaxed">
-                Your AI Hyrox coach. Ask about training, technique, race
-                strategy, or anything Hyrox.
-              </p>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Message thread */}
-        {messages.map((msg) => {
-          const text = getMessageText(msg);
-          if (!text) return null;
-
-          if (msg.role === 'user') {
-            return (
-              <motion.div
-                key={msg.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25 }}
-                className="flex flex-col items-end"
-              >
-                <div className="bg-white/10 backdrop-blur-md rounded-2xl rounded-tr-none p-4 max-w-[85%] border border-white/5">
-                  <p className="text-sm leading-relaxed">{text}</p>
-                </div>
-              </motion.div>
-            );
-          }
-
-          if (msg.role === 'assistant') {
-            return (
-              <motion.div
-                key={msg.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25 }}
-                className="flex flex-col items-start"
-              >
-                <div className="bg-bg-card/80 backdrop-blur-xl rounded-2xl rounded-tl-none p-4 max-w-[90%] border border-[#39FF14]/20">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <div className="w-4 h-4 rounded-full bg-[#39FF14] flex items-center justify-center">
-                      <Zap size={9} className="text-black" />
-                    </div>
-                    <span className="text-[9px] font-black uppercase tracking-widest text-[#39FF14]">
-                      Hyrox Coach AI
-                    </span>
-                  </div>
-                  <div className="text-sm leading-relaxed text-white/85 prose prose-invert prose-sm max-w-none prose-p:my-1.5 prose-headings:text-white prose-headings:font-bold prose-strong:text-white prose-li:text-white/85 prose-ul:my-1 prose-ol:my-1">
-                    <ReactMarkdown>{text}</ReactMarkdown>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          }
-
-          return null;
-        })}
-
-        {/* AI Loading State */}
+        {/* ── Error banner ── */}
         <AnimatePresence>
-          {isStreaming &&
-            !messages.some(
-              (m) => m.role === 'assistant' && status === 'streaming'
-            ) && (
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                className="flex flex-col items-start"
-              >
-                <div className="bg-bg-card/80 backdrop-blur-xl rounded-2xl rounded-tl-none px-3 py-2 border border-[#39FF14]/20">
-                  <TypingIndicator />
-                </div>
-                <span className="text-[10px] text-white/20 mt-1.5 uppercase font-bold">
-                  {coldStart
-                    ? 'Coach AI is warming up...'
-                    : 'Coach AI is thinking...'}
-                </span>
-              </motion.div>
-            )}
+          {errorMsg && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="mb-3 px-4 py-2.5 bg-red-500/10 border border-red-500/20 rounded-xl"
+            >
+              <p className="text-xs text-red-400">{errorMsg}</p>
+            </motion.div>
+          )}
         </AnimatePresence>
 
-        <div ref={messagesEndRef} />
-      </div>
+        {/* ── Messages ── */}
+        <div
+          className="flex-1 overflow-y-auto space-y-5 pb-4 pr-1"
+          style={{ scrollbarWidth: 'none' }}
+        >
+          {/* Empty state */}
+          {!hasMessages && !isStreaming && (
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              animate="show"
+              className="flex flex-col items-center justify-center h-full text-center gap-4 py-20"
+            >
+              <div className="w-16 h-16 rounded-full bg-[#39FF14]/10 flex items-center justify-center border border-[#39FF14]/20">
+                <Zap size={28} className="text-[#39FF14]" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black uppercase tracking-tighter mb-1">
+                  Coach K
+                </h3>
+                <p className="text-sm text-white/40 max-w-xs leading-relaxed">
+                  Your AI Hyrox coach. Ask about training, technique, race
+                  strategy, or anything Hyrox.
+                </p>
+              </div>
+            </motion.div>
+          )}
 
-      {/* ── Input Area ── */}
-      <div className="flex-shrink-0 pt-3 border-t border-white/5">
-        {inputMode === 'text' ? (
+          {/* Message thread */}
+          {messages.map((msg) => {
+            const text = getMessageText(msg);
+            if (!text) return null;
+
+            if (msg.role === 'user') {
+              return (
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="flex flex-col items-end"
+                >
+                  <div className="bg-white/10 backdrop-blur-md rounded-2xl rounded-tr-none p-4 max-w-[85%] border border-white/5">
+                    <p className="text-sm leading-relaxed">{text}</p>
+                  </div>
+                </motion.div>
+              );
+            }
+
+            if (msg.role === 'assistant') {
+              const hasPlan = isPlanMessage(text);
+              return (
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="flex flex-col items-start"
+                >
+                  <div className="bg-bg-card/80 backdrop-blur-xl rounded-2xl rounded-tl-none p-4 max-w-[90%] border border-[#39FF14]/20">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="w-4 h-4 rounded-full bg-[#39FF14] flex items-center justify-center">
+                        <Zap size={9} className="text-black" />
+                      </div>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-[#39FF14]">
+                        Hyrox Coach AI
+                      </span>
+                    </div>
+                    <div className="text-sm leading-relaxed text-white/85 prose prose-invert prose-sm max-w-none prose-p:my-1.5 prose-headings:text-white prose-headings:font-bold prose-strong:text-white prose-li:text-white/85 prose-ul:my-1 prose-ol:my-1">
+                      <ReactMarkdown>{text}</ReactMarkdown>
+                    </div>
+                  </div>
+                  {/* Show plan card below plan messages */}
+                  {hasPlan && (
+                    <div className="max-w-[90%]">
+                      <PlanCard
+                        messageContent={text}
+                        conversationId={activeConversationId}
+                      />
+                    </div>
+                  )}
+                </motion.div>
+              );
+            }
+
+            return null;
+          })}
+
+          {/* AI Loading State */}
+          <AnimatePresence>
+            {isStreaming &&
+              messages[messages.length - 1]?.role !== 'assistant' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  className="flex flex-col items-start"
+                >
+                  <div className="bg-bg-card/80 backdrop-blur-xl rounded-2xl rounded-tl-none px-3 py-2 border border-[#39FF14]/20">
+                    <TypingIndicator />
+                  </div>
+                  <span className="text-[10px] text-white/20 mt-1.5 uppercase font-bold">
+                    {coldStart
+                      ? 'Coach AI is warming up...'
+                      : 'Coach AI is thinking...'}
+                  </span>
+                </motion.div>
+              )}
+          </AnimatePresence>
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* ── Input Area — unified text + mic ── */}
+        <div className="flex-shrink-0 pt-3 border-t border-white/5">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleSend();
             }}
-            className="flex items-center gap-3 bg-white/5 rounded-2xl px-4 py-3 border border-white/10 focus-within:border-[#39FF14]/40 transition-colors"
+            className="flex items-center gap-2 bg-white/5 rounded-2xl px-3 py-2.5 border border-white/10 focus-within:border-[#39FF14]/40 transition-colors"
           >
+            {/* Mic button — only shown if browser supports Web Speech API */}
+            {voiceSupported && (
+              <motion.button
+                type="button"
+                whileTap={{ scale: 0.9 }}
+                onClick={handleMicToggle}
+                disabled={isStreaming}
+                className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                  isListening
+                    ? 'bg-[#39FF14] shadow-[0_0_16px_rgba(57,255,20,0.4)]'
+                    : 'bg-white/10 text-white/40 hover:text-white'
+                } disabled:opacity-30`}
+                aria-label={isListening ? 'Stop listening' : 'Start voice input'}
+                aria-pressed={isListening}
+              >
+                {isListening ? (
+                  <MicOff size={14} className="text-black" />
+                ) : (
+                  <Mic size={14} />
+                )}
+              </motion.button>
+            )}
+
+            {/* Text input */}
             <input
               type="text"
-              value={textInput}
+              value={displayValue}
               onChange={(e) => setTextInput(e.target.value)}
-              placeholder="Ask about your race prep, session plan, pacing..."
-              className="flex-1 bg-transparent text-sm text-white placeholder-white/25 outline-none"
+              placeholder={
+                isListening
+                  ? 'Listening...'
+                  : 'Ask about your race prep, session plan, pacing...'
+              }
+              className={`flex-1 bg-transparent text-sm text-white placeholder-white/25 outline-none min-w-0 ${
+                isListening && interimTranscript ? 'italic text-white/50' : ''
+              }`}
               aria-label="Message input"
+              readOnly={isListening}
               disabled={isStreaming}
             />
+
+            {/* Send button */}
             <motion.button
               type="submit"
               whileTap={{ scale: 0.9 }}
               disabled={!textInput.trim() || isStreaming}
-              className="w-8 h-8 rounded-xl bg-[#39FF14] flex items-center justify-center disabled:opacity-30 transition-opacity"
+              className="w-8 h-8 rounded-xl bg-[#39FF14] flex items-center justify-center flex-shrink-0 disabled:opacity-30 transition-opacity"
               aria-label="Send message"
             >
               <Send size={14} className="text-black" />
             </motion.button>
           </form>
-        ) : (
-          <div className="flex flex-col items-center gap-3">
-            <motion.button
-              whileTap={{ scale: 0.93 }}
-              onClick={handleVoiceToggle}
-              className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 ${
-                isListening
-                  ? 'bg-[#39FF14] shadow-[0_0_30px_rgba(57,255,20,0.5)]'
-                  : 'bg-white/10 border border-white/10'
-              }`}
-              aria-label={isListening ? 'Stop listening' : 'Start voice input'}
-              aria-pressed={isListening}
-            >
-              {isListening ? (
-                <MicOff size={24} className="text-black" />
-              ) : (
-                <Mic size={24} className="text-white/70" />
-              )}
-            </motion.button>
-            {isListening ? (
-              <AudioWaveform isActive />
-            ) : (
-              <p className="text-[11px] text-white/30 uppercase font-bold tracking-widest">
-                Tap to speak
-              </p>
+
+          {/* Voice listening indicator */}
+          <AnimatePresence>
+            {isListening && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="flex items-center justify-center gap-2 pt-2"
+              >
+                <div className="flex gap-0.5">
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <motion.div
+                      key={i}
+                      className="w-0.5 bg-[#39FF14] rounded-full"
+                      animate={{
+                        height: [4, 12, 4],
+                      }}
+                      transition={{
+                        duration: 0.6,
+                        repeat: Infinity,
+                        delay: i * 0.1,
+                        ease: 'easeInOut',
+                      }}
+                    />
+                  ))}
+                </div>
+                <span className="text-[10px] text-[#39FF14]/60 uppercase font-bold tracking-widest">
+                  Listening — tap mic to stop
+                </span>
+              </motion.div>
             )}
-          </div>
-        )}
-      </div>
-    </motion.div>
+          </AnimatePresence>
+        </div>
+      </motion.div>
+
+      {/* ── Chat History Sidebar ── */}
+      <ChatSidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        conversations={conversations}
+        activeConversationId={activeConversationId}
+        onSelectConversation={handleSelectConversation}
+        onNewChat={handleNewChat}
+      />
+    </>
   );
 }

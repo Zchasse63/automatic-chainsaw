@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { showAchievementToast } from '@/components/shared/achievement-toast';
 
 interface Workout {
   id: string;
@@ -78,8 +79,9 @@ export function useCreateWorkout() {
       queryClient.invalidateQueries({ queryKey: ['dashboard'] });
       queryClient.invalidateQueries({ queryKey: ['training-plans'] });
       queryClient.invalidateQueries({ queryKey: ['achievements'] });
-      // TODO: Re-add achievement toast in new UI
-      // if (data.newAchievements?.length) { ... }
+      if (data.newAchievements?.length) {
+        data.newAchievements.forEach((name) => showAchievementToast(name));
+      }
     },
   });
 }

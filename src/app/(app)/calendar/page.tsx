@@ -156,7 +156,7 @@ export default function CalendarPage() {
       initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.28 }}
-      className="flex-1 overflow-y-auto px-6 pt-6 pb-32 bg-bg-deep min-h-screen"
+      className="flex-1 overflow-y-auto px-6 pt-6 pb-6 bg-bg-deep min-h-screen"
     >
       {/* Header */}
       <header className="mb-5">

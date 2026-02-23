@@ -14,6 +14,9 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["openai"]
+  # IMPORTANT: Set function timeout to 60s in Netlify dashboard
+  # (Site settings → Functions → Background functions timeout)
+  # The chat AI route with tool calls can take 15-40s; default 10-26s is too short.
 
 # Environment variables are set in the Netlify dashboard
 # Required:

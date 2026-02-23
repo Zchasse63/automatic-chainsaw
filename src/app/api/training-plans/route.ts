@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import { apiLimiter } from '@/lib/rate-limit';
 import { createLogger } from '@/lib/logger';
+import type { Json } from '@/types/database';
 
 export async function GET() {
   try {
@@ -121,74 +122,89 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // If nested weeks/days provided, insert them
+    // If nested weeks/days provided, bulk-insert them (2 DB calls instead of N)
     if (body.weeks && Array.isArray(body.weeks) && body.weeks.length > 0) {
-      let insertionFailed = false;
-      let failureDetail = '';
+      const log = createLogger({ route: 'POST /api/training-plans' });
+
+      // Phase 1: Bulk-insert all weeks
+      const weeksToInsert = body.weeks.map((week: { week_number: number; focus?: string; notes?: string; target_volume_hours?: number }) => ({
+        training_plan_id: plan.id,
+        week_number: week.week_number,
+        focus: week.focus || null,
+        notes: week.notes || null,
+        target_volume_hours: week.target_volume_hours || null,
+      }));
+
+      const { data: savedWeeks, error: weeksError } = await supabase
+        .from('training_plan_weeks')
+        .insert(weeksToInsert)
+        .select('id, week_number');
+
+      if (weeksError || !savedWeeks?.length) {
+        log.error('Failed to insert weeks', { error: weeksError?.message });
+        await supabase.from('training_plans').delete().eq('id', plan.id);
+        return NextResponse.json(
+          { error: `Failed to save training plan weeks: ${weeksError?.message ?? 'unknown error'}` },
+          { status: 500 }
+        );
+      }
+
+      // Phase 2: Map week_number → saved week ID, then bulk-insert all days
+      const weekIdMap = new Map(savedWeeks.map((w) => [w.week_number, w.id]));
+      const allDays: Array<{
+        training_plan_week_id: string;
+        day_of_week: number;
+        session_type: string | null;
+        workout_title: string | null;
+        workout_description: string | null;
+        workout_details: Json | null;
+        estimated_duration_minutes: number | null;
+        is_rest_day: boolean;
+      }> = [];
 
       for (const week of body.weeks) {
-        const { data: savedWeek, error: weekError } = await supabase
-          .from('training_plan_weeks')
-          .insert({
-            training_plan_id: plan.id,
-            week_number: week.week_number,
-            focus: week.focus || null,
-            notes: week.notes || null,
-            target_volume_hours: week.target_volume_hours || null,
-          })
-          .select('id')
-          .single();
-
-        if (weekError || !savedWeek) {
-          createLogger({ route: 'POST /api/training-plans' }).error('Failed to insert week', { error: weekError?.message });
-          insertionFailed = true;
-          failureDetail = `Week ${week.week_number}: ${weekError?.message ?? 'unknown error'}`;
-          break;
-        }
-
         if (week.days && Array.isArray(week.days)) {
-          const daysToInsert = week.days.map(
-            (day: {
-              day_of_week: number;
-              session_type?: string;
-              workout_title?: string;
-              workout_description?: string;
-              workout_details?: Record<string, unknown>;
-              estimated_duration_minutes?: number;
-              is_rest_day?: boolean;
-              notes?: string;
-            }) => ({
-              training_plan_week_id: savedWeek.id,
+          const weekId = weekIdMap.get(week.week_number);
+          if (!weekId) continue;
+
+          for (const day of week.days as Array<{
+            day_of_week: number;
+            session_type?: string;
+            workout_title?: string;
+            workout_description?: string;
+            workout_details?: Record<string, unknown>;
+            estimated_duration_minutes?: number;
+            is_rest_day?: boolean;
+            notes?: string;
+          }>) {
+            allDays.push({
+              training_plan_week_id: weekId,
               day_of_week: day.day_of_week,
               session_type: day.session_type || null,
               workout_title: day.workout_title || null,
               workout_description: day.workout_description || null,
-              workout_details: day.workout_details || null,
+              workout_details: (day.workout_details as Json) || null,
               estimated_duration_minutes: day.estimated_duration_minutes || null,
               is_rest_day: day.is_rest_day || false,
-            })
-          );
-
-          const { error: daysError } = await supabase
-            .from('training_plan_days')
-            .insert(daysToInsert);
-
-          if (daysError) {
-            createLogger({ route: 'POST /api/training-plans' }).error('Failed to insert days', { week: week.week_number, error: daysError.message });
-            insertionFailed = true;
-            failureDetail = `Week ${week.week_number} days: ${daysError.message}`;
-            break;
+            });
           }
         }
       }
 
-      // If any insertion failed, roll back the entire plan (cascade deletes weeks+days)
-      if (insertionFailed) {
-        await supabase.from('training_plans').delete().eq('id', plan.id);
-        return NextResponse.json(
-          { error: `Failed to save training plan: ${failureDetail}` },
-          { status: 500 }
-        );
+      if (allDays.length > 0) {
+        const { error: daysError } = await supabase
+          .from('training_plan_days')
+          .insert(allDays);
+
+        if (daysError) {
+          log.error('Failed to insert days', { error: daysError.message });
+          await supabase.from('training_plan_weeks').delete().eq('training_plan_id', plan.id);
+          await supabase.from('training_plans').delete().eq('id', plan.id);
+          return NextResponse.json(
+            { error: `Failed to save training plan days: ${daysError.message}` },
+            { status: 500 }
+          );
+        }
       }
     }
 

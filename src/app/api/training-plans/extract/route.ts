@@ -1,9 +1,12 @@
 import { generateObject } from 'ai';
 import { EXTRACTION_MODEL } from '@/lib/ai/xai';
 import { TrainingPlanSchema } from '@/lib/coach/training-plan-schema';
+import { chatLimiter } from '@/lib/rate-limit';
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createLogger } from '@/lib/logger';
+
+const MAX_CONTENT_LENGTH = 50_000;
 
 const EXTRACTION_PROMPT = `You are a JSON extraction engine. Given a training plan written in natural language by a Hyrox coach, extract it into structured JSON.
 
@@ -36,12 +39,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { messageContent } = await request.json();
+  // Validate body before consuming a rate-limit token
+  const body = await request.json().catch(() => null);
+  const messageContent = body?.messageContent;
 
   if (!messageContent || typeof messageContent !== 'string') {
     return NextResponse.json(
       { error: 'messageContent is required' },
       { status: 400 }
+    );
+  }
+
+  if (messageContent.length > MAX_CONTENT_LENGTH) {
+    return NextResponse.json(
+      { error: 'Content too long' },
+      { status: 400 }
+    );
+  }
+
+  const { allowed, resetMs } = chatLimiter.check(user.id);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again shortly.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(resetMs / 1000)) } }
     );
   }
 

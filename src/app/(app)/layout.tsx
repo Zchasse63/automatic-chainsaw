@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { BottomNav } from '@/components/layout/bottom-nav';
 import { SwipeContainer } from '@/components/layout/swipe-container';
+import { AchievementToastContainer } from '@/components/shared/achievement-toast';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   // Defense-in-depth: middleware handles redirect, this catches edge cases
@@ -30,6 +31,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
         {/* Bottom navigation */}
         <BottomNav />
+
+        {/* Achievement toast notifications */}
+        <AchievementToastContainer />
 
         {/* Scanlines overlay */}
         <div

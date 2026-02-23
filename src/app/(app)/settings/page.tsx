@@ -15,6 +15,7 @@ import {
   Info,
   Check,
   Loader2,
+  Mic,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useDashboard } from '@/hooks/use-dashboard';
@@ -167,6 +168,14 @@ export default function SettingsPage() {
   const [units, setUnits] = useState('');
   const [trainingSaved, setTrainingSaved] = useState(false);
 
+  // Voice input state
+  const [voiceAutoSend, setVoiceAutoSend] = useState(false);
+
+  // Initialize voice setting from localStorage
+  useEffect(() => {
+    setVoiceAutoSend(localStorage.getItem('voiceAutoSend') === 'true');
+  }, []);
+
   // Initialize form state from profile (useEffect to avoid setState during render)
   useEffect(() => {
     if (!profile) return;
@@ -245,7 +254,7 @@ export default function SettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-bg-deep px-6 pt-6 pb-32 animate-pulse">
+      <div className="min-h-screen bg-bg-deep px-6 pt-6 pb-6 animate-pulse">
         <div className="h-8 w-32 bg-white/5 rounded-lg mb-6" />
         <div className="space-y-4">
           {[...Array(4)].map((_, i) => (
@@ -261,7 +270,7 @@ export default function SettingsPage() {
       initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.28 }}
-      className="flex-1 overflow-y-auto px-6 pt-6 pb-32 bg-bg-deep min-h-screen"
+      className="flex-1 overflow-y-auto px-6 pt-6 pb-6 bg-bg-deep min-h-screen"
     >
       {/* Header */}
       <header className="flex items-center gap-3 mb-6">
@@ -361,6 +370,36 @@ export default function SettingsPage() {
             />
           </FieldRow>
           <SaveButton onSave={saveTraining} saving={updateProfile.isPending} saved={trainingSaved} />
+        </SettingsSection>
+
+        {/* ── Voice Input ── */}
+        <SettingsSection title="Voice Input" icon={Mic}>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-white/60">Auto-send voice messages</p>
+              <p className="text-[10px] text-white/30 mt-0.5">
+                Automatically send after you stop speaking
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                const next = !voiceAutoSend;
+                localStorage.setItem('voiceAutoSend', String(next));
+                setVoiceAutoSend(next);
+              }}
+              className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
+                voiceAutoSend ? 'bg-[#39FF14]' : 'bg-white/10'
+              }`}
+              role="switch"
+              aria-checked={voiceAutoSend}
+            >
+              <div
+                className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${
+                  voiceAutoSend ? 'translate-x-[22px]' : 'translate-x-0.5'
+                }`}
+              />
+            </button>
+          </div>
         </SettingsSection>
 
         {/* ── Notifications (stub) ── */}

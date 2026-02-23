@@ -142,8 +142,8 @@
   }
 
   /* ── Safe area spacing ── */
-  .pt-safe { padding-top: 56px; }     /* Mobile safe area top */
-  .pb-safe { padding-bottom: 128px; } /* Bottom nav clearance */
+  .pt-safe { padding-top: calc(56px + env(safe-area-inset-top, 0px)); }
+  .pb-safe { padding-bottom: calc(80px + env(safe-area-inset-bottom, 2rem)); }
 
   /* ── Typography shortcuts ── */
   .text-hero {

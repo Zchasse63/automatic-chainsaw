@@ -41,7 +41,8 @@ export function BottomNav() {
           animate={{ y: 0 }}
           exit={{ y: 80 }}
           transition={{ duration: 0.25 }}
-          className="fixed bottom-0 left-0 right-0 bg-[#0f0f0f]/80 backdrop-blur-2xl border-t border-white/5 pb-8 pt-3 px-4 z-50"
+          className="fixed bottom-0 left-0 right-0 bg-[#0f0f0f]/80 backdrop-blur-2xl border-t border-white/5 pt-3 px-4 z-50"
+          style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom, 2rem))' }}
           role="navigation"
           aria-label="Main navigation"
         >

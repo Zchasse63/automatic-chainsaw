@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { apiLimiter } from '@/lib/rate-limit';
 import { createLogger } from '@/lib/logger';
+import { createDailyMetricsSchema } from '@/lib/validations/daily-metrics';
 
 export async function GET(request: NextRequest) {
   try {
@@ -74,16 +75,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
 
-    let body;
+    let rawBody;
     try {
-      body = await request.json();
+      rawBody = await request.json();
     } catch {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
-    if (!body.date) {
-      return NextResponse.json({ error: 'date is required' }, { status: 400 });
+    const parsed = createDailyMetricsSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
     }
+    const body = parsed.data;
 
     const { data: metric, error } = await supabase
       .from('daily_metrics')

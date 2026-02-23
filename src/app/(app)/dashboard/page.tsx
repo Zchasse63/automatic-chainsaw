@@ -12,30 +12,7 @@ import { useWorkouts } from '@/hooks/use-workouts';
 import { ReadinessScore, StationRadar, ChartTooltip } from '@/components/shared';
 import { toISODateString } from '@/lib/calendar-utils';
 
-// ── Elite station targets (seconds) for score normalization ──
-const ELITE_TARGETS: Record<string, number> = {
-  'Ski Erg': 210,
-  'Sled Push': 70,
-  'Sled Pull': 80,
-  'Burpee Broad Jump': 150,
-  'Row Erg': 200,
-  'Farmers Carry': 55,
-  'Sandbag Lunges': 110,
-  'Wall Balls': 150,
-};
-
-// ── Modality color map ──
-const MODALITY_COLORS: Record<string, string> = {
-  run: '#00F0FF',
-  running: '#00F0FF',
-  strength: '#39FF14',
-  hiit: '#FF6B00',
-  hyrox: '#39FF14',
-  simulation: '#39FF14',
-  station_practice: '#FF8C42',
-  recovery: '#00F0FF',
-  rest: 'rgba(255,255,255,0.1)',
-};
+import { ELITE_TARGETS, MODALITY_COLORS } from '@/lib/constants/hyrox';
 
 // ── Helpers ──
 function formatGoalTime(minutes: number | null | undefined): string {
@@ -74,7 +51,7 @@ function useClientDate() {
 // ── Loading skeleton ──
 function DashboardSkeleton() {
   return (
-    <div className="bg-bg-deep min-h-screen px-6 pt-6 pb-32 animate-pulse">
+    <div className="bg-bg-deep min-h-screen px-6 pt-6 pb-6 animate-pulse">
       {/* Header skeleton */}
       <div className="mb-8 flex items-center justify-between">
         <div>
@@ -177,7 +154,7 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="bg-bg-deep min-h-screen px-6 pt-6 pb-32">
+    <div className="bg-bg-deep min-h-screen px-6 pt-6 pb-6">
       <motion.div
         variants={stagger}
         initial="hidden"
